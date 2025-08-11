@@ -9,6 +9,11 @@ section {
   border-bottom: 1px solid #ddd;
 }
 
+/* SECCIÓN DE AUTORES */
+#autores{
+  back-ground: #175058;
+}
+
 h2 {
   color: #333;
 }
