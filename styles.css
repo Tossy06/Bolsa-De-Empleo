@@ -10,10 +10,10 @@ section {
 }
 
 /* SECCIÓN DE AUTORES */
-#autores{
+.autor-section{
   background-color: #175058;
   display: flex;
-  aling-items: center;
+  align-items: center;
 }
 
 h2 {
