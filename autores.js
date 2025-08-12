@@ -20,6 +20,7 @@ async function cargarAutores() {
 
   autores.forEach(autor => {
     if (autor.login !== repoOwner) { // evitar duplicar
+      console.log("Autor!!!", autor);
       const card = document.createElement("div");
       card.classList.add("card");
       card.innerHTML = `
