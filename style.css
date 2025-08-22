@@ -10,7 +10,7 @@ section {
 }
 
 /* SECCIÓN DE AUTORES */
-.autor-section{
+.autor-section .div{
   display:flex;
   align-items: center;
   justify-content: space-between;
