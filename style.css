@@ -35,7 +35,7 @@ h2 {
   flex-wrap: wrap;
 }
 
-.card {
+.autor-card {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 1rem;
@@ -45,7 +45,7 @@ h2 {
   box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
 }
 
-.card img {
+.autor-card img {
   border-radius: 50%;
   width: 100px;
   height: 100px;
