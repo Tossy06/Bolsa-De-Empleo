@@ -1,69 +1,90 @@
+/* ===== Base ===== */
+* { box-sizing: border-box; }
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  line-height: 1.5;
+  color: #222;
+  background: #fff;
 }
-
 section {
-  padding: 2rem;
-  border-bottom: 1px solid #ddd;
+  padding: 2rem 1.25rem;
+  border-bottom: 1px solid #eee;
 }
+h2 { color: #333; margin-top: 0; }
 
-/* SECCIÓN DE AUTORES */
+/* ===== Autores ===== */
 .autor-section {
   background: #175058;
-}
-.autor-section h2{
   color: #fff;
+}
+.autor-section h2 {
   text-align: center;
+  color: #fff;
 }
-.autores-cards{
-  display:flex;
-  align-items: center;
-  justify-content: space-between;
-  
-}
-
-
-h2 {
-  color: #333;
-}
-
 .autor-cards {
   display: flex;
-  gap: 1rem;
   flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: stretch;
+  margin-top: 1rem;
 }
-
 .autor-card {
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  background: #f9f9f9;
+  color: #222;
+  width: 220px;
+  border: 1px solid #dcdcdc;
+  border-radius: 12px;
   padding: 1rem;
   text-align: center;
-  width: 200px;
-  background: #f9f9f9;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.08);
 }
-
 .autor-card img {
   border-radius: 50%;
-  width: 100px;
-  height: 100px;
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 0.5rem;
+}
+.autor-card h3 {
+  font-size: 1.05rem;
+  margin: 0.5rem 0 0.25rem;
+}
+.autor-card a {
+  display: inline-block;
+  text-decoration: none;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #175058;
+  color: #175058;
+  background: #fff;
+}
+.autor-card a:hover {
+  background: #175058;
+  color: #fff;
+}
+.msg-error {
+  color: #ffd2d2;
+  background: #7a1f1f;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
 }
 
-/* ==== Historias de Usuario ==== */
+/* ===== Historias de Usuario ===== */
 .historias-section {
   padding: 40px 20px;
   background-color: #f8f9fa;
   text-align: center;
 }
-
 .historias-section h2 {
   font-size: 2rem;
   margin-bottom: 30px;
   color: #333;
 }
-
 .historias-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -71,7 +92,6 @@ h2 {
   max-width: 1200px;
   margin: 0 auto;
 }
-
 .card {
   background: #fff;
   padding: 20px;
@@ -80,21 +100,21 @@ h2 {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   text-align: left;
 }
-
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
-
 .card h3 {
   font-size: 1.2rem;
   margin-bottom: 10px;
   color: #0056b3;
 }
-
 .card p {
   font-size: 0.95rem;
   color: #555;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
+/* ===== Overview / Requerimientos ajustes suaves ===== */
+#overview p { max-width: 900px; margin: 0.5rem auto 0; }
+#requerimientos ul { max-width: 900px; margin: 0.5rem auto 1rem; }
