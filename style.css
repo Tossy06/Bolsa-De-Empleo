@@ -29,7 +29,7 @@ h2 {
   color: #333;
 }
 
-.cards {
+.autor-cards {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
