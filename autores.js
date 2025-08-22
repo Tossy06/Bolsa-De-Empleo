@@ -25,7 +25,7 @@ async function cargarAutores() {
     const autores = await response.json();
 
     // 🔎 Ver si trae colaboradores
-    console.log("Colaboradores encontrados:", autores);
+    console.log("Colaboradores encontrados!!!:", autores);
 
     autores.forEach((autor) => {
       if (autor?.login && autor.login !== repoOwner) {
