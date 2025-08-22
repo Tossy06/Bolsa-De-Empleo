@@ -13,6 +13,16 @@ section {
 .autor-section {
   background: #175058;
 }
+.autores-cards{
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+  
+}
+.autores-cards h2{
+  color: #fff;
+  text-align: center;
+}
 
 h2 {
   color: #333;
