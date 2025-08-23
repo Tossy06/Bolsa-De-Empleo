@@ -49,3 +49,42 @@ async function cargarAutores() {
 }
 
 document.addEventListener("DOMContentLoaded", cargarAutores);
+
+
+function escribirYBorrarDescripcion() {
+  const parrafo = document.querySelector("#overview p");
+  if (!parrafo) return;
+
+  const texto = `Nuestro proyecto consiste en una plataforma web que actúa como intermediario entre las personas con discapacidad que buscan empleo y las empresas que necesitan cumplir con la legislación vigente y, al mismo tiempo, mejorar sus prácticas de inclusión laboral. Este proyecto busca cumplir con los ODS de Trabajo Decente y Crecimiento Económico.`;
+
+  let index = 0;
+  let escribiendo = true;
+
+  function escribirOBorrar() {
+    if (escribiendo) {
+      parrafo.textContent = texto.substring(0, index);
+      index++;
+      if (index > texto.length) {
+        escribiendo = false;
+        setTimeout(escribirOBorrar, 1000); // Pausa antes de borrar
+        return;
+      }
+    } else {
+      parrafo.textContent = texto.substring(0, index);
+      index--;
+      if (index < 0) {
+        escribiendo = true;
+        setTimeout(escribirOBorrar, 1000); // Pausa antes de volver a escribir
+        return;
+      }
+    }
+    setTimeout(escribirOBorrar, 20); // Velocidad de animación
+  }
+
+  escribirOBorrar();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  cargarAutores();
+  escribirYBorrarDescripcion();
+});
