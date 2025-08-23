@@ -82,6 +82,23 @@ section {
 #requerimientos h2 {
   color: #fff;
 }
+.no-funcionales{
+  display: flex;
+  flex-direction: column;
+  justify-self: end;
+  background: #175058;
+  padding: 10px;
+  border-radius: 10px;
+}
+.funcionales{
+  display: flex;
+  flex-direction: column;
+  justify-self: flex-start;
+  background: #175058;
+  padding: 10px;
+  border-radius: 10px;
+}
+}
 
 
 /* ===== Historias de Usuario ===== */
