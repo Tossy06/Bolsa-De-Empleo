@@ -74,6 +74,12 @@ h2 { color: #333; margin-top: 0; }
   padding: 0.5rem 0.75rem;
 }
 
+/* ===== Requerimientos ===== */
+#Requerimientos{
+  background: ##4AC3BC;
+}
+
+
 /* ===== Historias de Usuario ===== */
 .historias-section {
   padding: 40px 20px;
