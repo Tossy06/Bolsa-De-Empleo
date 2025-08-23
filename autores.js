@@ -85,6 +85,5 @@ function escribirYBorrarDescripcion() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  cargarAutores();
   escribirYBorrarDescripcion();
 });
