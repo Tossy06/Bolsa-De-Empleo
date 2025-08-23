@@ -76,7 +76,10 @@ h2 { color: #333; margin-top: 0; }
 
 /* ===== Requerimientos ===== */
 #requerimientos{
-  background: ##4AC3BC;
+  background: #4AC3BC;
+}
+#requerimientos h2 p{
+  color: #fff;
 }
 
 
