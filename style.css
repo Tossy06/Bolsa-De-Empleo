@@ -142,6 +142,19 @@ section {
   line-height: 1.45;
 }
 
+#overview p::after {
+  content: "|";
+  animation: blink 1s infinite;
+  margin-left: 2px;
+  color: black; /* Puedes personalizarlo */
+}
+
+@keyframes blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+}
+
+
 /* ===== Overview / Requerimientos ajustes suaves ===== */
 #overview p { max-width: 900px; margin: 0.5rem auto 0; }
 #requerimientos ul { max-width: 900px; margin: 0.5rem auto 1rem; }
