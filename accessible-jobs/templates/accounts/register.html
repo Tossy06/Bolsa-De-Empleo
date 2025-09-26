@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    
+    .field-required::after {
+        content: " *";
+        color: #dc3545;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="form-section p-4 p-md-5">
+                
+                <!-- Encabezado -->
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-plus-fill text-primary" style="font-size: 3rem;" aria-hidden="true"></i>
+                    <h1 class="h3 mt-3">Crear Nueva Cuenta</h1>
+                    <p class="text-muted">
+                        Únete a nuestra comunidad inclusiva
+                    </p>
+                </div>
+                
+                <!-- Nota de accesibilidad -->
+                <div class="alert alert-info" role="note">
+                    <i class="bi bi-info-circle-fill me-2" aria-hidden="true"></i>
+                    <strong>Navegación accesible:</strong> Usa la tecla Tab para moverte entre campos. 
+                    Los campos marcados con <span class="text-danger">*</span> son obligatorios.
+                </div>
+                
+                <!-- Formulario -->
+                <form method="post" novalidate aria-label="Formulario de registro">
+                    {% csrf_token %}
+                    
+                    <!-- Información básica -->
+                    <fieldset class="mb-4">
+                        <legend class="h5 mb-3">Información Personal</legend>
+                        
+                        <!-- Nombre de usuario -->
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label field-required">
+                                {{ form.username.label }}
+                            </label>
+                            {{ form.username }}
+                            <div id="{{ form.username.id_for_label }}_help" class="form-text">
+                                {{ form.username.help_text }}
+                            </div>
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback d-block" role="alert">
+                                    {{ form.username.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label field-required">
+                                {{ form.email.label }}
+                            </label>
+                            {{ form.email }}
+                            <div id="{{ form.email.id_for_label }}_help" class="form-text">
+                                {{ form.email.help_text }}
+                            </div>
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback d-block" role="alert">
+                                    {{ form.email.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Nombre y Apellido en dos columnas -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label field-required">
+                                    {{ form.first_name.label }}
+                                </label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="invalid-feedback d-block" role="alert">
+                                        {{ form.first_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label field-required">
+                                    {{ form.last_name.label }}
+                                </label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="invalid-feedback d-block" role="alert">
+                                        {{ form.last_name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </fieldset>
+                    
+                    <!-- Tipo de usuario -->
+                    <fieldset class="mb-4">
+                        <legend class="h5 mb-3">Tipo de Cuenta</legend>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.user_type.id_for_label }}" class="form-label field-required">
+                                {{ form.user_type.label }}
+                            </label>
+                            {{ form.user_type }}
+                            {% if form.user_type.errors %}
+                                <div class="invalid-feedback d-block" role="alert">
+                                    {{ form.user_type.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                    
+                    <!-- Accesibilidad (opcional) -->
+                    <fieldset class="mb-4">
+                        <legend class="h5 mb-3">
+                            Preferencias de Accesibilidad 
+                            <span class="badge bg-secondary">Opcional</span>
+                        </legend>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.disability_type.id_for_label }}" class="form-label">
+                                {{ form.disability_type.label }}
+                            </label>
+                            {{ form.disability_type }}
+                            <div id="{{ form.disability_type.id_for_label }}_help" class="form-text">
+                                {{ form.disability_type.help_text }}
+                            </div>
+                            {% if form.disability_type.errors %}
+                                <div class="invalid-feedback d-block" role="alert">
+                                    {{ form.disability_type.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                    
+                    <!-- Contraseña -->
+                    <fieldset class="mb-4">
+                        <legend class="h5 mb-3">Seguridad</legend>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label field-required">
+                                {{ form.password1.label }}
+                            </label>
+                            {{ form.password1 }}
+                            <div id="{{ form.password1.id_for_label }}_help" class="form-text">
+                                {{ form.password1.help_text }}
+                            </div>
+                            {% if form.password1.errors %}
+                                <div class="invalid-feedback d-block" role="alert">
+                                    {{ form.password1.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label field-required">
+                                {{ form.password2.label }}
+                            </label>
+                            {{ form.password2 }}
+                            <div id="{{ form.password2.id_for_label }}_help" class="form-text">
+                                {{ form.password2.help_text }}
+                            </div>
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback d-block" role="alert">
+                                    {{ form.password2.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                    
+                    <!-- hCaptcha -->
+                    <div class="mb-4">
+                        <label class="form-label field-required">{{ form.hcaptcha.label }}</label>
+                        {{ form.hcaptcha }}
+                        <div class="form-text">
+                            {{ form.hcaptcha.help_text }}
+                        </div>
+                        {% if form.hcaptcha.errors %}
+                            <div class="invalid-feedback d-block" role="alert">
+                                {{ form.hcaptcha.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Términos y condiciones -->
+                    <div class="mb-4">
+                        <div class="form-check">
+                            {{ form.accept_terms }}
+                            <label class="form-check-label" for="{{ form.accept_terms.id_for_label }}">
+                                {{ form.accept_terms.label }}
+                                <a href="#" target="_blank" rel="noopener noreferrer">(Ver términos)</a>
+                            </label>
+                            {% if form.accept_terms.errors %}
+                                <div class="invalid-feedback d-block" role="alert">
+                                    {{ form.accept_terms.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Botones -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle me-2" aria-hidden="true"></i>
+                            Crear Cuenta
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Link a login -->
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        ¿Ya tienes una cuenta? 
+                        <a href="{% url 'accounts:login' %}">Inicia sesión aquí</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

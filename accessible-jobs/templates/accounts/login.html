@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    
+    .login-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px 10px 0 0;
+        padding: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="login-container">
+                
+                <!-- Encabezado -->
+                <div class="login-header text-center">
+                    <i class="bi bi-box-arrow-in-right" style="font-size: 3rem;" aria-hidden="true"></i>
+                    <h1 class="h3 mt-3 mb-1">Bienvenido de Vuelta</h1>
+                    <p class="mb-0">Inicia sesión para continuar</p>
+                </div>
+                
+                <div class="p-4">
+                    <!-- Nota de accesibilidad -->
+                    <div class="alert alert-info mb-4" role="note">
+                        <i class="bi bi-keyboard me-2" aria-hidden="true"></i>
+                        <strong>Accesibilidad:</strong> Puedes navegar este formulario usando solo el teclado.
+                    </div>
+                    
+                    <!-- Formulario de Login -->
+                    <form method="post" novalidate aria-label="Formulario de inicio de sesión">
+                        {% csrf_token %}
+                        
+                        <!-- Usuario -->
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">
+                                <i class="bi bi-person-fill me-1" aria-hidden="true"></i>
+                                {{ form.username.label }}
+                            </label>
+                            {{ form.username }}
+                            <div id="{{ form.username.id_for_label }}_help" class="form-text">
+                                Ingresa tu nombre de usuario o correo electrónico
+                            </div>
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback d-block" role="alert">
+                                    <i class="bi bi-exclamation-circle me-1" aria-hidden="true"></i>
+                                    {{ form.username.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Contraseña -->
+                        <div class="mb-3">
+                            <label for="{{ form.password.id_for_label }}" class="form-label">
+                                <i class="bi bi-lock-fill me-1" aria-hidden="true"></i>
+                                {{ form.password.label }}
+                            </label>
+                            <div class="input-group">
+                                {{ form.password }}
+                                <button class="btn btn-outline-secondary" 
+                                        type="button" 
+                                        id="togglePassword"
+                                        aria-label="Mostrar u ocultar contraseña">
+                                    <i class="bi bi-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            <div id="{{ form.password.id_for_label }}_help" class="form-text">
+                                Ingresa tu contraseña
+                            </div>
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback d-block" role="alert">
+                                    <i class="bi bi-exclamation-circle me-1" aria-hidden="true"></i>
+                                    {{ form.password.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Recordarme y Olvidé contraseña -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                {{ form.remember_me }}
+                                <label class="form-check-label" for="{{ form.remember_me.id_for_label }}">
+                                    {{ form.remember_me.label }}
+                                </label>
+                            </div>
+                            <a href="#" class="text-decoration-none small">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
+                        
+                        <!-- Errores generales del formulario -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
+                                {{ form.non_field_errors.0 }}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Botón de login -->
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>
+                                Iniciar Sesión
+                            </button>
+                        </div>
+                        
+                        <!-- Divider -->
+                        <div class="text-center my-3">
+                            <span class="text-muted">o</span>
+                        </div>
+                        
+                        <!-- Registro -->
+                        <div class="d-grid">
+                            <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-person-plus me-2" aria-hidden="true"></i>
+                                Crear Nueva Cuenta
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Información adicional -->
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    <i class="bi bi-shield-check me-1" aria-hidden="true"></i>
+                    Tus datos están protegidos y seguros
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Script para mostrar/ocultar contraseña
+    document.addEventListener('DOMContentLoaded', function() {
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordField = document.getElementById('{{ form.password.id_for_label }}');
+        
+        if (togglePassword && passwordField) {
+            togglePassword.addEventListener('click', function() {
+                // Cambiar tipo de input
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                
+                // Cambiar icono
+                const icon = this.querySelector('i');
+                if (type === 'password') {
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                    this.setAttribute('aria-label', 'Mostrar contraseña');
+                } else {
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                    this.setAttribute('aria-label', 'Ocultar contraseña');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

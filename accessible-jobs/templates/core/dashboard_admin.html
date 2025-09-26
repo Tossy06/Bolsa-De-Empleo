@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <h1 class="mb-4">Panel de Administración del Sistema</h1>
+
+  <!-- Tarjetas de resumen -->
+  <div class="row g-4">
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h5 class="card-title">Usuarios</h5>
+          <p class="display-6">0</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h5 class="card-title">Empresas</h5>
+          <p class="display-6">0</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h5 class="card-title">Ofertas</h5>
+          <p class="display-6">0</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h5 class="card-title">Postulaciones</h5>
+          <p class="display-6">0</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Secciones -->
+  <div class="row mt-5">
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Gestión de Usuarios</h5>
+        </div>
+        <div class="card-body">
+          <p>Administra los usuarios registrados, asigna roles y controla el acceso.</p>
+          <a href="#" class="btn btn-primary">Ver usuarios</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">Gestión de Empresas</h5>
+        </div>
+        <div class="card-body">
+          <p>Revisa y aprueba empresas registradas. Modera su actividad en la plataforma.</p>
+          <a href="#" class="btn btn-success">Ver empresas</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0">Ofertas de Empleo</h5>
+        </div>
+        <div class="card-body">
+          <p>Gestiona las ofertas publicadas, aprueba o elimina las que incumplan políticas.</p>
+          <a href="#" class="btn btn-warning text-dark">Ver ofertas</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Configuración del Sistema</h5>
+        </div>
+        <div class="card-body">
+          <p>Administra la configuración general del sistema y parámetros globales.</p>
+          <a href="#" class="btn btn-dark">Configurar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

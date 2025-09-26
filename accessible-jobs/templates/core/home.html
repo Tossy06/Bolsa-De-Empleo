@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h1 class="display-4 fw-bold mb-4">
+                    Empleo Inclusivo para Todos
+                </h1>
+                <p class="lead mb-4">
+                    Conectamos talento con oportunidades, 
+                    rompiendo barreras y construyendo un futuro laboral más inclusivo.
+                </p>
+                <div class="d-grid d-sm-flex gap-3">
+                    <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">
+                        <i class="bi bi-person-plus me-2" aria-hidden="true"></i>
+                        Comenzar Ahora
+                    </a>
+                    <a href="{% url 'core:about' %}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+                        Saber Más
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="bi bi-people-fill" style="font-size: 15rem; opacity: 0.7;" aria-hidden="true"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Características -->
+<section class="py-5">
+    <div class="container py-4">
+        <h2 class="text-center mb-5">¿Por Qué Elegirnos?</h2>
+        <div class="row g-4">
+            <!-- Característica 1 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                            <i class="bi bi-universal-access-circle text-primary" style="font-size: 3rem;" aria-hidden="true"></i>
+                        </div>
+                        <h3 class="h5 mb-3">100% Accesible</h3>
+                        <p class="text-muted mb-0">
+                            Plataforma diseñada desde cero pensando en la accesibilidad. 
+                            Compatible con lectores de pantalla, navegación por teclado y más.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Característica 2 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                            <i class="bi bi-briefcase-fill text-success" style="font-size: 3rem;" aria-hidden="true"></i>
+                        </div>
+                        <h3 class="h5 mb-3">Empleos Inclusivos</h3>
+                        <p class="text-muted mb-0">
+                            Empresas comprometidas con la diversidad publican ofertas 
+                            laborales adaptadas y diseñadas para todos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Característica 3 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                            <i class="bi bi-shield-check text-info" style="font-size: 3rem;" aria-hidden="true"></i>
+                        </div>
+                        <h3 class="h5 mb-3">Seguro y Confiable</h3>
+                        <p class="text-muted mb-0">
+                            Verificamos empresas y protegemos tus datos. 
+                            Tu información está segura y solo tú decides qué compartir.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Estadísticas -->
+<section class="bg-light py-5">
+    <div class="container py-4">
+        <div class="row text-center g-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="p-3">
+                    <i class="bi bi-people text-primary" style="font-size: 3rem;" aria-hidden="true"></i>
+                    <h3 class="h2 mt-3 mb-0">1,200+</h3>
+                    <p class="text-muted">Candidatos Registrados</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="p-3">
+                    <i class="bi bi-building text-success" style="font-size: 3rem;" aria-hidden="true"></i>
+                    <h3 class="h2 mt-3 mb-0">350+</h3>
+                    <p class="text-muted">Empresas Activas</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="p-3">
+                    <i class="bi bi-briefcase text-info" style="font-size: 3rem;" aria-hidden="true"></i>
+                    <h3 class="h2 mt-3 mb-0">800+</h3>
+                    <p class="text-muted">Ofertas Publicadas</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="p-3">
+                    <i class="bi bi-check-circle text-warning" style="font-size: 3rem;" aria-hidden="true"></i>
+                    <h3 class="h2 mt-3 mb-0">95%</h3>
+                    <p class="text-muted">Satisfacción</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5">
+    <div class="container py-4">
+        <div class="bg-primary text-white rounded-3 p-5 text-center">
+            <h2 class="mb-4">¿Listo para dar el siguiente paso?</h2>
+            <p class="lead mb-4">
+                Únete a nuestra comunidad y descubre oportunidades diseñadas para ti.
+            </p>
+            <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-rocket-takeoff me-2" aria-hidden="true"></i>
+                Crear Cuenta Gratis
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
