@@ -1,0 +1,99 @@
+/* Contenedor principal */
+.form-section {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  }
+  
+  /* Barra de progreso */
+  .progress-container {
+    position: relative;
+  }
+  .progress-bar {
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #0d6efd, #20c997);
+    transition: width 0.3s ease;
+  }
+  .step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .step {
+    text-align: center;
+    flex: 1;
+  }
+  .step-number {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    margin: 0 auto 6px;
+    display: flex; align-items: center; justify-content: center;
+    background: #dee2e6;
+    font-weight: 600;
+  }
+  .step.active .step-number {
+    background: #0d6efd; color: #fff;
+  }
+  .step.completed .step-number {
+    background: #20c997; color: #fff;
+  }
+  .step-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+  
+  /* Pasos del formulario */
+  .multistep-form {
+    overflow: hidden;
+    position: relative;
+  }
+  .form-step {
+    display: none;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+  }
+  .form-step.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .form-step.animate-in-right { transform: translateX(0); }
+  .form-step.animate-in-left { transform: translateX(0); }
+  
+  /* Cards de selección de usuario */
+  .user-type-card {
+    padding: 20px;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .user-type-card:hover {
+    border-color: #0d6efd;
+    background: #f8f9fa;
+  }
+  .user-type-card.selected {
+    border-color: #0d6efd;
+    background: #e9f2ff;
+    box-shadow: 0 0 10px rgba(13,110,253,0.3);
+  }
+  
+  /* Navegación */
+  .form-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+
+
+  

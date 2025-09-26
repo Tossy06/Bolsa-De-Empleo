@@ -1,0 +1,96 @@
+.form-section {
+    min-height: 650px; 
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  }
+  
+  .step {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  
+  .step.active {
+    display: block;
+    opacity: 1;
+  }
+  
+  /* Progreso */
+  .step-progress {
+    text-align: center;
+  }
+  .progress-bar {
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #007bff, #00c4ff);
+    transition: width 0.3s ease;
+  }
+  .step-indicators {
+    display: flex;
+    justify-content: space-between;
+  }
+  .step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+  .step-circle.active {
+    background: #007bff;
+    color: #fff;
+    box-shadow: 0 0 12px rgba(0, 123, 255, 0.6);
+  }
+  
+  /* Tarjetas de tipo de usuario */
+  .user-type-container {
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  .user-type-card {
+    flex: 1;
+    text-align: center;
+    padding: 2rem;
+    border: 2px solid #dee2e6;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+  
+  .user-type-card input {
+    display: none; 
+  }
+  
+  .user-type-card:hover {
+    border-color: #007bff;
+    background: #f8faff;
+    transform: translateY(-2px);
+  }
+  
+  .user-type-card.active {
+    border-color: #007bff;
+    background: #eaf4ff;
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
+  }
+  
+  .user-type-card .icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #007bff;
+  }
+  

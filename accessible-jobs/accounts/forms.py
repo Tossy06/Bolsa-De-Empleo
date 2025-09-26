@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from hcaptcha.fields import hCaptchaField
 from .models import User
 
@@ -25,10 +26,16 @@ class AccessibleUserCreationForm(UserCreationForm):
         }
     )
     
+    
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'user_type', 
+        fields = ['user_type', 'username', 'email', 'first_name', 'last_name', 
                   'disability_type', 'password1', 'password2']
+        
+        # Widgets personalizados
+        widgets = {
+            'username': forms.TextInput(attrs={'autocomplete': 'username'}),
+        }
         
         # Labels personalizados más descriptivos
         labels = {
@@ -42,7 +49,7 @@ class AccessibleUserCreationForm(UserCreationForm):
         
         # Textos de ayuda accesibles
         help_texts = {
-            'username': 'Único identificador. Solo letras, números y @/./+/-/_',
+            'username': 'Identificador único para tu cuenta',
             'email': 'Usaremos este correo para comunicarnos contigo',
             'disability_type': 'Esta información es confidencial y nos ayuda a adaptar la plataforma a tus necesidades',
         }
@@ -50,10 +57,16 @@ class AccessibleUserCreationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
+        # Remover el validador de username por defecto y permitir cualquier carácter
+        self.fields['username'].validators = []
+        
         # Añadir clases de Bootstrap y atributos ARIA a todos los campos
         for field_name, field in self.fields.items():
             # Clases de Bootstrap para estilo
-            field.widget.attrs['class'] = 'form-control'
+            if field_name == 'accept_terms':
+                field.widget.attrs['class'] = 'form-check-input'
+            else:
+                field.widget.attrs['class'] = 'form-control'
             
             # Atributos ARIA para accesibilidad
             field.widget.attrs['aria-label'] = field.label
@@ -62,12 +75,17 @@ class AccessibleUserCreationForm(UserCreationForm):
             # Marcar campos requeridos visualmente y para lectores de pantalla
             if field.required:
                 field.widget.attrs['aria-required'] = 'true'
-                field.label = f'{field.label} *'
         
         # Personalizar campos específicos
         self.fields['email'].required = True
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
+        
+        # Añadir atributo data para cambio dinámico de labels
+        self.fields['user_type'].widget.attrs['id'] = 'id_user_type'
+        self.fields['username'].widget.attrs['id'] = 'id_username'
+        self.fields['first_name'].widget.attrs['id'] = 'id_first_name'
+        self.fields['last_name'].widget.attrs['id'] = 'id_last_name'
         
         # Mejorar el campo de contraseña con instrucciones claras
         self.fields['password1'].help_text = (
@@ -78,9 +96,6 @@ class AccessibleUserCreationForm(UserCreationForm):
         self.fields['password2'].help_text = (
             'Ingresa la misma contraseña nuevamente para verificación.'
         )
-        
-        # Checkbox de términos con estilo especial
-        self.fields['accept_terms'].widget.attrs['class'] = 'form-check-input'
     
     def clean_email(self):
         """Valida que el email no esté ya registrado"""
