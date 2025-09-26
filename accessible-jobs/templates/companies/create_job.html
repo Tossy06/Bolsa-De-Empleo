@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/job-posting.css' %}">
+{% endblock %}
+
+{% block title %}{{ title|default:"Crear Oferta de Trabajo" }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-10">
+            <!-- Header -->
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h2 mb-2">
+                            <i class="fas fa-briefcase me-2"></i>
+                            {{ title|default:"Crear Nueva Oferta de Trabajo" }}
+                        </h1>
+                        <p class="mb-0 opacity-75">Publica una oferta inclusiva y accesible para personas con discapacidad</p>
+                    </div>
+                    <a href="{% url 'core:dashboard' %}" class="btn btn-light">
+                        <i class="fas fa-arrow-left me-1"></i> Volver
+                    </a>
+                </div>
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-steps">
+                    <div class="step" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Información Básica</div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Detalles del Puesto</div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Accesibilidad</div>
+                    </div>
+                    <div class="step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Condiciones</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Form -->
+            <div class="card form-card">
+                <div class="card-body p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {% if message.tags == 'success' %}
+                                    <i class="fas fa-check-circle me-2"></i>
+                                {% else %}
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                {% endif %}
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" novalidate id="jobForm">
+                        {% csrf_token %}
+
+                        <!-- Sección 1: Información Básica -->
+                        <div class="form-section active" data-section="1">
+                            <h3 class="section-title">
+                                <i class="fas fa-info-circle"></i>
+                                Información Básica del Puesto
+                            </h3>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        {{ form.title.label_tag }}
+                                        {{ form.title }}
+                                        {% if form.title.help_text %}
+                                            <div class="form-text">{{ form.title.help_text }}</div>
+                                        {% endif %}
+                                        {% for error in form.title.errors %}
+                                            <div class="text-danger small mt-1">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.job_type.label_tag }}
+                                        {{ form.job_type }}
+                                        {% for error in form.job_type.errors %}
+                                            <div class="text-danger small mt-1">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        {{ form.location.label_tag }}
+                                        {{ form.location }}
+                                        {% for error in form.location.errors %}
+                                            <div class="text-danger small mt-1">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <div class="form-check mt-4 pt-2">
+                                            {{ form.is_remote }}
+                                            <label for="{{ form.is_remote.id_for_label }}" class="form-check-label">
+                                                {{ form.is_remote.label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.description.label_tag }}
+                                {{ form.description }}
+                                {% if form.description.help_text %}
+                                    <div class="form-text">{{ form.description.help_text }}</div>
+                                {% endif %}
+                                {% for error in form.description.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Sección 2: Detalles del Puesto -->
+                        <div class="form-section" data-section="2">
+                            <h3 class="section-title">
+                                <i class="fas fa-tasks"></i>
+                                Detalles y Requisitos
+                            </h3>
+                            <div class="mb-3">
+                                {{ form.responsibilities.label_tag }}
+                                {{ form.responsibilities }}
+                                {% if form.responsibilities.help_text %}
+                                    <div class="form-text">{{ form.responsibilities.help_text }}</div>
+                                {% endif %}
+                                {% for error in form.responsibilities.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.requirements.label_tag }}
+                                {{ form.requirements }}
+                                {% if form.requirements.help_text %}
+                                    <div class="form-text">{{ form.requirements.help_text }}</div>
+                                {% endif %}
+                                {% for error in form.requirements.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.experience_level.label_tag }}
+                                        {{ form.experience_level }}
+                                        {% for error in form.experience_level.errors %}
+                                            <div class="text-danger small mt-1">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.application_deadline.label_tag }}
+                                        {{ form.application_deadline }}
+                                        {% if form.application_deadline.help_text %}
+                                            <div class="form-text">{{ form.application_deadline.help_text }}</div>
+                                        {% endif %}
+                                        {% for error in form.application_deadline.errors %}
+                                            <div class="text-danger small mt-1">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección 3: Accesibilidad -->
+                        <div class="accessibility-highlight" data-section="3">
+                            <h3 class="section-title">
+                                <i class="fas fa-universal-access"></i>
+                                Inclusión y Accesibilidad
+                            </h3>
+                            <p class="mb-3 text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Esta información ayudará a candidatos con discapacidad a encontrar oportunidades que se ajusten a sus necesidades.
+                            </p>
+                            <div class="mb-3">
+                                {{ form.disability_focus.label_tag }}
+                                {{ form.disability_focus }}
+                                {% if form.disability_focus.help_text %}
+                                    <div class="form-text">{{ form.disability_focus.help_text }}</div>
+                                {% endif %}
+                                {% for error in form.disability_focus.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.accessibility_features.label_tag }}
+                                {{ form.accessibility_features }}
+                                {% if form.accessibility_features.help_text %}
+                                    <div class="form-text">{{ form.accessibility_features.help_text }}</div>
+                                {% endif %}
+                                {% for error in form.accessibility_features.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Sección 4: Condiciones -->
+                        <div class="form-section" data-section="4">
+                            <h3 class="section-title">
+                                <i class="fas fa-money-bill-wave"></i>
+                                Compensación y Beneficios
+                            </h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.salary_min.label_tag }}
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            {{ form.salary_min }}
+                                        </div>
+                                        {% for error in form.salary_min.errors %}
+                                            <div class="text-danger small mt-1">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.salary_max.label_tag }}
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            {{ form.salary_max }}
+                                        </div>
+                                        {% for error in form.salary_max.errors %}
+                                            <div class="text-danger small mt-1">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.benefits.label_tag }}
+                                {{ form.benefits }}
+                                {% if form.benefits.help_text %}
+                                    <div class="form-text">{{ form.benefits.help_text }}</div>
+                                {% endif %}
+                                {% for error in form.benefits.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-3">
+                                        {{ form.is_active }}
+                                        <label for="{{ form.is_active.id_for_label }}" class="form-check-label">
+                                            {{ form.is_active.label }}
+                                        </label>
+                                        {% if form.is_active.help_text %}
+                                            <div class="form-text">{{ form.is_active.help_text }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-3">
+                                        {{ form.featured }}
+                                        <label for="{{ form.featured.id_for_label }}" class="form-check-label">
+                                            {{ form.featured.label }}
+                                        </label>
+                                        {% if form.featured.help_text %}
+                                            <div class="form-text">{{ form.featured.help_text }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de navegación step-by-step -->
+                        <div class="form-navigation d-flex justify-content-between pt-4">
+                            <button type="button" class="btn btn-prev btn-navigation" disabled>Anterior</button>
+                            <button type="button" class="btn btn-next btn-navigation">Siguiente</button>
+                        </div>
+
+                        <!-- Botones finales de envío -->
+                        <div class="d-flex justify-content-between pt-4">
+                            <a href="{% url 'core:dashboard' %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>
+                                {% if job %}Actualizar Oferta{% else %}Publicar Oferta{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/job-posting.js' %}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sections = document.querySelectorAll('.form-section, .accessibility-highlight');
+    const nextBtn = document.querySelector('.btn-next');
+    const prevBtn = document.querySelector('.btn-prev');
+    const steps = document.querySelectorAll('.step');
+
+    let current = 0;
+
+    function showSection(index) {
+        sections.forEach((s, i) => {
+            s.classList.toggle('active', i === index);
+        });
+        steps.forEach((step, i) => {
+            step.classList.toggle('active', i === index);
+            step.classList.toggle('completed', i < index);
+        });
+        prevBtn.disabled = index === 0;
+        nextBtn.disabled = index === sections.length - 1;
+    }
+
+    nextBtn.addEventListener('click', () => {
+        if (current < sections.length - 1) {
+            current++;
+            showSection(current);
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (current > 0) {
+            current--;
+            showSection(current);
+        }
+    });
+
+    showSection(current);
+});
+</script>
+{% endblock %}
