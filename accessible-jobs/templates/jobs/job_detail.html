@@ -1,0 +1,390 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ job.title }} - {{ job.company.get_full_name }}{% endblock %}
+
+{% block content %}
+<!-- Header con gradiente -->
+<div class="bg-gradient bg-primary text-white py-5 mb-4">
+    <div class="container">
+        <div class="row align-items-center mb-3">
+            <div class="col-auto">
+                <div class="bg-white rounded-3 p-3">
+                    <i class="bi bi-building fs-2 text-primary"></i>
+                </div>
+            </div>
+            <div class="col">
+                <h1 class="display-5 fw-bold mb-2">{{ job.title }}</h1>
+                <p class="fs-5 mb-0">{{ job.company.get_full_name }}</p>
+            </div>
+        </div>
+        
+        <div class="d-flex flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>{{ job.location }}</span>
+                {% if job.is_remote %}
+                <span class="badge bg-light text-dark">Remoto</span>
+                {% endif %}
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-briefcase-fill"></i>
+                <span>{{ job.get_job_type_display }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>{{ job.get_experience_level_display }}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-currency-dollar"></i>
+                <span>{{ job.salary_range }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row">
+        <!-- Contenido principal -->
+        <div class="col-lg-8">
+            <!-- Descripción -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">
+                        <i class="bi bi-file-text me-2 text-primary"></i>Descripción del puesto
+                    </h2>
+                    <div class="card-text">
+                        {{ job.description|linebreaks }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Responsabilidades -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">
+                        <i class="bi bi-check-circle me-2 text-primary"></i>Responsabilidades principales
+                    </h2>
+                    <div class="card-text">
+                        {{ job.responsibilities|linebreaks }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requisitos -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">
+                        <i class="bi bi-mortarboard me-2 text-primary"></i>Requisitos
+                    </h2>
+                    <div class="card-text">
+                        {{ job.requirements|linebreaks }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Características de accesibilidad -->
+            {% if job.accessibility_features %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">
+                        <i class="bi bi-universal-access me-2 text-primary"></i>Características de accesibilidad
+                    </h2>
+                    <div class="card-text">
+                        {{ job.accessibility_features|linebreaks }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Beneficios -->
+            {% if job.benefits %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">
+                        <i class="bi bi-gift me-2 text-primary"></i>Beneficios adicionales
+                    </h2>
+                    <div class="card-text">
+                        {{ job.benefits|linebreaks }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Información de cumplimiento legal -->
+            <div class="card mb-4 shadow-sm border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title h5 mb-0">
+                        <i class="bi bi-shield-check me-2"></i>Cumplimiento legal y no discriminación
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <!-- Ajustes razonables -->
+                    <div class="alert alert-info border-start border-4 border-info">
+                        <h3 class="alert-heading h6 fw-bold">
+                            <i class="bi bi-tools me-2"></i>Ajustes razonables disponibles
+                        </h3>
+                        <div>{{ job.reasonable_accommodations|linebreaks }}</div>
+                    </div>
+
+                    <!-- Condiciones de accesibilidad -->
+                    <div class="alert alert-info border-start border-4 border-info">
+                        <h3 class="alert-heading h6 fw-bold">
+                            <i class="bi bi-building me-2"></i>Condiciones de accesibilidad del lugar de trabajo
+                        </h3>
+                        <div>{{ job.workplace_accessibility|linebreaks }}</div>
+                    </div>
+
+                    <!-- Declaración de no discriminación -->
+                    <div class="alert alert-info border-start border-4 border-info">
+                        <h3 class="alert-heading h6 fw-bold">
+                            <i class="bi bi-people me-2"></i>Declaración de no discriminación
+                        </h3>
+                        <div>{{ job.non_discrimination_statement|linebreaks }}</div>
+                    </div>
+
+                    <!-- Sello de cumplimiento -->
+                    <div class="alert alert-success mb-0">
+                        <h4 class="alert-heading h6 fw-bold">
+                            <i class="bi bi-check-circle-fill me-2"></i>Esta oferta cumple con:
+                        </h4>
+                        <ul class="mb-0 mt-2">
+                            <li>Ley 1618 de 2013 (Colombia)</li>
+                            <li>Convención de la ONU sobre Derechos de Personas con Discapacidad</li>
+                            <li>Requisitos de accesibilidad y no discriminación</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Card de aplicación -->
+            <div class="card mb-4 shadow">
+                <div class="card-body">
+                    <h3 class="card-title h5 mb-3">Postúlate a esta oferta</h3>
+                    
+                    <div class="text-success fw-bold fs-4 my-3">
+                        {{ job.salary_range }}
+                    </div>
+
+                    {% if job.application_deadline %}
+                    <div class="alert alert-warning py-2 small">
+                        <i class="bi bi-calendar-event me-1"></i>
+                        <strong>Fecha límite:</strong><br>
+                        {{ job.application_deadline|date:"d/m/Y" }}
+                    </div>
+                    {% endif %}
+
+                    <button class="btn btn-primary w-100 btn-lg mb-2" onclick="applyToJob()">
+                        <i class="bi bi-file-earmark-text me-2"></i>Postularme ahora
+                    </button>
+
+                    <button class="btn btn-outline-secondary w-100" onclick="saveJob()">
+                        <i class="bi bi-bookmark me-2"></i>Guardar oferta
+                    </button>
+                </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title h6 mb-3">Información de la oferta</h3>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">
+                                <i class="bi bi-calendar3 me-1"></i>Publicada:
+                            </span>
+                            <strong>{{ job.created_at|date:"d/m/Y" }}</strong>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">
+                                <i class="bi bi-person-wheelchair me-1"></i>Tipo:
+                            </span>
+                            <strong class="text-end">{{ job.get_disability_focus_display }}</strong>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">
+                                <i class="bi bi-laptop me-1"></i>Modalidad:
+                            </span>
+                            {% if job.is_remote %}
+                            <span class="badge bg-success">Remoto</span>
+                            {% else %}
+                            <span class="badge bg-info">Presencial</span>
+                            {% endif %}
+                        </div>
+                        {% if job.featured %}
+                        <div class="list-group-item px-0 text-center">
+                            <span class="badge bg-warning text-dark fs-6 py-2 px-3">
+                                <i class="bi bi-star-fill me-1"></i>Oferta Destacada
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compartir -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title h6 mb-3">Compartir esta oferta</h3>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" onclick="shareOnLinkedIn()">
+                            <i class="bi bi-linkedin me-2"></i>LinkedIn
+                        </button>
+                        <button class="btn btn-outline-info" onclick="shareOnTwitter()">
+                            <i class="bi bi-twitter me-2"></i>Twitter
+                        </button>
+                        <button class="btn btn-outline-success" onclick="shareOnWhatsApp()">
+                            <i class="bi bi-whatsapp me-2"></i>WhatsApp
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="copyLink()">
+                            <i class="bi bi-link-45deg me-2"></i>Copiar enlace
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ofertas relacionadas -->
+    {% if related_jobs %}
+    <div class="mt-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title h4 mb-4">
+                    <i class="bi bi-briefcase me-2 text-primary"></i>Más ofertas de {{ job.company.get_full_name }}
+                </h2>
+                <div class="row g-3">
+                    {% for related_job in related_jobs %}
+                    <div class="col-md-4">
+                        <a href="{% url 'jobs:detail' related_job.id %}" class="text-decoration-none">
+                            <div class="card h-100 border hover-shadow">
+                                <div class="card-body">
+                                    <h3 class="card-title h6 text-dark">{{ related_job.title }}</h3>
+                                    <p class="card-text text-muted small mb-2">
+                                        <i class="bi bi-geo-alt me-1"></i>{{ related_job.location }}
+                                        {% if related_job.is_remote %}
+                                        <span class="badge bg-success ms-1">Remoto</span>
+                                        {% endif %}
+                                    </p>
+                                    <p class="card-text text-muted small mb-0">
+                                        <i class="bi bi-currency-dollar me-1"></i>{{ related_job.salary_range }}
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Botón volver -->
+    <div class="text-center mt-5">
+        <a href="{% url 'jobs:list' %}" class="btn btn-outline-primary btn-lg">
+            <i class="bi bi-arrow-left me-2"></i>Volver a todas las ofertas
+        </a>
+    </div>
+</div>
+
+<style>
+    .hover-shadow {
+        transition: all 0.3s ease;
+    }
+    .hover-shadow:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+        transform: translateY(-2px);
+    }
+</style>
+
+<script>
+    // Datos del servidor
+    const userType = '{{ user.user_type|default:"" }}';
+    const loginUrl = '{% url "accounts:login" %}';
+    const currentPath = '{{ request.path }}';
+    const jobTitle = '{{ job.title|escapejs }}';
+    const companyName = '{{ job.company.get_full_name|escapejs }}';
+
+    function applyToJob() {
+        if (!isAuthenticated) {
+            if (confirm('Debes iniciar sesión para postularte. ¿Deseas ir a la página de inicio de sesión?')) {
+                window.location.href = loginUrl + '?next=' + encodeURIComponent(currentPath);
+            }
+            return;
+        }
+        
+        if (userType !== 'candidate') {
+            alert('Solo los candidatos pueden postularse a ofertas. Si eres candidato, inicia sesión con tu cuenta.');
+            return;
+        }
+        
+        alert('Funcionalidad de postulación en desarrollo. Pronto podrás postularte directamente.');
+        // TODO: Implementar modal de postulación o redirigir a formulario
+    }
+
+    function saveJob() {
+        if (!isAuthenticated) {
+            if (confirm('Debes iniciar sesión para guardar ofertas. ¿Deseas ir a la página de inicio de sesión?')) {
+                window.location.href = loginUrl + '?next=' + encodeURIComponent(currentPath);
+            }
+            return;
+        }
+        
+        alert('Funcionalidad de guardar ofertas en desarrollo.');
+        // TODO: Implementar guardado de ofertas favoritas
+    }
+
+    function shareOnLinkedIn() {
+        const url = encodeURIComponent(window.location.href);
+        window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + url, '_blank');
+    }
+
+    function shareOnTwitter() {
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent(jobTitle + ' en ' + companyName);
+        window.open('https://twitter.com/intent/tweet?url=' + url + '&text=' + text, '_blank');
+    }
+
+    function shareOnWhatsApp() {
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent('Mira esta oferta de empleo inclusiva: ' + jobTitle + ' - ' + companyName);
+        window.open('https://wa.me/?text=' + text + ' ' + url, '_blank');
+    }
+
+    function copyLink() {
+        const url = window.location.href;
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function() {
+                alert('Enlace copiado al portapapeles');
+            }).catch(function(err) {
+                fallbackCopyLink(url);
+            });
+        } else {
+            fallbackCopyLink(url);
+        }
+    }
+
+    function fallbackCopyLink(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        
+        try {
+            document.execCommand('copy');
+            alert('Enlace copiado al portapapeles');
+        } catch (err) {
+            alert('No se pudo copiar el enlace. Por favor, cópialo manualmente.');
+        }
+        
+        document.body.removeChild(textarea);
+    }
+</script>
+{% endblock %}

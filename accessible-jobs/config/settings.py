@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'companies',
     'accessibility',
     'core',
+    'admin_jobs',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

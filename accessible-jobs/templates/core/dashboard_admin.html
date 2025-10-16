@@ -1,94 +1,170 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Panel de Administración{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
-  <h1 class="mb-4">Panel de Administración del Sistema</h1>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">
+      <i class="fas fa-shield-alt text-danger me-2"></i>
+      Panel de Administración del Sistema
+    </h1>
+    <span class="badge bg-danger fs-6">ADMIN</span>
+  </div>
 
-  <!-- Tarjetas de resumen -->
-  <div class="row g-4">
+  <!-- Tarjetas de resumen con datos reales -->
+  <div class="row g-4 mb-5">
     <div class="col-md-3">
-      <div class="card shadow-sm text-center">
+      <div class="card shadow-sm border-start border-primary border-4">
         <div class="card-body">
-          <h5 class="card-title">Usuarios</h5>
-          <p class="display-6">0</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Total Usuarios</h6>
+              <h2 class="mb-0">{{ total_users }}</h2>
+              <small class="text-muted">
+                {{ total_candidates }} candidatos | {{ total_companies }} empresas
+              </small>
+            </div>
+            <i class="fas fa-users fa-3x text-primary opacity-25"></i>
+          </div>
         </div>
       </div>
     </div>
+
     <div class="col-md-3">
-      <div class="card shadow-sm text-center">
+      <div class="card shadow-sm border-start border-warning border-4">
         <div class="card-body">
-          <h5 class="card-title">Empresas</h5>
-          <p class="display-6">0</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Ofertas Pendientes</h6>
+              <h2 class="mb-0 text-warning">{{ pending_jobs }}</h2>
+              <small class="text-muted">Requieren revisión</small>
+            </div>
+            <i class="fas fa-clock fa-3x text-warning opacity-25"></i>
+          </div>
         </div>
       </div>
     </div>
+
     <div class="col-md-3">
-      <div class="card shadow-sm text-center">
+      <div class="card shadow-sm border-start border-success border-4">
         <div class="card-body">
-          <h5 class="card-title">Ofertas</h5>
-          <p class="display-6">0</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Ofertas Aprobadas</h6>
+              <h2 class="mb-0 text-success">{{ approved_jobs }}</h2>
+              <small class="text-muted">Publicadas activamente</small>
+            </div>
+            <i class="fas fa-check-circle fa-3x text-success opacity-25"></i>
+          </div>
         </div>
       </div>
     </div>
+
     <div class="col-md-3">
-      <div class="card shadow-sm text-center">
+      <div class="card shadow-sm border-start border-danger border-4">
         <div class="card-body">
-          <h5 class="card-title">Postulaciones</h5>
-          <p class="display-6">0</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-muted mb-1">Ofertas Rechazadas</h6>
+              <h2 class="mb-0 text-danger">{{ rejected_jobs }}</h2>
+              <small class="text-muted">No cumplen requisitos</small>
+            </div>
+            <i class="fas fa-times-circle fa-3x text-danger opacity-25"></i>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Secciones -->
-  <div class="row mt-5">
+  <!-- Secciones de gestión -->
+  <div class="row">
     <div class="col-md-6 mb-4">
-      <div class="card shadow-sm">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="fas fa-briefcase me-2"></i>
+            Ofertas Pendientes de Revisión
+          </h5>
+          {% if pending_jobs > 0 %}
+            <span class="badge bg-dark">{{ pending_jobs }}</span>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <p class="mb-3">Revisa y valida ofertas según la Ley 1618 de 2013. Verifica que cumplan con los requisitos de inclusión y accesibilidad.</p>
+          <a href="{% url 'admin_jobs:pending_list' %}" class="btn btn-warning text-dark">
+            <i class="fas fa-gavel me-2"></i>
+            Revisar Ofertas Pendientes
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm h-100">
         <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">Gestión de Usuarios</h5>
+          <h5 class="mb-0">
+            <i class="fas fa-users me-2"></i>
+            Gestión de Usuarios
+          </h5>
         </div>
         <div class="card-body">
-          <p>Administra los usuarios registrados, asigna roles y controla el acceso.</p>
-          <a href="#" class="btn btn-primary">Ver usuarios</a>
+          <p class="mb-3">Administra usuarios registrados, asigna roles y controla el acceso al sistema.</p>
+          <a href="#" class="btn btn-primary disabled">
+            <i class="fas fa-user-cog me-2"></i>
+            Ver usuarios (Próximamente)
+          </a>
         </div>
       </div>
     </div>
 
     <div class="col-md-6 mb-4">
-      <div class="card shadow-sm">
+      <div class="card shadow-sm h-100">
         <div class="card-header bg-success text-white">
-          <h5 class="mb-0">Gestión de Empresas</h5>
+          <h5 class="mb-0">
+            <i class="fas fa-building me-2"></i>
+            Gestión de Empresas
+          </h5>
         </div>
         <div class="card-body">
-          <p>Revisa y aprueba empresas registradas. Modera su actividad en la plataforma.</p>
-          <a href="#" class="btn btn-success">Ver empresas</a>
+          <p class="mb-3">Revisa y aprueba empresas registradas. Modera su actividad en la plataforma.</p>
+          <a href="#" class="btn btn-success disabled">
+            <i class="fas fa-clipboard-check me-2"></i>
+            Ver empresas (Próximamente)
+          </a>
         </div>
       </div>
     </div>
 
     <div class="col-md-6 mb-4">
-      <div class="card shadow-sm">
-        <div class="card-header bg-warning text-dark">
-          <h5 class="mb-0">Ofertas de Empleo</h5>
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">
+            <i class="fas fa-history me-2"></i>
+            Registro de Auditoría
+          </h5>
         </div>
         <div class="card-body">
-          <p>Gestiona las ofertas publicadas, aprueba o elimina las que incumplan políticas.</p>
-          <a href="#" class="btn btn-warning text-dark">Ver ofertas</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6 mb-4">
-      <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white">
-          <h5 class="mb-0">Configuración del Sistema</h5>
-        </div>
-        <div class="card-body">
-          <p>Administra la configuración general del sistema y parámetros globales.</p>
-          <a href="#" class="btn btn-dark">Configurar</a>
+          <p class="mb-3">Consulta el historial completo de acciones realizadas en el sistema.</p>
+          <a href="{% url 'admin_jobs:audit_logs' %}" class="btn btn-info text-white">
+            <i class="fas fa-file-alt me-2"></i>
+            Ver Logs de Auditoría
+          </a>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Alertas importantes -->
+  {% if pending_jobs > 0 %}
+  <div class="alert alert-warning d-flex align-items-center" role="alert">
+    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+    <div>
+      <strong>¡Atención!</strong> Tienes {{ pending_jobs }} oferta{{ pending_jobs|pluralize }} pendiente{{ pending_jobs|pluralize }} de revisión que requiere{{ pending_jobs|pluralize:"n" }} tu aprobación.
+      <a href="{% url 'admin_jobs:pending_list' %}" class="alert-link">Revisar ahora →</a>
+    </div>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

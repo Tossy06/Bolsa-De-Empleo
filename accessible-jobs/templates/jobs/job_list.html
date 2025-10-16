@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ofertas de Empleo Inclusivas{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Stats Banner -->
+    <div class="bg-primary text-white rounded-3 p-4 mb-4 shadow">
+        <div class="text-center">
+            <h1 class="display-4 fw-bold mb-2">{{ total_jobs }}</h1>
+            <h2 class="h4 mb-2">Ofertas de Empleo Inclusivas</h2>
+            <p class="mb-0">Todas las ofertas cumplen con normativas de accesibilidad</p>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" action="{% url 'jobs:list' %}" class="row g-3">
+                <div class="col-md-6 col-lg-3">
+                    <label for="search" class="form-label fw-semibold">
+                        <i class="bi bi-search me-1"></i>Buscar por palabra clave
+                    </label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="search" 
+                        name="search" 
+                        value="{{ search_query }}"
+                        placeholder="Ej: Desarrollador, Marketing..."
+                        aria-label="Buscar ofertas por palabra clave"
+                    >
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <label for="location" class="form-label fw-semibold">
+                        <i class="bi bi-geo-alt me-1"></i>Ubicación
+                    </label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="location" 
+                        name="location" 
+                        value="{{ location }}"
+                        placeholder="Ej: Bogotá, Medellín..."
+                        aria-label="Filtrar por ubicación"
+                    >
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <label for="job_type" class="form-label fw-semibold">
+                        <i class="bi bi-briefcase me-1"></i>Tipo de empleo
+                    </label>
+                    <select class="form-select" id="job_type" name="job_type" aria-label="Filtrar por tipo de empleo">
+                        <option value="">Todos</option>
+                        <option value="full_time" {% if job_type == 'full_time' %}selected{% endif %}>Tiempo completo</option>
+                        <option value="part_time" {% if job_type == 'part_time' %}selected{% endif %}>Tiempo parcial</option>
+                        <option value="contract" {% if job_type == 'contract' %}selected{% endif %}>Por contrato</option>
+                        <option value="internship" {% if job_type == 'internship' %}selected{% endif %}>Prácticas</option>
+                        <option value="remote" {% if job_type == 'remote' %}selected{% endif %}>Remoto</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <label for="disability_focus" class="form-label fw-semibold">
+                        <i class="bi bi-universal-access me-1"></i>Enfoque en discapacidad
+                    </label>
+                    <select class="form-select" id="disability_focus" name="disability_focus" aria-label="Filtrar por tipo de discapacidad">
+                        <option value="">Todas</option>
+                        <option value="visual" {% if disability_focus == 'visual' %}selected{% endif %}>Discapacidad visual</option>
+                        <option value="hearing" {% if disability_focus == 'hearing' %}selected{% endif %}>Discapacidad auditiva</option>
+                        <option value="physical" {% if disability_focus == 'physical' %}selected{% endif %}>Discapacidad física/motriz</option>
+                        <option value="cognitive" {% if disability_focus == 'cognitive' %}selected{% endif %}>Discapacidad cognitiva</option>
+                        <option value="intellectual" {% if disability_focus == 'intellectual' %}selected{% endif %}>Discapacidad intelectual</option>
+                        <option value="psychosocial" {% if disability_focus == 'psychosocial' %}selected{% endif %}>Discapacidad psicosocial</option>
+                        <option value="multiple" {% if disability_focus == 'multiple' %}selected{% endif %}>Discapacidad múltiple</option>
+                        <option value="all" {% if disability_focus == 'all' %}selected{% endif %}>Todas las discapacidades</option>
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="bi bi-search me-1"></i>Buscar ofertas
+                    </button>
+                    <a href="{% url 'jobs:list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>Limpiar filtros
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de ofertas -->
+    {% if page_obj %}
+        <div class="row">
+            {% for job in page_obj %}
+            <div class="col-12">
+                <article class="card mb-3 shadow-sm hover-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="flex-grow-1">
+                                <h2 class="h5 mb-2">
+                                    <a href="{% url 'jobs:detail' job.id %}" class="text-decoration-none text-dark stretched-link">
+                                        {{ job.title }}
+                                    </a>
+                                </h2>
+                                <p class="text-muted mb-0 fw-semibold">
+                                    <i class="bi bi-building me-1"></i>{{ job.company.get_full_name }}
+                                </p>
+                            </div>
+                            {% if job.featured %}
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-star-fill me-1"></i>Destacada
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-3 mb-3 text-muted small">
+                            <div>
+                                <i class="bi bi-geo-alt-fill me-1"></i>
+                                <span>{{ job.location }}</span>
+                                {% if job.is_remote %}
+                                <span class="badge bg-success ms-1">Remoto</span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <i class="bi bi-briefcase-fill me-1"></i>
+                                <span>{{ job.get_job_type_display }}</span>
+                            </div>
+                            <div>
+                                <i class="bi bi-cash-stack me-1"></i>
+                                <span>{{ job.salary_range }}</span>
+                            </div>
+                            <div>
+                                <i class="bi bi-bar-chart-fill me-1"></i>
+                                <span>{{ job.get_experience_level_display }}</span>
+                            </div>
+                            {% if job.application_deadline %}
+                            <div>
+                                <i class="bi bi-calendar-event me-1"></i>
+                                <span>Hasta: {{ job.application_deadline|date:"d/m/Y" }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <p class="card-text text-muted mb-3">
+                            {{ job.description|truncatewords:30 }}
+                        </p>
+
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <span class="badge bg-light text-dark border">
+                                <i class="bi bi-universal-access me-1"></i>{{ job.get_disability_focus_display }}
+                            </span>
+                            {% if job.accessibility_features %}
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>Accesibilidad garantizada
+                            </span>
+                            {% endif %}
+                            <span class="badge bg-info">
+                                <i class="bi bi-shield-check me-1"></i>Cumple Ley 1618
+                            </span>
+                        </div>
+
+                        <div class="position-relative">
+                            <a href="{% url 'jobs:detail' job.id %}" class="btn btn-primary btn-sm">
+                                Ver detalles y postularme
+                                <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginación -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Navegación de páginas de ofertas" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if job_type %}&job_type={{ job_type }}{% endif %}{% if disability_focus %}&disability_focus={{ disability_focus }}{% endif %}" aria-label="Primera página">
+                        <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if job_type %}&job_type={{ job_type }}{% endif %}{% if disability_focus %}&disability_focus={{ disability_focus }}{% endif %}" aria-label="Página anterior">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                    </span>
+                </li>
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if job_type %}&job_type={{ job_type }}{% endif %}{% if disability_focus %}&disability_focus={{ disability_focus }}{% endif %}" aria-label="Página siguiente">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if location %}&location={{ location }}{% endif %}{% if job_type %}&job_type={{ job_type }}{% endif %}{% if disability_focus %}&disability_focus={{ disability_focus }}{% endif %}" aria-label="Última página">
+                        <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <!-- Estado vacío -->
+        <div class="text-center py-5">
+            <i class="bi bi-search display-1 text-muted mb-3"></i>
+            <h3 class="mb-3">No se encontraron ofertas</h3>
+            <p class="text-muted mb-4">
+                Intenta ajustar tus filtros de búsqueda o
+                <a href="{% url 'jobs:list' %}">ver todas las ofertas disponibles</a>
+            </p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .hover-card {
+        transition: all 0.3s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+    }
+</style>
+{% endblock %}

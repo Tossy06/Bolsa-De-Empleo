@@ -1,0 +1,379 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Revisar Oferta: {{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_jobs:pending_list' %}">Ofertas Pendientes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ job.title }}</li>
+        </ol>
+    </nav>
+
+    <!-- Header con estado de cumplimiento -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h1 class="h2">{{ job.title }}</h1>
+            <p class="text-muted">
+                <i class="bi bi-building"></i> {{ job.company.get_full_name|default:job.company.username }}
+                | <i class="bi bi-geo-alt"></i> {{ job.location }}
+                {% if job.is_remote %}<span class="badge bg-info">Remoto</span>{% endif %}
+            </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            {% if is_compliant %}
+                <div class="alert alert-success mb-2">
+                    <i class="bi bi-check-circle-fill"></i> Cumple requisitos legales
+                </div>
+            {% else %}
+                <div class="alert alert-danger mb-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Faltan campos obligatorios
+                </div>
+            {% endif %}
+            
+            <span class="badge 
+                {% if job.compliance_status == 'pending_review' %}bg-warning text-dark
+                {% elif job.compliance_status == 'changes_requested' %}bg-info
+                {% elif job.compliance_status == 'approved' %}bg-success
+                {% elif job.compliance_status == 'rejected' %}bg-danger
+                {% else %}bg-secondary{% endif %}">
+                {{ job.get_compliance_status_display }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Campos faltantes (si los hay) -->
+    {% if not is_compliant %}
+    <div class="alert alert-warning border-start border-warning border-4" role="alert">
+        <h5 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Campos obligatorios faltantes</h5>
+        <ul class="mb-0">
+            {% for field in missing_fields_display %}
+                <li>{{ field }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Razón de rechazo/cambios anteriores -->
+    {% if job.rejection_reason %}
+    <div class="alert alert-info border-start border-info border-4">
+        <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Comentarios previos del revisor</h6>
+        <p class="mb-0">{{ job.rejection_reason }}</p>
+        {% if job.reviewed_by %}
+        <small class="text-muted">
+            Por {{ job.reviewed_by.get_full_name }} el {{ job.reviewed_at|date:"d/m/Y H:i" }}
+        </small>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <!-- Información principal de la oferta -->
+        <div class="col-lg-8">
+            <!-- Descripción -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-file-text"></i> Descripción del trabajo</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ job.description|linebreaks }}</p>
+                </div>
+            </div>
+
+            <!-- Responsabilidades -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-list-check"></i> Responsabilidades</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ job.responsibilities|linebreaks }}</p>
+                </div>
+            </div>
+
+            <!-- Requisitos -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clipboard-check"></i> Requisitos</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ job.requirements|linebreaks }}</p>
+                </div>
+            </div>
+
+            <!-- CAMPOS LEGALES OBLIGATORIOS -->
+            <div class="card mb-4 border-primary">
+                <div class="card-header bg-primary bg-opacity-10">
+                    <h5 class="mb-0 text-primary">
+                        <i class="bi bi-shield-check"></i> Cumplimiento Legal (Ley 1618)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Ajustes razonables -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold">
+                            <i class="bi bi-gear"></i> Ajustes razonables disponibles
+                            {% if not job.reasonable_accommodations %}
+                                <span class="badge bg-danger">Faltante</span>
+                            {% else %}
+                                <span class="badge bg-success">Completo</span>
+                            {% endif %}
+                        </h6>
+                        {% if job.reasonable_accommodations %}
+                            <p class="text-muted">{{ job.reasonable_accommodations|linebreaks }}</p>
+                        {% else %}
+                            <p class="text-danger"><em>Este campo no ha sido completado</em></p>
+                        {% endif %}
+                    </div>
+
+                    <hr>
+
+                    <!-- Accesibilidad del lugar de trabajo -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold">
+                            <i class="bi bi-building"></i> Condiciones de accesibilidad del lugar de trabajo
+                            {% if not job.workplace_accessibility %}
+                                <span class="badge bg-danger">Faltante</span>
+                            {% else %}
+                                <span class="badge bg-success">Completo</span>
+                            {% endif %}
+                        </h6>
+                        {% if job.workplace_accessibility %}
+                            <p class="text-muted">{{ job.workplace_accessibility|linebreaks }}</p>
+                        {% else %}
+                            <p class="text-danger"><em>Este campo no ha sido completado</em></p>
+                        {% endif %}
+                    </div>
+
+                    <hr>
+
+                    <!-- Declaración de no discriminación -->
+                    <div class="mb-0">
+                        <h6 class="fw-bold">
+                            <i class="bi bi-people"></i> Declaración de no discriminación
+                            {% if not job.non_discrimination_statement %}
+                                <span class="badge bg-danger">Faltante</span>
+                            {% else %}
+                                <span class="badge bg-success">Completo</span>
+                            {% endif %}
+                        </h6>
+                        {% if job.non_discrimination_statement %}
+                            <p class="text-muted">{{ job.non_discrimination_statement|linebreaks }}</p>
+                        {% else %}
+                            <p class="text-danger"><em>Este campo no ha sido completado</em></p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Beneficios -->
+            {% if job.benefits %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-gift"></i> Beneficios</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ job.benefits|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Características de accesibilidad -->
+            {% if job.accessibility_features %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-universal-access"></i> Características de accesibilidad</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ job.accessibility_features|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar con información adicional -->
+        <div class="col-lg-4">
+            <!-- Detalles de la oferta -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Detalles de la oferta</h6>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-6">Tipo de empleo:</dt>
+                        <dd class="col-sm-6">{{ job.get_job_type_display }}</dd>
+
+                        <dt class="col-sm-6">Experiencia:</dt>
+                        <dd class="col-sm-6">{{ job.get_experience_level_display }}</dd>
+
+                        <dt class="col-sm-6">Salario:</dt>
+                        <dd class="col-sm-6">{{ job.salary_range }}</dd>
+
+                        <dt class="col-sm-6">Enfoque:</dt>
+                        <dd class="col-sm-6">{{ job.get_disability_focus_display }}</dd>
+
+                        {% if job.application_deadline %}
+                        <dt class="col-sm-6">Fecha límite:</dt>
+                        <dd class="col-sm-6">{{ job.application_deadline|date:"d/m/Y" }}</dd>
+                        {% endif %}
+
+                        <dt class="col-sm-6">Creada:</dt>
+                        <dd class="col-sm-6">{{ job.created_at|date:"d/m/Y H:i" }}</dd>
+
+                        <dt class="col-sm-6">Actualizada:</dt>
+                        <dd class="col-sm-6">{{ job.updated_at|date:"d/m/Y H:i" }}</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Información de la empresa -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Información de la empresa</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-1"><strong>{{ job.company.get_full_name|default:job.company.username }}</strong></p>
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-envelope"></i> {{ job.company.email }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Acciones de revisión -->
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="bi bi-lightning"></i> Acciones de revisión</h6>
+                </div>
+                <div class="card-body">
+                    <!-- Aprobar -->
+                    {% if is_compliant %}
+                    <form method="post" action="{% url 'admin_jobs:approve' job.id %}" class="mb-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success w-100" 
+                                onclick="return confirm('¿Estás seguro de aprobar esta oferta?')">
+                            <i class="bi bi-check-circle"></i> Aprobar oferta
+                        </button>
+                    </form>
+                    {% else %}
+                    <button class="btn btn-success w-100 mb-2" disabled title="Faltan campos obligatorios">
+                        <i class="bi bi-check-circle"></i> Aprobar oferta
+                    </button>
+                    <small class="text-muted d-block mb-3">
+                        No se puede aprobar hasta completar todos los campos obligatorios
+                    </small>
+                    {% endif %}
+
+                    <!-- Solicitar cambios -->
+                    <button type="button" class="btn btn-warning w-100 mb-2" data-bs-toggle="modal" data-bs-target="#requestChangesModal">
+                        <i class="bi bi-pencil-square"></i> Solicitar cambios
+                    </button>
+
+                    <!-- Rechazar -->
+                    <button type="button" class="btn btn-danger w-100 mb-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                        <i class="bi bi-x-circle"></i> Rechazar oferta
+                    </button>
+
+                    <hr>
+
+                    <a href="{% url 'admin_jobs:pending_list' %}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-left"></i> Volver al listado
+                    </a>
+                </div>
+            </div>
+
+            <!-- Historial de auditoría -->
+            {% if audit_logs %}
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="bi bi-clock-history"></i> Historial de auditoría</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for log in audit_logs %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ log.get_action_display }}</h6>
+                                <small class="text-muted">{{ log.timestamp|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            <p class="mb-1 small text-muted">
+                                {{ log.user.get_full_name|default:log.user.username }}
+                            </p>
+                            {% if log.notes %}
+                            <p class="mb-0 small">{{ log.notes }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal para solicitar cambios -->
+<div class="modal fade" id="requestChangesModal" tabindex="-1" aria-labelledby="requestChangesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'admin_jobs:request_changes' job.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="requestChangesModalLabel">Solicitar cambios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> La empresa recibirá una notificación y podrá editar y reenviar la oferta.
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Especifica qué cambios se requieren: *</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="5" 
+                                  placeholder="Ejemplo: La declaración de no discriminación debe ser más específica..." required></textarea>
+                        <div class="form-text">Mínimo 20 caracteres</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-pencil-square"></i> Solicitar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para rechazar -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'admin_jobs:reject' job.id %}">
+                {% csrf_token %}
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="rejectModalLabel">Rechazar oferta</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Esta acción marcará la oferta como rechazada y será desactivada.
+                    </div>
+                    <div class="mb-3">
+                        <label for="reject_reason" class="form-label">Motivo del rechazo: *</label>
+                        <textarea class="form-control" id="reject_reason" name="reason" rows="5" 
+                                  placeholder="Ejemplo: La oferta no cumple con los requisitos mínimos de accesibilidad..." required></textarea>
+                        <div class="form-text">Mínimo 20 caracteres</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-circle"></i> Rechazar oferta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

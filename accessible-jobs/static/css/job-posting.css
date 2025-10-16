@@ -318,3 +318,66 @@
         width: 100%;
     }
 }
+
+/* Estilos para sección legal */
+.legal-compliance {
+    background: linear-gradient(135deg, #fff3cd, #ffe69c);
+    border: 2px solid #ffc107;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    display: none;
+}
+
+.legal-compliance.active {
+    display: block;
+}
+
+.legal-compliance .alert-warning {
+    background: #fff;
+    border-left: 4px solid #ffc107;
+}
+
+/* Contador de caracteres */
+small.form-text.text-end {
+    font-weight: 600;
+    font-size: 0.75rem;
+    transition: color 0.3s ease;
+}
+
+/* Animación para campos inválidos */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    animation: shake 0.3s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Badge de estado de cumplimiento */
+.compliance-badge {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 0.25rem;
+}
+
+.compliance-badge.pending {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.compliance-badge.approved {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.compliance-badge.rejected {
+    background-color: #dc3545;
+    color: #fff;
+}

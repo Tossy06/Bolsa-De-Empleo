@@ -46,6 +46,10 @@
                         <div class="step-number">4</div>
                         <div class="step-title">Condiciones</div>
                     </div>
+                    <div class="step" data-step="5">
+                        <div class="step-number">5</div>
+                        <div class="step-title">Cumplimiento Legal</div>
+                    </div>
                 </div>
             </div>
 
@@ -279,6 +283,62 @@
                                         {% endif %}
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- 🆕 SECCIÓN 5: Cumplimiento Legal (LEY 1618) -->
+                        <div class="form-section legal-compliance" data-section="5">
+                            <h3 class="section-title">
+                                <i class="fas fa-gavel"></i>
+                                Cumplimiento Legal (Ley 1618 de 2013)
+                            </h3>
+                            
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Campos obligatorios por ley:</strong>
+                                Toda oferta laboral debe incluir información sobre inclusión, accesibilidad y no discriminación según la Ley 1618 de 2013 y la Convención de la ONU.
+                            </div>
+
+                            <div class="mb-4">
+                                {{ form.reasonable_accommodations.label_tag }}
+                                {{ form.reasonable_accommodations }}
+                                {% if form.reasonable_accommodations.help_text %}
+                                    <div class="form-text">{{ form.reasonable_accommodations.help_text }}</div>
+                                {% endif %}
+                                <div class="form-text text-muted">
+                                    <strong>Ejemplos:</strong> Horarios flexibles, trabajo remoto parcial o total, adaptación de herramientas tecnológicas, pausas adicionales, ajustes en la carga de trabajo.
+                                </div>
+                                {% for error in form.reasonable_accommodations.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-4">
+                                {{ form.workplace_accessibility.label_tag }}
+                                {{ form.workplace_accessibility }}
+                                {% if form.workplace_accessibility.help_text %}
+                                    <div class="form-text">{{ form.workplace_accessibility.help_text }}</div>
+                                {% endif %}
+                                <div class="form-text text-muted">
+                                    <strong>Ejemplos:</strong> Rampas de acceso, ascensores, baños adaptados, estacionamiento preferencial, señalización en braille, iluminación adecuada, software lector de pantalla.
+                                </div>
+                                {% for error in form.workplace_accessibility.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-4">
+                                {{ form.non_discrimination_statement.label_tag }}
+                                {{ form.non_discrimination_statement }}
+                                {% if form.non_discrimination_statement.help_text %}
+                                    <div class="form-text">{{ form.non_discrimination_statement.help_text }}</div>
+                                {% endif %}
+                                <div class="form-text text-muted">
+                                    <strong>Ejemplo:</strong> "Nuestra empresa garantiza igualdad de oportunidades para todas las personas. No discriminamos por razón de discapacidad y nos comprometemos a realizar los ajustes razonables necesarios."
+                                </div>
+                                {% for error in form.non_discrimination_statement.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
                             </div>
                         </div>
 

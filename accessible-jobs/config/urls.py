@@ -8,15 +8,20 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    # Panel de administración de Django
-    path('admin/', admin.site.urls),
-    
+    path('admin/jobs/', include('admin_jobs.urls')),
+
+    # Ofertas públicas
+    path('empleos/', include('jobs.urls')),
+
     # URLs de la aplicación de cuentas
     path('cuentas/', include('accounts.urls')),
 
     # URLs de empresas
     path('company/', include('companies.urls')),
-    
+
+    # Panel de administración de Django
+    path('admin/', admin.site.urls),
+
     # URLs de la aplicación core (home, dashboard, etc)
     path('', include('core.urls')),
     

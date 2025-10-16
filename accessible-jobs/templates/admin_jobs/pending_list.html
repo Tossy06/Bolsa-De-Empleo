@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ofertas Pendientes de Revisión{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1">
+        <i class="fas fa-gavel text-warning me-2"></i>
+        Ofertas Pendientes de Revisión
+      </h1>
+      <p class="text-muted mb-0">Valida ofertas según Ley 1618 de 2013</p>
+    </div>
+    <a href="{% url 'core:dashboard' %}" class="btn btn-secondary">
+      <i class="fas fa-arrow-left me-1"></i> Volver al Dashboard
+    </a>
+  </div>
+
+  <!-- Estadísticas rápidas -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="card border-warning">
+        <div class="card-body">
+          <h5 class="card-title text-warning">
+            <i class="fas fa-clock me-2"></i>Pendientes de Revisión
+          </h5>
+          <h2 class="mb-0">{{ total_pending }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card border-info">
+        <div class="card-body">
+          <h5 class="card-title text-info">
+            <i class="fas fa-edit me-2"></i>Cambios Solicitados
+          </h5>
+          <h2 class="mb-0">{{ total_changes_requested }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="get" class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Estado</label>
+          <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="pending_review" {% if status_filter == 'pending_review' %}selected{% endif %}>
+              Pendientes de revisión
+            </option>
+            <option value="changes_requested" {% if status_filter == 'changes_requested' %}selected{% endif %}>
+              Cambios solicitados
+            </option>
+            <option value="all" {% if status_filter == 'all' %}selected{% endif %}>
+              Todas (excepto aprobadas)
+            </option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Buscar</label>
+          <input type="text" name="search" class="form-control" 
+                 placeholder="Título, empresa o email..." 
+                 value="{{ search_query }}">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="fas fa-search me-1"></i> Buscar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lista de ofertas -->
+  <div class="card">
+    <div class="card-header bg-light">
+      <h5 class="mb-0">
+        <i class="fas fa-list me-2"></i>
+        Ofertas ({{ page_obj.paginator.count }} total{{ page_obj.paginator.count|pluralize:"es" }})
+      </h5>
+    </div>
+    <div class="card-body p-0">
+      {% if page_obj %}
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Oferta</th>
+                <th>Empresa</th>
+                <th>Estado</th>
+                <th>Cumplimiento</th>
+                <th>Fecha</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for job in page_obj %}
+                <tr>
+                  <td>
+                    <strong>{{ job.title }}</strong><br>
+                    <small class="text-muted">{{ job.location }}</small>
+                  </td>
+                  <td>
+                    <i class="fas fa-building text-muted me-1"></i>
+                    {{ job.company.username }}<br>
+                    <small class="text-muted">{{ job.company.email }}</small>
+                  </td>
+                  <td>
+                    {% if job.compliance_status == 'pending_review' %}
+                      <span class="badge bg-warning text-dark">
+                        <i class="fas fa-clock me-1"></i>Pendiente
+                      </span>
+                    {% elif job.compliance_status == 'changes_requested' %}
+                      <span class="badge bg-info">
+                        <i class="fas fa-edit me-1"></i>Cambios solicitados
+                      </span>
+                    {% elif job.compliance_status == 'rejected' %}
+                      <span class="badge bg-danger">
+                        <i class="fas fa-times me-1"></i>Rechazada
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if job.is_compliant %}
+                      <span class="badge bg-success">
+                        <i class="fas fa-check-circle me-1"></i>Cumple
+                      </span>
+                    {% else %}
+                      <span class="badge bg-danger">
+                        <i class="fas fa-exclamation-triangle me-1"></i>Incompleta
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <small>{{ job.created_at|date:"d/m/Y H:i" }}</small>
+                  </td>
+                  <td class="text-center">
+                    <a href="{% url 'admin_jobs:review_detail' job.id %}" 
+                       class="btn btn-sm btn-primary">
+                      <i class="fas fa-eye me-1"></i> Revisar
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        {% if page_obj.has_other_pages %}
+          <div class="card-footer">
+            <nav aria-label="Paginación">
+              <ul class="pagination justify-content-center mb-0">
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page=1&status={{ status_filter }}&search={{ search_query }}">
+                      Primera
+                    </a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&status={{ status_filter }}&search={{ search_query }}">
+                      Anterior
+                    </a>
+                  </li>
+                {% endif %}
+
+                <li class="page-item active">
+                  <span class="page-link">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                  </span>
+                </li>
+
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&status={{ status_filter }}&search={{ search_query }}">
+                      Siguiente
+                    </a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&status={{ status_filter }}&search={{ search_query }}">
+                      Última
+                    </a>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="text-center py-5">
+          <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+          <p class="text-muted">No hay ofertas pendientes en este momento.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

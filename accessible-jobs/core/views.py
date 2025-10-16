@@ -1,15 +1,10 @@
-"""
-Vistas principales de la aplicación
-"""
-
+# core/views.py
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from companies.models import Job, ComplianceStatus
+from accounts.models import User
 
 def home_view(request):
-    """
-    Página de inicio - Landing page
-    Accesible para todos los usuarios
-    """
     context = {
         'title': 'Inicio',
         'page_description': 'Plataforma de empleo inclusiva para personas con discapacidad'
@@ -19,31 +14,55 @@ def home_view(request):
 
 @login_required
 def dashboard_view(request):
-    """
-    Dashboard principal del usuario
-    Muestra contenido personalizado según el tipo de usuario
-    """
     user = request.user
     
+    # Contexto base
     context = {
         'title': 'Mi Panel',
         'page_description': f'Panel de control de {user.get_full_name()}',
         'user': user,
     }
     
-    # Renderizar template diferente según tipo de usuario
+    # Dashboard según tipo de usuario
     if user.user_type == 'candidate':
+        # AGREGAR OFERTAS RECOMENDADAS PARA CANDIDATOS
+        recommended_jobs = Job.objects.filter(
+            compliance_status=ComplianceStatus.APPROVED,
+            is_active=True
+        ).select_related('company').order_by('-created_at')[:5]
+        
+        context['recommended_jobs'] = recommended_jobs
         return render(request, 'core/dashboard_candidate.html', context)
+    
     elif user.user_type == 'company':
+        jobs = Job.objects.filter(company=user).order_by('-created_at')
+        
+        # AGREGAR ESTADÍSTICAS PARA EMPRESAS
+        context.update({
+            'jobs': jobs,
+            'total_jobs': jobs.count(),
+            'active_jobs': jobs.filter(is_active=True).count(),
+            'pending_jobs': jobs.filter(compliance_status=ComplianceStatus.PENDING_REVIEW).count(),
+            'approved_jobs': jobs.filter(compliance_status=ComplianceStatus.APPROVED).count(),
+            'rejected_jobs': jobs.filter(compliance_status=ComplianceStatus.REJECTED).count(),
+        })
         return render(request, 'core/dashboard_company.html', context)
-    else:
+    
+    else:  # admin
+        # ESTADÍSTICAS PARA ADMIN
+        context.update({
+            'total_users': User.objects.count(),
+            'total_companies': User.objects.filter(user_type='company').count(),
+            'total_candidates': User.objects.filter(user_type='candidate').count(),
+            'total_jobs': Job.objects.count(),
+            'pending_jobs': Job.objects.filter(compliance_status=ComplianceStatus.PENDING_REVIEW).count(),
+            'approved_jobs': Job.objects.filter(compliance_status=ComplianceStatus.APPROVED).count(),
+            'rejected_jobs': Job.objects.filter(compliance_status=ComplianceStatus.REJECTED).count(),
+        })
         return render(request, 'core/dashboard_admin.html', context)
 
 
 def about_view(request):
-    """
-    Página sobre nosotros
-    """
     context = {
         'title': 'Sobre Nosotros',
         'page_description': 'Conoce más sobre nuestra misión de inclusión laboral'
