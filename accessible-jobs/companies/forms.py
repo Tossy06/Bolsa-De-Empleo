@@ -3,6 +3,9 @@ from django import forms
 from django.core.exceptions import ValidationError
 from .models import Job, ComplianceStatus
 
+from .models import HiringReport, DisabilityType
+from django.utils import timezone
+
 class JobForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -267,5 +270,198 @@ class JobForm(forms.ModelForm):
         if commit:
             instance.save()
             self.save_m2m()
+        
+        return instance
+    
+class HiringReportForm(forms.ModelForm):
+    """
+    Formulario para registrar contrataciones de personas con discapacidad
+    """
+    class Meta:
+        model = HiringReport
+        fields = [
+            'company_name',
+            'company_nit',
+            'job',
+            'contract_number',
+            'contract_date',
+            'position_title',
+            'disability_type',
+            'disability_percentage',
+            'notes'
+        ]
+        
+        widgets = {
+            'company_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nombre legal de la empresa'
+            }),
+            'company_nit': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: 900123456-7'
+            }),
+            'job': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'contract_number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: CONT-2025-001'
+            }),
+            'contract_date': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'position_title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Cargo del empleado'
+            }),
+            'disability_type': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'disability_percentage': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Porcentaje (1-100)',
+                'min': 1,
+                'max': 100
+            }),
+            'notes': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Notas adicionales (opcional)'
+            }),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        
+        # Pre-llenar información de la empresa si es posible
+        if self.user:
+            # Pre-llenar nombre de empresa
+            if hasattr(self.user, 'company_name'):
+                self.fields['company_name'].initial = self.user.company_name
+            elif self.user.first_name:
+                self.fields['company_name'].initial = f"{self.user.first_name} {self.user.last_name}".strip()
+            
+            # Filtrar solo los trabajos de esta empresa
+            self.fields['job'].queryset = Job.objects.filter(
+                company=self.user,
+                is_active=True
+            ).order_by('-created_at')
+        
+        # Campos obligatorios
+        self.fields['company_name'].required = True
+        self.fields['company_nit'].required = True
+        self.fields['contract_number'].required = True
+        self.fields['contract_date'].required = True
+        self.fields['position_title'].required = True
+        self.fields['disability_type'].required = True
+        
+        # Labels personalizados
+        self.fields['company_nit'].label = "NIT de la empresa"
+        self.fields['job'].label = "Oferta de trabajo relacionada (opcional)"
+        self.fields['contract_date'].label = "Fecha de inicio del contrato"
+        self.fields['disability_type'].label = "Tipo de discapacidad (codificado para privacidad)"
+        self.fields['disability_percentage'].label = "Porcentaje de discapacidad (opcional)"
+        
+        # Help text
+        self.fields['company_nit'].help_text = "Número de identificación tributaria"
+        self.fields['contract_number'].help_text = "Número único del contrato de trabajo"
+        self.fields['disability_type'].help_text = "Se usa codificación para proteger la privacidad del empleado"
+        self.fields['disability_percentage'].help_text = "Si aplica, según certificado médico"
+    
+    def clean_company_nit(self):
+        """Validar formato del NIT"""
+        nit = self.cleaned_data.get('company_nit', '').strip()
+        
+        if not nit:
+            raise ValidationError('El NIT es obligatorio')
+        
+        # Remover caracteres no numéricos excepto guiones
+        import re
+        nit_clean = re.sub(r'[^\d-]', '', nit)
+        
+        # Validar formato básico (números y guión)
+        if not re.match(r'^\d{6,10}-?\d?$', nit_clean):
+            raise ValidationError(
+                'Formato de NIT inválido. Debe ser como: 900123456-7'
+            )
+        
+        return nit_clean
+    
+    def clean_contract_number(self):
+        """Validar que el número de contrato sea único para esta empresa"""
+        contract_number = self.cleaned_data.get('contract_number', '').strip()
+        
+        if not contract_number:
+            raise ValidationError('El número de contrato es obligatorio')
+        
+        # Verificar unicidad (excepto si estamos editando)
+        query = HiringReport.objects.filter(
+            company=self.user,
+            contract_number=contract_number
+        )
+        
+        if self.instance.pk:
+            query = query.exclude(pk=self.instance.pk)
+        
+        if query.exists():
+            raise ValidationError(
+                'Ya existe un informe con este número de contrato'
+            )
+        
+        return contract_number
+    
+    def clean_contract_date(self):
+        """Validar que la fecha de contrato no sea futura"""
+        contract_date = self.cleaned_data.get('contract_date')
+        
+        if contract_date and contract_date > timezone.now().date():
+            raise ValidationError(
+                'La fecha de contrato no puede ser en el futuro'
+            )
+        
+        return contract_date
+    
+    def clean_disability_percentage(self):
+        """Validar rango del porcentaje"""
+        percentage = self.cleaned_data.get('disability_percentage')
+        
+        if percentage is not None:
+            if percentage < 1 or percentage > 100:
+                raise ValidationError(
+                    'El porcentaje debe estar entre 1 y 100'
+                )
+        
+        return percentage
+    
+    def clean(self):
+        """Validación global"""
+        cleaned_data = super().clean()
+        
+        # Si hay un job seleccionado, verificar que sea de la misma empresa
+        job = cleaned_data.get('job')
+        if job and self.user and job.company != self.user:
+            raise ValidationError({
+                'job': 'Solo puede seleccionar ofertas de su propia empresa'
+            })
+        
+        return cleaned_data
+    
+    def save(self, commit=True):
+        """Guardar el informe"""
+        instance = super().save(commit=False)
+        
+        # Asignar la empresa
+        if self.user:
+            instance.company = self.user
+        
+        # Estado inicial
+        instance.status = 'pending'
+        
+        if commit:
+            instance.save()
+            # Generar firma digital automáticamente
+            instance.generate_signature()
         
         return instance

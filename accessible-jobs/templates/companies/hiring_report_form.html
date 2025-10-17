@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'company:hiring_reports' %}">
+                    <i class="bi bi-file-earmark-text me-1"></i>
+                    Informes
+                </a>
+            </li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-2">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        {{ title }}
+                    </h2>
+                    <p class="text-muted mb-0">
+                        Complete la información de la contratación para generar el informe al Ministerio de Trabajo
+                    </p>
+                </div>
+            </div>
+
+            <!-- Alert informativo -->
+            <div class="alert alert-info border-0 shadow-sm mb-4">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <i class="bi bi-info-circle fs-4"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="alert-heading">Información importante</h6>
+                        <ul class="mb-0 small">
+                            <li>Los datos de discapacidad se codificarán para proteger la privacidad del empleado</li>
+                            <li>El informe será firmado digitalmente antes de su envío</li>
+                            <li>Una vez enviado y confirmado, no podrá modificarse</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario -->
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-building me-2"></i>
+                            Información de la Empresa
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.company_name.id_for_label }}" class="form-label">
+                                    {{ form.company_name.label }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                {{ form.company_name }}
+                                {% if form.company_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.company_name.errors.0 }}
+                                </div>
+                                {% endif %}
+                                {% if form.company_name.help_text %}
+                                <small class="form-text text-muted">
+                                    {{ form.company_name.help_text }}
+                                </small>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.company_nit.id_for_label }}" class="form-label">
+                                    {{ form.company_nit.label }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                {{ form.company_nit }}
+                                {% if form.company_nit.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.company_nit.errors.0 }}
+                                </div>
+                                {% endif %}
+                                {% if form.company_nit.help_text %}
+                                <small class="form-text text-muted">
+                                    {{ form.company_nit.help_text }}
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-file-text me-2"></i>
+                            Información del Contrato
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.contract_number.id_for_label }}" class="form-label">
+                                    {{ form.contract_number.label }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                {{ form.contract_number }}
+                                {% if form.contract_number.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.contract_number.errors.0 }}
+                                </div>
+                                {% endif %}
+                                {% if form.contract_number.help_text %}
+                                <small class="form-text text-muted">
+                                    {{ form.contract_number.help_text }}
+                                </small>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="{{ form.contract_date.id_for_label }}" class="form-label">
+                                    {{ form.contract_date.label }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                {{ form.contract_date }}
+                                {% if form.contract_date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.contract_date.errors.0 }}
+                                </div>
+                                {% endif %}
+                                {% if form.contract_date.help_text %}
+                                <small class="form-text text-muted">
+                                    {{ form.contract_date.help_text }}
+                                </small>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <label for="{{ form.position_title.id_for_label }}" class="form-label">
+                                    {{ form.position_title.label }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                {{ form.position_title }}
+                                {% if form.position_title.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.position_title.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <label for="{{ form.job.id_for_label }}" class="form-label">
+                                    {{ form.job.label }}
+                                </label>
+                                {{ form.job }}
+                                {% if form.job.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.job.errors.0 }}
+                                </div>
+                                {% endif %}
+                                {% if form.job.help_text %}
+                                <small class="form-text text-muted">
+                                    {{ form.job.help_text }}
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-shield-check me-2"></i>
+                            Información de Discapacidad (Codificada)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning border-0 mb-3">
+                            <i class="bi bi-shield-lock me-2"></i>
+                            <strong>Privacidad protegida:</strong> Esta información se codificará para proteger la identidad del empleado.
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="{{ form.disability_type.id_for_label }}" class="form-label">
+                                    {{ form.disability_type.label }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                {{ form.disability_type }}
+                                {% if form.disability_type.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.disability_type.errors.0 }}
+                                </div>
+                                {% endif %}
+                                {% if form.disability_type.help_text %}
+                                <small class="form-text text-muted">
+                                    {{ form.disability_type.help_text }}
+                                </small>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label for="{{ form.disability_percentage.id_for_label }}" class="form-label">
+                                    {{ form.disability_percentage.label }}
+                                </label>
+                                {{ form.disability_percentage }}
+                                {% if form.disability_percentage.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.disability_percentage.errors.0 }}
+                                </div>
+                                {% endif %}
+                                {% if form.disability_percentage.help_text %}
+                                <small class="form-text text-muted">
+                                    {{ form.disability_percentage.help_text }}
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">
+                            <i class="bi bi-journal-text me-2"></i>
+                            Notas Adicionales
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">
+                            {{ form.notes.label }}
+                        </label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.notes.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'company:hiring_reports' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-2"></i>
+                                Guardar Informe
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación del formulario
+    const form = document.querySelector('form');
+    
+    form.addEventListener('submit', function(e) {
+        // Marcar campos con error
+        const errorFields = form.querySelectorAll('.invalid-feedback.d-block');
+        if (errorFields.length > 0) {
+            errorFields[0].closest('.form-control, .form-select').focus();
+        }
+    });
+    
+    // Auto-formatear NIT
+    const nitInput = document.getElementById('{{ form.company_nit.id_for_label }}');
+    if (nitInput) {
+        nitInput.addEventListener('blur', function() {
+            let value = this.value.replace(/[^\d-]/g, '');
+            if (value.length >= 9 && !value.includes('-')) {
+                value = value.slice(0, -1) + '-' + value.slice(-1);
+            }
+            this.value = value;
+        });
+    }
+});
+</script>
+{% endblock %}

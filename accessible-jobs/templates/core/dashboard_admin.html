@@ -101,6 +101,38 @@
       </div>
     </div>
 
+    <!-- NUEVA SECCIÓN: Panel del Ministerio -->
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm h-100 border-start border-info border-4">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="bi bi-building me-2"></i>
+            Panel del Ministerio de Trabajo
+          </h5>
+          <span class="badge bg-light text-info">Simulación</span>
+        </div>
+        <div class="card-body">
+          <p class="mb-3">
+            Revisa los informes de contratación de personas con discapacidad enviados por las empresas según la Ley 2466/2025.
+          </p>
+          <div class="d-grid gap-2">
+            <a href="{% url 'admin_jobs:ministry_dashboard' %}" class="btn btn-info text-white">
+              <i class="bi bi-speedometer2 me-2"></i>
+              Dashboard del Ministerio
+            </a>
+            <a href="{% url 'admin_jobs:ministry_reports_list' %}" class="btn btn-outline-info">
+              <i class="bi bi-file-earmark-text me-2"></i>
+              Ver Todos los Informes
+            </a>
+            <a href="{% url 'admin_jobs:inclusion_kpis' %}" class="btn btn-outline-primary">
+                <i class="bi bi-bar-chart-line me-2"></i>
+                Ver KPIs de Inclusión
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="col-md-6 mb-4">
       <div class="card shadow-sm h-100">
         <div class="card-header bg-primary text-white">
@@ -139,7 +171,7 @@
 
     <div class="col-md-6 mb-4">
       <div class="card shadow-sm h-100">
-        <div class="card-header bg-info text-white">
+        <div class="card-header bg-dark text-white">
           <h5 class="mb-0">
             <i class="fas fa-history me-2"></i>
             Registro de Auditoría
@@ -147,7 +179,7 @@
         </div>
         <div class="card-body">
           <p class="mb-3">Consulta el historial completo de acciones realizadas en el sistema.</p>
-          <a href="{% url 'admin_jobs:audit_logs' %}" class="btn btn-info text-white">
+          <a href="{% url 'admin_jobs:audit_logs' %}" class="btn btn-dark text-white">
             <i class="fas fa-file-alt me-2"></i>
             Ver Logs de Auditoría
           </a>

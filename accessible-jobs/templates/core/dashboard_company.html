@@ -80,6 +80,94 @@
             </div>
         </div>
     </div>
+
+    <!-- NUEVA SECCIÓN: Cumplimiento de Cuotas de Empleo -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm border-start border-primary border-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-lg-1 text-center mb-3 mb-lg-0">
+                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px;">
+                                <i class="bi bi-graph-up-arrow text-primary fs-3"></i>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 mb-3 mb-lg-0">
+                            <h5 class="mb-2">
+                                <i class="bi bi-clipboard-data text-primary me-2"></i>
+                                Cumplimiento de Cuotas de Empleo
+                                <span class="badge bg-primary ms-2">Ley 2466/2025</span>
+                            </h5>
+                            <p class="text-muted mb-2 small">
+                                Monitoree el cumplimiento de la cuota legal del 2% de empleados con discapacidad. 
+                                Visualice métricas, históricos y genere reportes para el Ministerio de Trabajo.
+                            </p>
+                            <ul class="list-unstyled mb-0 small text-muted">
+                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Dashboard con métricas en tiempo real</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Gráficos de evolución histórica</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Exportación a PDF y Excel</li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 text-lg-end">
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'company:quota_compliance' %}" class="btn btn-primary">
+                                    <i class="bi bi-graph-up me-2"></i>
+                                    Ver Dashboard de Cuotas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NUEVA SECCIÓN: Informes de Contratación -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm border-start border-info border-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-lg-1 text-center mb-3 mb-lg-0">
+                            <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px;">
+                                <i class="bi bi-file-earmark-text text-info fs-3"></i>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 mb-3 mb-lg-0">
+                            <h5 class="mb-2">
+                                <i class="bi bi-shield-check text-info me-2"></i>
+                                Informes de Contratación al Ministerio
+                                <span class="badge bg-info ms-2">Ley 2466/2025</span>
+                            </h5>
+                            <p class="text-muted mb-2 small">
+                                Registre las contrataciones de personas con discapacidad y genere informes 
+                                automáticos para el Ministerio de Trabajo con firma digital.
+                            </p>
+                            <ul class="list-unstyled mb-0 small text-muted">
+                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Generación automática de PDF y XML</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Firma digital certificada</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Protección de datos personales</li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 text-lg-end">
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'company:hiring_reports' %}" class="btn btn-info">
+                                    <i class="bi bi-list-ul me-2"></i>
+                                    Ver Mis Informes
+                                </a>
+                                <a href="{% url 'company:create_hiring_report' %}" class="btn btn-outline-info">
+                                    <i class="bi bi-plus-circle me-2"></i>
+                                    Registrar Contratación
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Contenido principal -->
     <div class="row">
@@ -209,6 +297,12 @@
                 <div class="list-group list-group-flush">
                     <a href="{% url 'company:create_job' %}" class="list-group-item list-group-item-action">
                         <i class="bi bi-plus me-2"></i> Crear Oferta
+                    </a>
+                    <a href="{% url 'company:quota_compliance' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-graph-up-arrow me-2"></i> Dashboard de Cuotas
+                    </a>
+                    <a href="{% url 'company:hiring_reports' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-file-earmark-text me-2"></i> Informes al Ministerio
                     </a>
                     <a href="#" class="list-group-item list-group-item-action">
                         <i class="bi bi-person-check me-2"></i> Ver Postulaciones

@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Panel del Ministerio de Trabajo{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-1">
+                <i class="bi bi-building text-info me-2"></i>
+                Panel del Ministerio de Trabajo
+            </h1>
+            <p class="text-muted mb-0">Sistema de Recepción de Informes de Contratación - Ley 2466/2025</p>
+        </div>
+        <div>
+            <span class="badge bg-info fs-6">SIMULACIÓN</span>
+        </div>
+    </div>
+
+    <!-- Estadísticas principales -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-2-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-file-earmark-text fs-3 text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 small">Total Informes</h6>
+                            <h2 class="mb-0">{{ total_reports }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-clock-history fs-3 text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 small">Pendientes</h6>
+                            <h2 class="mb-0">{{ pending_reports }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-send fs-3 text-info"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 small">Enviados</h6>
+                            <h2 class="mb-0">{{ sent_reports }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-check-circle fs-3 text-success"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 small">Confirmados</h6>
+                            <h2 class="mb-0">{{ confirmed_reports }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-danger bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-exclamation-triangle fs-3 text-danger"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1 small">Fallidos</h6>
+                            <h2 class="mb-0">{{ failed_reports }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Columna principal -->
+        <div class="col-lg-8">
+            <!-- Informes recientes -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-clock-history me-2"></i>
+                            Informes Recientes
+                        </h5>
+                        <a href="{% url 'admin_jobs:ministry_reports_list' %}" class="btn btn-sm btn-outline-info">
+                            Ver Todos
+                            <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    {% if recent_reports %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Empresa</th>
+                                    <th>Contrato</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th class="text-end pe-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in recent_reports %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <strong>{{ report.company_name }}</strong>
+                                        <br>
+                                        <small class="text-muted">NIT: {{ report.company_nit }}</small>
+                                    </td>
+                                    <td>
+                                        <strong>{{ report.contract_number }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ report.position_title }}</small>
+                                    </td>
+                                    <td>
+                                        <small>{{ report.created_at|date:"d/m/Y H:i" }}</small>
+                                    </td>
+                                    <td>
+                                        {% if report.status == 'pending' %}
+                                        <span class="badge bg-warning">
+                                            <i class="bi bi-clock-history me-1"></i>
+                                            Pendiente
+                                        </span>
+                                        {% elif report.status == 'sent' %}
+                                        <span class="badge bg-info">
+                                            <i class="bi bi-send me-1"></i>
+                                            Enviado
+                                        </span>
+                                        {% elif report.status == 'confirmed' %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Confirmado
+                                        </span>
+                                        {% elif report.status == 'failed' %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            Fallido
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="{% url 'admin_jobs:ministry_report_detail' report.id %}" 
+                                           class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        {% if report.pdf_file %}
+                                        <a href="{% url 'admin_jobs:download_report_pdf' report.id %}" 
+                                           class="btn btn-sm btn-outline-info"
+                                           title="Descargar PDF">
+                                            <i class="bi bi-file-pdf"></i>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
+                        <p class="text-muted">No hay informes registrados</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna lateral -->
+        <div class="col-lg-4">
+            <!-- Estadísticas por tipo de discapacidad -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="mb-0">
+                        <i class="bi bi-pie-chart me-2"></i>
+                        Contrataciones por Tipo de Discapacidad
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if disability_stats %}
+                    <div class="list-group list-group-flush">
+                        {% for stat in disability_stats %}
+                        <div class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <span class="small">{{ stat.disability_type }}</span>
+                            <span class="badge bg-info rounded-pill">{{ stat.count }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted small mb-0">Sin datos disponibles</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Empresas más activas -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="mb-0">
+                        <i class="bi bi-trophy me-2"></i>
+                        Empresas Más Activas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if top_companies %}
+                    <div class="list-group list-group-flush">
+                        {% for company in top_companies %}
+                        <div class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong class="small d-block">{{ company.company_name }}</strong>
+                                <small class="text-muted">{{ company.count }} contratación{{ company.count|pluralize:"es" }}</small>
+                            </div>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted small mb-0">Sin datos disponibles</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Acciones rápidas -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="mb-0">
+                        <i class="bi bi-lightning me-2"></i>
+                        Acciones Rápidas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'admin_jobs:ministry_reports_list' %}" class="btn btn-outline-info">
+                            <i class="bi bi-list-ul me-2"></i>
+                            Ver Todos los Informes
+                        </a>
+                        <a href="{% url 'admin_jobs:ministry_reports_list' %}?status=pending" class="btn btn-outline-warning">
+                            <i class="bi bi-clock-history me-2"></i>
+                            Informes Pendientes
+                        </a>
+                        <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>
+                            Volver al Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .col-md-2-4 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+    
+    @media (max-width: 768px) {
+        .col-md-2-4 {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

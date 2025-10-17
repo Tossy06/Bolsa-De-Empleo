@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Informes Recibidos - Ministerio{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'admin_jobs:ministry_dashboard' %}">
+                    <i class="bi bi-building me-1"></i>
+                    Ministerio
+                </a>
+            </li>
+            <li class="breadcrumb-item active">Informes Recibidos</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-2">
+                <i class="bi bi-file-earmark-text me-2"></i>
+                Informes de Contratación Recibidos
+            </h1>
+            <p class="text-muted mb-0">
+                Revisión y seguimiento de informes enviados por empresas
+            </p>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="search" class="form-label small">Buscar</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="search" 
+                           name="search" 
+                           value="{{ search_query }}"
+                           placeholder="Empresa, NIT o Contrato">
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="status" class="form-label small">Estado</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">Todos los estados</option>
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="disability_type" class="form-label small">Tipo de Discapacidad</label>
+                    <select class="form-select" id="disability_type" name="disability_type">
+                        <option value="">Todos los tipos</option>
+                        <option value="type_a" {% if disability_filter == 'type_a' %}selected{% endif %}>Tipo A - Visual</option>
+                        <option value="type_b" {% if disability_filter == 'type_b' %}selected{% endif %}>Tipo B - Auditiva</option>
+                        <option value="type_c" {% if disability_filter == 'type_c' %}selected{% endif %}>Tipo C - Física/Motriz</option>
+                        <option value="type_d" {% if disability_filter == 'type_d' %}selected{% endif %}>Tipo D - Cognitiva</option>
+                        <option value="type_e" {% if disability_filter == 'type_e' %}selected{% endif %}>Tipo E - Intelectual</option>
+                        <option value="type_f" {% if disability_filter == 'type_f' %}selected{% endif %}>Tipo F - Psicosocial</option>
+                        <option value="type_g" {% if disability_filter == 'type_g' %}selected{% endif %}>Tipo G - Múltiple</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="bi bi-search me-1"></i>
+                        Filtrar
+                    </button>
+                    <a href="{% url 'admin_jobs:ministry_reports_list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i>
+                        Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de informes -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            {% if reports %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Empresa</th>
+                            <th>Número de Contrato</th>
+                            <th>Cargo</th>
+                            <th>Fecha Contrato</th>
+                            <th>Tipo Discapacidad</th>
+                            <th>Estado</th>
+                            <th>Fecha Recepción</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                        <tr>
+                            <td class="ps-4">
+                                <strong class="d-block">{{ report.company_name }}</strong>
+                                <small class="text-muted">NIT: {{ report.company_nit }}</small>
+                            </td>
+                            <td>
+                                <strong>{{ report.contract_number }}</strong>
+                                {% if report.ministry_receipt_number %}
+                                <br>
+                                <small class="text-muted">Recibo: {{ report.ministry_receipt_number }}</small>
+                                {% endif %}
+                            </td>
+                            <td>{{ report.position_title }}</td>
+                            <td>
+                                <small>{{ report.contract_date|date:"d/m/Y" }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                    {{ report.get_disability_type_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if report.status == 'pending' %}
+                                <span class="badge bg-warning">
+                                    <i class="bi bi-clock-history me-1"></i>
+                                    Pendiente
+                                </span>
+                                {% elif report.status == 'sent' %}
+                                <span class="badge bg-info">
+                                    <i class="bi bi-send me-1"></i>
+                                    Enviado
+                                </span>
+                                {% elif report.status == 'confirmed' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Confirmado
+                                </span>
+                                {% elif report.status == 'failed' %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                    Fallido
+                                </span>
+                                {% elif report.status == 'retry' %}
+                                <span class="badge bg-warning">
+                                    <i class="bi bi-arrow-repeat me-1"></i>
+                                    Reintentando
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <small class="text-muted">
+                                    {{ report.created_at|date:"d/m/Y H:i" }}
+                                </small>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{% url 'admin_jobs:ministry_report_detail' report.id %}" 
+                                       class="btn btn-outline-secondary"
+                                       title="Ver detalles">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    
+                                    {% if report.pdf_file %}
+                                    <a href="{% url 'admin_jobs:download_report_pdf' report.id %}" 
+                                       class="btn btn-outline-info"
+                                       title="Descargar PDF"
+                                       target="_blank">
+                                        <i class="bi bi-file-pdf"></i>
+                                    </a>
+                                    {% endif %}
+                                    
+                                    {% if report.xml_file %}
+                                    <a href="{% url 'admin_jobs:download_report_xml' report.id %}" 
+                                       class="btn btn-outline-secondary"
+                                       title="Descargar XML"
+                                       target="_blank">
+                                        <i class="bi bi-file-earmark-code"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
+                <h5 class="text-muted">No se encontraron informes</h5>
+                <p class="text-muted mb-0">
+                    {% if search_query or status_filter or disability_filter %}
+                    Intente ajustar los filtros de búsqueda
+                    {% else %}
+                    No hay informes registrados en el sistema
+                    {% endif %}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

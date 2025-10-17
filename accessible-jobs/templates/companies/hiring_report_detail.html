@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Informe {{ report.contract_number }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'company:hiring_reports' %}">
+                    <i class="bi bi-file-earmark-text me-1"></i>
+                    Informes
+                </a>
+            </li>
+            <li class="breadcrumb-item active">{{ report.contract_number }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Header con estado -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h2 class="h4 mb-2">
+                                <i class="bi bi-file-earmark-text me-2"></i>
+                                Informe {{ report.contract_number }}
+                            </h2>
+                            <p class="text-muted mb-0">
+                                Creado el {{ report.created_at|date:"d/m/Y H:i" }}
+                            </p>
+                        </div>
+                        <div>
+                            {% if report.status == 'pending' %}
+                            <span class="badge bg-warning fs-6">
+                                <i class="bi bi-clock-history me-1"></i>
+                                Pendiente
+                            </span>
+                            {% elif report.status == 'sent' %}
+                            <span class="badge bg-info fs-6">
+                                <i class="bi bi-send me-1"></i>
+                                Enviado
+                            </span>
+                            {% elif report.status == 'confirmed' %}
+                            <span class="badge bg-success fs-6">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Confirmado
+                            </span>
+                            {% elif report.status == 'failed' %}
+                            <span class="badge bg-danger fs-6">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                Fallido
+                            </span>
+                            {% elif report.status == 'retry' %}
+                            <span class="badge bg-warning fs-6">
+                                <i class="bi bi-arrow-repeat me-1"></i>
+                                Reintentando
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de la empresa -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-building me-2"></i>
+                        Información de la Empresa
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small mb-1">Nombre de la Empresa</label>
+                            <p class="mb-0 fw-semibold">{{ report.company_name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small mb-1">NIT</label>
+                            <p class="mb-0 fw-semibold">{{ report.company_nit }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del contrato -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-text me-2"></i>
+                        Información del Contrato
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="text-muted small mb-1">Número de Contrato</label>
+                            <p class="mb-0 fw-semibold">{{ report.contract_number }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small mb-1">Fecha de Contrato</label>
+                            <p class="mb-0 fw-semibold">{{ report.contract_date|date:"d/m/Y" }}</p>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="text-muted small mb-1">Cargo</label>
+                            <p class="mb-0 fw-semibold">{{ report.position_title }}</p>
+                        </div>
+                        {% if report.job %}
+                        <div class="col-md-12">
+                            <label class="text-muted small mb-1">Oferta de Trabajo Relacionada</label>
+                            <p class="mb-0">
+                                <a href="{% url 'jobs:detail' report.job.id %}" class="text-decoration-none">
+                                    {{ report.job.title }}
+                                    <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                </a>
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de discapacidad -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-shield-check me-2"></i>
+                        Información de Discapacidad (Codificada)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning border-0 mb-3">
+                        <i class="bi bi-shield-lock me-2"></i>
+                        Esta información está codificada para proteger la privacidad del empleado
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="text-muted small mb-1">Tipo de Discapacidad</label>
+                            <p class="mb-0">
+                                <span class="badge bg-secondary">
+                                    {{ report.get_disability_type_display }}
+                                </span>
+                            </p>
+                        </div>
+                        {% if report.disability_percentage %}
+                        <div class="col-md-4">
+                            <label class="text-muted small mb-1">Porcentaje</label>
+                            <p class="mb-0 fw-semibold">{{ report.disability_percentage }}%</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notas adicionales -->
+            {% if report.notes %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-journal-text me-2"></i>
+                        Notas Adicionales
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ report.notes }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Información de envío -->
+            {% if report.status == 'confirmed' or report.status == 'sent' %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-send-check me-2"></i>
+                        Información de Envío
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% if report.sent_at %}
+                        <div class="col-md-6">
+                            <label class="text-muted small mb-1">Fecha de Envío</label>
+                            <p class="mb-0 fw-semibold">{{ report.sent_at|date:"d/m/Y H:i" }}</p>
+                        </div>
+                        {% endif %}
+                        {% if report.confirmed_at %}
+                        <div class="col-md-6">
+                            <label class="text-muted small mb-1">Fecha de Confirmación</label>
+                            <p class="mb-0 fw-semibold">{{ report.confirmed_at|date:"d/m/Y H:i" }}</p>
+                        </div>
+                        {% endif %}
+                        {% if report.ministry_receipt_number %}
+                        <div class="col-md-12">
+                            <label class="text-muted small mb-1">Número de Recibo del Ministerio</label>
+                            <p class="mb-0">
+                                <span class="badge bg-success fs-6">
+                                    {{ report.ministry_receipt_number }}
+                                </span>
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Errores -->
+            {% if report.error_log %}
+            <div class="card border-0 shadow-sm border-danger mb-4">
+                <div class="card-header bg-danger bg-opacity-10 py-3">
+                    <h5 class="mb-0 text-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Registro de Errores
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <pre class="mb-0 small">{{ report.error_log }}</pre>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Acciones -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0">
+                        <i class="bi bi-gear me-2"></i>
+                        Acciones
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        {% if report.status == 'pending' or report.status == 'failed' %}
+                        <button type="button" class="btn btn-success" id="sendReportBtn">
+                            <i class="bi bi-send me-2"></i>
+                            Enviar al Ministerio
+                        </button>
+                        
+                        <a href="{% url 'company:edit_hiring_report' report.id %}" class="btn btn-primary">
+                            <i class="bi bi-pencil me-2"></i>
+                            Editar Informe
+                        </a>
+                        
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash me-2"></i>
+                            Eliminar Informe
+                        </button>
+                        {% endif %}
+                        
+                        {% if report.status == 'confirmed' %}
+                        {% if report.pdf_file %}
+                        <a href="{{ report.pdf_file.url }}" class="btn btn-info" target="_blank">
+                            <i class="bi bi-file-pdf me-2"></i>
+                            Descargar PDF
+                        </a>
+                        {% endif %}
+                        
+                        {% if report.xml_file %}
+                        <a href="{{ report.xml_file.url }}" class="btn btn-secondary" target="_blank">
+                            <i class="bi bi-file-earmark-code me-2"></i>
+                            Descargar XML
+                        </a>
+                        {% endif %}
+                        {% endif %}
+                        
+                        <a href="{% url 'company:hiring_reports' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>
+                            Volver al Listado
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Firma digital -->
+            {% if report.digital_signature %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0">
+                        <i class="bi bi-shield-lock me-2"></i>
+                        Firma Digital
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-2">Hash SHA-256:</p>
+                    <code class="d-block text-break small">{{ report.digital_signature }}</code>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Historial -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0">
+                        <i class="bi bi-clock-history me-2"></i>
+                        Historial
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="timeline list-unstyled mb-0">
+                        <li class="mb-3">
+                            <small class="text-muted d-block">{{ report.created_at|date:"d/m/Y H:i" }}</small>
+                            <strong>Informe creado</strong>
+                        </li>
+                        
+                        {% if report.sent_at %}
+                        <li class="mb-3">
+                            <small class="text-muted d-block">{{ report.sent_at|date:"d/m/Y H:i" }}</small>
+                            <strong>Enviado al Ministerio</strong>
+                        </li>
+                        {% endif %}
+                        
+                        {% if report.confirmed_at %}
+                        <li class="mb-3">
+                            <small class="text-muted d-block">{{ report.confirmed_at|date:"d/m/Y H:i" }}</small>
+                            <strong>Confirmado por el Ministerio</strong>
+                        </li>
+                        {% endif %}
+                        
+                        {% if report.retry_count > 0 %}
+                        <li class="mb-3">
+                            <small class="text-muted d-block">{{ report.last_retry_at|date:"d/m/Y H:i" }}</small>
+                            <strong>Reintento {{ report.retry_count }} de 3</strong>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-trash me-2"></i>
+                    Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Esta acción no se puede deshacer
+                </div>
+                <p>¿Está seguro que desea eliminar el informe <strong>{{ report.contract_number }}</strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <form method="post" action="{% url 'company:delete_hiring_report' report.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>
+                        Eliminar Informe
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sendBtn = document.getElementById('sendReportBtn');
+    
+    if (sendBtn) {
+        sendBtn.addEventListener('click', async function() {
+            if (!confirm('¿Está seguro que desea enviar este informe al Ministerio de Trabajo?')) {
+                return;
+            }
+            
+            const originalHtml = this.innerHTML;
+            
+            try {
+                this.disabled = true;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
+                
+                const response = await fetch(`/company/hiring-reports/{{ report.id }}/send/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                    this.disabled = false;
+                    this.innerHTML = originalHtml;
+                }
+            } catch (error) {
+                alert('Error al enviar el informe: ' + error.message);
+                this.disabled = false;
+                this.innerHTML = originalHtml;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Informes de Contratación - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    {% csrf_token %}
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-2">
+                        <i class="bi bi-file-earmark-text me-2"></i>
+                        Informes de Contratación
+                    </h1>
+                    <p class="text-muted mb-0">
+                        Registro de contrataciones según Ley 2466/2025
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'company:create_hiring_report' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Registrar Contratación
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-file-earmark-text fs-4 text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Total Informes</h6>
+                            <h3 class="mb-0">{{ stats.total }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-clock-history fs-4 text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Pendientes</h6>
+                            <h3 class="mb-0">{{ stats.pending }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-check-circle fs-4 text-success"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Confirmados</h6>
+                            <h3 class="mb-0">{{ stats.confirmed }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-danger bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-exclamation-triangle fs-4 text-danger"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-1">Fallidos</h6>
+                            <h3 class="mb-0">{{ stats.failed }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de informes -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-list-ul me-2"></i>
+                Listado de Informes
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            {% if reports %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Número de Contrato</th>
+                            <th>Fecha Contrato</th>
+                            <th>Cargo</th>
+                            <th>Tipo Discapacidad</th>
+                            <th>Estado</th>
+                            <th>Fecha Creación</th>
+                            <th class="text-end pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                        <tr>
+                            <td class="ps-4">
+                                <strong>{{ report.contract_number }}</strong>
+                            </td>
+                            <td>{{ report.contract_date|date:"d/m/Y" }}</td>
+                            <td>{{ report.position_title }}</td>
+                            <td>
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                    {{ report.get_disability_type_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if report.status == 'pending' %}
+                                <span class="badge bg-warning">
+                                    <i class="bi bi-clock-history me-1"></i>
+                                    Pendiente
+                                </span>
+                                {% elif report.status == 'sent' %}
+                                <span class="badge bg-info">
+                                    <i class="bi bi-send me-1"></i>
+                                    Enviado
+                                </span>
+                                {% elif report.status == 'confirmed' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Confirmado
+                                </span>
+                                {% elif report.status == 'failed' %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                    Fallido
+                                </span>
+                                {% elif report.status == 'retry' %}
+                                <span class="badge bg-warning">
+                                    <i class="bi bi-arrow-repeat me-1"></i>
+                                    Reintentando
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <small class="text-muted">
+                                    {{ report.created_at|date:"d/m/Y H:i" }}
+                                </small>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{% url 'company:hiring_report_detail' report.id %}" 
+                                       class="btn btn-outline-secondary"
+                                       title="Ver detalles">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    
+                                    {% if report.status == 'pending' or report.status == 'failed' %}
+                                    <a href="{% url 'company:edit_hiring_report' report.id %}" 
+                                       class="btn btn-outline-primary"
+                                       title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    
+                                    <button type="button" 
+                                            class="btn btn-outline-success send-report-btn"
+                                            data-report-id="{{ report.id }}"
+                                            title="Enviar al Ministerio">
+                                        <i class="bi bi-send"></i>
+                                    </button>
+                                    {% endif %}
+                                    
+                                    {% if report.status == 'confirmed' and report.pdf_file %}
+                                    <a href="{{ report.pdf_file.url }}" 
+                                       class="btn btn-outline-info"
+                                       target="_blank"
+                                       title="Descargar PDF">
+                                        <i class="bi bi-file-pdf"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
+                <h5 class="text-muted">No hay informes registrados</h5>
+                <p class="text-muted mb-4">
+                    Comience registrando su primera contratación
+                </p>
+                <a href="{% url 'company:create_hiring_report' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Registrar Primera Contratación
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de envío -->
+<div class="modal fade" id="sendReportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-send me-2"></i>
+                    Enviar Informe al Ministerio
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    El informe será firmado digitalmente y enviado al Ministerio de Trabajo.
+                </div>
+                <p class="mb-0">¿Está seguro que desea enviar este informe?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="confirmSendBtn">
+                    <i class="bi bi-send me-2"></i>
+                    Enviar Informe
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let currentReportId = null;
+    const modal = new bootstrap.Modal(document.getElementById('sendReportModal'));
+    
+    // Manejar clic en botones de envío
+    document.querySelectorAll('.send-report-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            currentReportId = this.dataset.reportId;
+            modal.show();
+        });
+    });
+    
+    // Confirmar envío
+    document.getElementById('confirmSendBtn').addEventListener('click', async function() {
+        if (!currentReportId) return;
+        
+        const btn = this;
+        const originalHtml = btn.innerHTML;
+        
+        try {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
+            
+            const response = await fetch(`/company/hiring-reports/${currentReportId}/send/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                modal.hide();
+                location.reload();
+            } else {
+                alert('Error: ' + data.error);
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        } catch (error) {
+            alert('Error al enviar el informe: ' + error.message);
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
+    });
+});
+</script>
+{% endblock %}

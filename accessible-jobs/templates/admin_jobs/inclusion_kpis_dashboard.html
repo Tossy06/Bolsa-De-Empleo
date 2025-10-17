@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard de KPIs de Inclusión{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* === Tarjetas de KPI === */
+    .kpi-card {
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+        background: white;
+    }
+    .kpi-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    .kpi-card.primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
+    .kpi-card.success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: #fff; }
+    .kpi-card.info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #fff; }
+    .kpi-card.warning { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: #fff; }
+
+    .kpi-number { font-size: 2.5rem; font-weight: bold; margin: 10px 0; }
+    .kpi-label { font-size: 14px; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* === Contenedores de gráficos y filtros === */
+    .chart-container, .filter-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .stat-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+        margin: 5px;
+    }
+
+    /* === Tabla accesible === */
+    .table-accessible {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table-accessible th {
+        background-color: #3498db;
+        color: #fff;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+    }
+    .table-accessible td {
+        padding: 12px;
+        border-bottom: 1px solid #ecf0f1;
+    }
+    .table-accessible tbody tr:hover { background-color: #f8f9fa; }
+
+    .export-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+
+    /* === Accesibilidad === */
+    @media (prefers-contrast: high) {
+        .kpi-card { border: 2px solid #000; }
+        .table-accessible th { background-color: #000; color: #fff; }
+    }
+    .focusable:focus { outline: 3px solid #3498db; outline-offset: 3px; }
+
+    .badge-primary { background-color: #3498db; color: #fff; }
+    .badge-success { background-color: #27ae60; color: #fff; }
+    .badge-warning { background-color: #f39c12; color: #fff; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4" role="main">
+
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-2" tabindex="0">
+                <i class="bi bi-graph-up-arrow" aria-hidden="true"></i> Dashboard de KPIs de Inclusión Laboral
+            </h1>
+            <p class="text-muted mb-0">Monitoreo de indicadores clave de desempeño en inclusión</p>
+        </div>
+        <div class="export-buttons">
+            <a href="{% url 'admin_jobs:export_kpis_pdf' %}?{{ request.GET.urlencode }}" 
+               class="btn btn-danger focusable" role="button"
+               aria-label="Exportar dashboard como PDF">
+                <i class="bi bi-file-pdf" aria-hidden="true"></i> Exportar PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filter-card" role="search" aria-label="Filtros de búsqueda">
+        <h3 class="h5 mb-3"><i class="bi bi-funnel" aria-hidden="true"></i> Filtros</h3>
+        <form method="get" action="{% url 'admin_jobs:inclusion_kpis' %}" id="filterForm">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="company" class="form-label">Empresa</label>
+                    <select name="company" id="company" class="form-select">
+                        <option value="">Todas</option>
+                        {% for company in companies %}
+                            <option value="{{ company.id }}" {% if request.GET.company == company.id|stringformat:"s" %}selected{% endif %}>
+                                {{ company.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="start_date" class="form-label">Desde</label>
+                    <input type="date" name="start_date" id="start_date" class="form-control" 
+                           value="{{ request.GET.start_date }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="end_date" class="form-label">Hasta</label>
+                    <input type="date" name="end_date" id="end_date" class="form-control" 
+                           value="{{ request.GET.end_date }}">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search" aria-hidden="true"></i> Aplicar Filtros
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="kpi-card primary">
+                <div class="kpi-label">Total Empleados</div>
+                <div class="kpi-number">{{ total_empleados }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="kpi-card success">
+                <div class="kpi-label">Empleados con Discapacidad</div>
+                <div class="kpi-number">{{ empleados_discapacidad }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="kpi-card info">
+                <div class="kpi-label">% Inclusión</div>
+                <div class="kpi-number">{{ porcentaje_inclusion }}%</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="kpi-card warning">
+                <div class="kpi-label">Nuevas Contrataciones</div>
+                <div class="kpi-number">{{ nuevas_contrataciones }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico -->
+    <div class="chart-container mt-4">
+        <h3 class="h5 mb-3"><i class="bi bi-bar-chart" aria-hidden="true"></i> Distribución por Departamento</h3>
+        <canvas id="chartInclusion" height="120"></canvas>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById("chartInclusion").getContext("2d");
+    const chartData = JSON.parse('{{ chart_data|safe|escapejs }}');
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: "% Inclusión",
+                data: chartData.values,
+                backgroundColor: "rgba(75, 192, 192, 0.6)",
+                borderColor: "rgba(75, 192, 192, 1)",
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, max: 100 } }
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,528 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard de Cumplimiento de Cuotas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .compliance-card {
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+        background: white;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    
+    .status-compliant {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .status-warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-critical {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    
+    .metric-box {
+        text-align: center;
+        padding: 20px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        margin-bottom: 15px;
+    }
+    
+    .metric-box h3 {
+        font-size: 36px;
+        margin: 10px 0;
+        font-weight: bold;
+    }
+    
+    .metric-box p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 14px;
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+        margin: 20px 0;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .btn-export {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .progress-bar-custom {
+        height: 30px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    
+    .metric-box.bg-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .metric-box.bg-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+    
+    .metric-box.bg-info {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    .metric-box.bg-warning {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-2">
+                <i class="bi bi-graph-up-arrow"></i> Dashboard de Cumplimiento de Cuotas
+            </h1>
+            <p class="text-muted">Seguimiento del cumplimiento de la Ley 2466/2025 - Cuota del 2%</p>
+        </div>
+        <div class="action-buttons">
+            <a href="{% url 'company:export_quota_pdf' %}" class="btn btn-danger btn-export">
+                <i class="bi bi-file-pdf"></i> Exportar PDF
+            </a>
+            <a href="{% url 'company:export_quota_excel' %}" class="btn btn-success btn-export">
+                <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+            </a>
+        </div>
+    </div>
+
+    <!-- Estado de Cumplimiento Principal -->
+    <div class="compliance-card">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="mb-3">Estado de Cumplimiento Actual</h2>
+                <div class="mb-3">
+                    {% if tracking.is_compliant %}
+                        <span class="status-badge status-compliant">
+                            <i class="bi bi-check-circle-fill"></i> CUMPLE CON LA CUOTA LEGAL
+                        </span>
+                    {% elif tracking.compliance_status == 'warning' %}
+                        <span class="status-badge status-warning">
+                            <i class="bi bi-exclamation-triangle-fill"></i> CERCA DEL LÍMITE
+                        </span>
+                    {% else %}
+                        <span class="status-badge status-critical">
+                            <i class="bi bi-x-circle-fill"></i> NO CUMPLE
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="mb-2"><strong>Porcentaje de Cumplimiento:</strong></label>
+                    <div class="progress" style="height: 30px;">
+                        <div class="progress-bar {% if tracking.is_compliant %}bg-success{% elif tracking.compliance_status == 'warning' %}bg-warning{% else %}bg-danger{% endif %} progress-bar-custom" 
+                             role="progressbar" 
+                             aria-valuenow="{{ tracking.compliance_percentage|floatformat:2 }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ tracking.compliance_percentage|floatformat:2 }}%
+                        </div>
+                    </div>
+                </div>
+                
+                {% if not tracking.is_compliant %}
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Empleados faltantes:</strong> Necesita contratar {{ tracking.employees_needed }} empleado{{ tracking.employees_needed|pluralize }} con discapacidad para cumplir con la cuota legal.
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="display-1 {% if tracking.is_compliant %}text-success{% elif tracking.compliance_status == 'warning' %}text-warning{% else %}text-danger{% endif %}">
+                        <i class="bi bi-{{ tracking.is_compliant|yesno:'check-circle,exclamation-triangle' }}"></i>
+                    </div>
+                    <p class="mt-2 text-muted">Última actualización: {{ tracking.last_updated|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Métricas Principales -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="metric-box bg-primary">
+                <p>Total de Empleados</p>
+                <h3>{{ tracking.total_employees }}</h3>
+                <small>Plantilla actual</small>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-box bg-success">
+                <p>Empleados con Discapacidad</p>
+                <h3>{{ tracking.employees_with_disability }}</h3>
+                <small>Actualmente contratados</small>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-box bg-info">
+                <p>Empleados Requeridos</p>
+                <h3>{{ tracking.required_employees_with_disability }}</h3>
+                <small>Cuota legal (2%)</small>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="metric-box bg-warning">
+                <p>Empleados Faltantes</p>
+                <h3>{{ tracking.employees_needed }}</h3>
+                <small>Para cumplir cuota</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actualizar Conteo de Empleados -->
+    <div class="compliance-card">
+        <h3 class="mb-3">
+            <i class="bi bi-pencil-square"></i> Actualizar Número de Empleados
+        </h3>
+        <form id="updateEmployeeForm" method="post" action="{% url 'company:update_employees' %}">
+            {% csrf_token %}
+            <div class="row align-items-end">
+                <div class="col-md-6">
+                    <label for="total_employees" class="form-label">Total de empleados en la empresa:</label>
+                    <input type="number" 
+                           class="form-control form-control-lg" 
+                           id="total_employees" 
+                           name="total_employees" 
+                           value="{{ tracking.total_employees }}"
+                           min="0"
+                           required>
+                    <small class="form-text text-muted">
+                        Actualice este valor cuando cambie el número total de empleados
+                    </small>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-arrow-repeat"></i> Actualizar Conteo
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="compliance-card">
+                <h3 class="mb-3">
+                    <i class="bi bi-bar-chart-line"></i> Evolución del Cumplimiento
+                </h3>
+                <div class="chart-container">
+                    <canvas id="complianceChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="compliance-card">
+                <h3 class="mb-3">
+                    <i class="bi bi-people-fill"></i> Histórico de Empleados
+                </h3>
+                <div class="chart-container">
+                    <canvas id="employeesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Histórico Mensual -->
+    <div class="compliance-card">
+        <h3 class="mb-3">
+            <i class="bi bi-calendar3"></i> Histórico Mensual
+        </h3>
+        
+        {% if historical_data %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Periodo</th>
+                        <th>Total Empleados</th>
+                        <th>Con Discapacidad</th>
+                        <th>Requeridos</th>
+                        <th>Cumplimiento</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in historical_data %}
+                    <tr>
+                        <td><strong>{{ record.period|date:"F Y" }}</strong></td>
+                        <td>{{ record.total_employees }}</td>
+                        <td>{{ record.employees_with_disability }}</td>
+                        <td>{{ record.required_employees }}</td>
+                        <td>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar {% if record.is_compliant %}bg-success{% else %}bg-danger{% endif %}" 
+                                     >
+                                    {{ record.compliance_percentage|floatformat:2 }}%
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if record.is_compliant %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle"></i> Cumple
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-x-circle"></i> No cumple
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No hay datos históricos disponibles aún.
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Informes Recientes de Contratación -->
+    <div class="compliance-card">
+        <h3 class="mb-3">
+            <i class="bi bi-file-text"></i> Informes Recientes de Contratación
+        </h3>
+        
+        {% if recent_reports %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Contrato</th>
+                        <th>Cargo</th>
+                        <th>Fecha</th>
+                        <th>Tipo Discapacidad</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in recent_reports %}
+                    <tr>
+                        <td><strong>{{ report.contract_number }}</strong></td>
+                        <td>{{ report.position_title }}</td>
+                        <td>{{ report.contract_date|date:"d/m/Y" }}</td>
+                        <td>{{ report.get_disability_type_display }}</td>
+                        <td>
+                            {% if report.status == 'confirmed' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle"></i> {{ report.get_status_display }}
+                                </span>
+                            {% elif report.status == 'sent' %}
+                                <span class="badge bg-info">
+                                    <i class="bi bi-send"></i> {{ report.get_status_display }}
+                                </span>
+                            {% elif report.status == 'pending' %}
+                                <span class="badge bg-warning">
+                                    <i class="bi bi-clock"></i> {{ report.get_status_display }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-x-circle"></i> {{ report.get_status_display }}
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No hay informes de contratación registrados aún.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Datos desde Django
+    const chartLabels = JSON.parse('{{ chart_labels|escapejs }}');
+    const chartDataCompliance = JSON.parse('{{ chart_data_compliance|escapejs }}');
+    const chartDataRequired = JSON.parse('{{ chart_data_required|escapejs }}');
+    const chartDataCurrent = JSON.parse('{{ chart_data_current|escapejs }}');
+    
+    // Gráfico de Cumplimiento
+    const complianceCtx = document.getElementById('complianceChart').getContext('2d');
+    new Chart(complianceCtx, {
+        type: 'line',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Porcentaje de Cumplimiento',
+                data: chartDataCompliance,
+                borderColor: 'rgb(102, 126, 234)',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'Línea de Cumplimiento (100%)',
+                data: Array(chartLabels.length).fill(100),
+                borderColor: 'rgb(40, 167, 69)',
+                borderDash: [5, 5],
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 120,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de Empleados
+    const employeesCtx = document.getElementById('employeesChart').getContext('2d');
+    new Chart(employeesCtx, {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'Empleados Requeridos',
+                data: chartDataRequired,
+                backgroundColor: 'rgba(255, 193, 7, 0.7)',
+                borderColor: 'rgb(255, 193, 7)',
+                borderWidth: 1
+            }, {
+                label: 'Empleados con Discapacidad',
+                data: chartDataCurrent,
+                backgroundColor: 'rgba(40, 167, 69, 0.7)',
+                borderColor: 'rgb(40, 167, 69)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+    // Formulario de actualización con AJAX
+    document.getElementById('updateEmployeeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Actualizando...';
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Mostrar mensaje de éxito
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success alert-dismissible fade show';
+                alert.innerHTML = `
+                    <i class="bi bi-check-circle"></i> <strong>¡Actualizado!</strong> Los datos se han actualizado correctamente.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                this.insertAdjacentElement('afterend', alert);
+                
+                // Recargar la página después de 2 segundos
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                throw new Error(data.error || 'Error al actualizar');
+            }
+        })
+        .catch(error => {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show';
+            alert.innerHTML = `
+                <i class="bi bi-exclamation-triangle"></i> <strong>Error:</strong> ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            this.insertAdjacentElement('afterend', alert);
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        });
+    });
+</script>
+{% endblock %}
