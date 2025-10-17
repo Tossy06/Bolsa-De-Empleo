@@ -367,44 +367,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/job-posting.js' %}"></script>
+<script src="{% static 'js/job-posting.js' %}?v=2"></script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const sections = document.querySelectorAll('.form-section, .accessibility-highlight');
-    const nextBtn = document.querySelector('.btn-next');
-    const prevBtn = document.querySelector('.btn-prev');
-    const steps = document.querySelectorAll('.step');
-
-    let current = 0;
-
-    function showSection(index) {
-        sections.forEach((s, i) => {
-            s.classList.toggle('active', i === index);
-        });
-        steps.forEach((step, i) => {
-            step.classList.toggle('active', i === index);
-            step.classList.toggle('completed', i < index);
-        });
-        prevBtn.disabled = index === 0;
-        nextBtn.disabled = index === sections.length - 1;
-    }
-
-    nextBtn.addEventListener('click', () => {
-        if (current < sections.length - 1) {
-            current++;
-            showSection(current);
-        }
-    });
-
-    prevBtn.addEventListener('click', () => {
-        if (current > 0) {
-            current--;
-            showSection(current);
-        }
-    });
-
-    showSection(current);
-});
-</script>
 {% endblock %}

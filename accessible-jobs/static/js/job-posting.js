@@ -1,4 +1,6 @@
 // static/js/job-posting.js
+console.log('🚀 Job posting script cargado');
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('jobForm');
     const sections = document.querySelectorAll('.form-section, .accessibility-highlight, .legal-compliance');
@@ -10,6 +12,144 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let currentSection = 0;
     let formModified = false;
+
+    // ==========================================
+    // VALIDACIÓN DE LENGUAJE INCLUSIVO
+    // ==========================================
+    console.log('🔍 Inicializando validador de lenguaje inclusivo');
+    
+    const languageFields = ['title', 'description', 'responsibilities', 'requirements',
+                           'accessibility_features', 'benefits', 'reasonable_accommodations',
+                           'workplace_accessibility', 'non_discrimination_statement'];
+    
+    let languageErrors = {};
+    
+    languageFields.forEach(name => {
+        const field = document.querySelector(`[name="${name}"]`);
+        if (field) {
+            console.log(`✅ Campo para validación: ${name}`);
+            field.addEventListener('input', function() {
+                clearTimeout(this.languageTimer);
+                this.languageTimer = setTimeout(() => {
+                    console.log(`🔎 Validando lenguaje en: ${name}`);
+                    validateLanguage(name, this.value);
+                }, 500);
+            });
+        } else {
+            console.warn(`⚠️ Campo no encontrado: ${name}`);
+        }
+    });
+    
+    async function validateLanguage(name, text) {
+        if (!text.trim()) {
+            clearLanguageError(name);
+            return;
+        }
+        
+        const formData = new FormData();
+        formData.append('text', text);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        
+        try {
+            const response = await fetch('/company/validate-language/', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                console.error('❌ Error HTTP:', response.status);
+                return;
+            }
+            
+            const data = await response.json();
+            console.log('📊 Respuesta:', data);
+            
+            if (data.issues && data.issues.length > 0) {
+                console.log(`🚨 ${data.issues.length} problemas en ${name}`);
+                languageErrors[name] = data.issues;
+                showLanguageError(name, data.issues);
+            } else {
+                console.log(`✅ Sin problemas en ${name}`);
+                clearLanguageError(name);
+            }
+            
+            updateSubmitButton();
+        } catch (error) {
+            console.error('❌ Error de red:', error);
+        }
+    }
+    
+    function showLanguageError(name, issues) {
+        const field = document.querySelector(`[name="${name}"]`);
+        field.style.borderColor = '#dc3545';
+        field.style.borderWidth = '3px';
+        field.style.backgroundColor = '#fff5f5';
+        
+        // Remover error anterior si existe
+        let errorDiv = field.parentElement.querySelector('.language-error-msg');
+        if (errorDiv) errorDiv.remove();
+        
+        // Crear nuevo mensaje de error
+        errorDiv = document.createElement('div');
+        errorDiv.className = 'language-error-msg alert alert-danger mt-2 mb-0';
+        errorDiv.style.borderLeft = '4px solid #dc3545';
+        
+        let html = '<strong><i class="fas fa-exclamation-triangle me-2"></i>Términos no inclusivos detectados:</strong>';
+        html += '<ul class="mb-0 mt-2 ms-3">';
+        issues.forEach(issue => {
+            html += `<li class="mb-1">`;
+            html += `<strong class="text-danger">"${escapeHtml(issue.term)}"</strong> `;
+            html += `→ <em class="text-success">${escapeHtml(issue.suggestion)}</em>`;
+            html += `</li>`;
+        });
+        html += '</ul>';
+        errorDiv.innerHTML = html;
+        
+        field.parentElement.appendChild(errorDiv);
+    }
+    
+    function clearLanguageError(name) {
+        delete languageErrors[name];
+        
+        const field = document.querySelector(`[name="${name}"]`);
+        if (!field) return;
+        
+        field.style.borderColor = '';
+        field.style.borderWidth = '';
+        field.style.backgroundColor = '';
+        
+        const errorDiv = field.parentElement.querySelector('.language-error-msg');
+        if (errorDiv) errorDiv.remove();
+        
+        updateSubmitButton();
+    }
+    
+    function updateSubmitButton() {
+        const submitBtn = document.querySelector('button[type="submit"]');
+        if (!submitBtn) return;
+        
+        const hasLanguageErrors = Object.keys(languageErrors).length > 0;
+        
+        submitBtn.disabled = hasLanguageErrors;
+        submitBtn.style.opacity = hasLanguageErrors ? '0.5' : '1';
+        submitBtn.style.cursor = hasLanguageErrors ? 'not-allowed' : 'pointer';
+        
+        if (hasLanguageErrors) {
+            const errorCount = Object.keys(languageErrors).length;
+            submitBtn.innerHTML = `🚫 Corrija ${errorCount} campo(s) con lenguaje no inclusivo`;
+        } else {
+            const isEdit = submitBtn.textContent.includes('Actualizar');
+            submitBtn.innerHTML = isEdit 
+                ? '<i class="fas fa-paper-plane me-2"></i>Actualizar Oferta'
+                : '<i class="fas fa-paper-plane me-2"></i>Publicar Oferta';
+        }
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
 
     // ==========================================
     // NAVEGACIÓN ENTRE SECCIONES
@@ -44,7 +184,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Marcar formulario como modificado
         input.addEventListener('change', () => formModified = true);
     });
 
@@ -90,7 +229,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ==========================================
     // VALIDACIÓN ESPECIAL CAMPOS LEGALES
-    // (Mínimo de caracteres obligatorio)
     // ==========================================
     const legalFields = {
         'id_reasonable_accommodations': 50,
@@ -102,7 +240,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const field = document.getElementById(fieldId);
         if (!field) return;
         
-        // Crear contador específico para campos legales
         const legalCounter = document.createElement('small');
         legalCounter.className = 'form-text text-end d-block mt-1 fw-bold';
         
@@ -111,7 +248,6 @@ document.addEventListener('DOMContentLoaded', function() {
             legalCounter.textContent = `${len}/${minChars} caracteres mínimos (obligatorio)`;
             legalCounter.style.color = len < minChars ? '#dc3545' : '#28a745';
             
-            // Validación visual
             if (len > 0 && len < minChars) {
                 field.classList.add('is-invalid');
                 field.classList.remove('is-valid');
@@ -123,7 +259,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         field.addEventListener('input', updateLegalCounter);
         
-        // Insertar después del contador normal si existe
         const existingCounter = field.nextSibling;
         if (existingCounter && existingCounter.classList?.contains('form-text')) {
             existingCounter.parentNode.insertBefore(legalCounter, existingCounter.nextSibling);
@@ -138,6 +273,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // VALIDACIÓN ANTES DE ENVIAR FORMULARIO
     // ==========================================
     form.addEventListener('submit', function(e) {
+        // BLOQUEAR SI HAY ERRORES DE LENGUAJE
+        if (Object.keys(languageErrors).length > 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            alert('❌ No puede enviar el formulario.\n\n' +
+                  'Se detectaron términos no inclusivos en ' + Object.keys(languageErrors).length + ' campo(s).\n\n' +
+                  'Por favor corrija los términos marcados en rojo antes de continuar.');
+            console.log('🛑 Envío bloqueado por errores de lenguaje');
+            return false;
+        }
+        
         const invalidFields = form.querySelectorAll('.is-invalid');
         
         if (invalidFields.length > 0) {
@@ -147,7 +293,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         
-        // Permitir envío sin alerta de salida
         formModified = false;
     });
 
@@ -166,4 +311,5 @@ document.addEventListener('DOMContentLoaded', function() {
     // INICIALIZACIÓN
     // ==========================================
     showSection(0);
+    console.log('✅ Sistema de validación de lenguaje activo');
 });

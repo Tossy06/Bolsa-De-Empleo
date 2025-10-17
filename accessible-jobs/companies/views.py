@@ -8,6 +8,10 @@ from django.db.models import Q
 from .models import Job
 from .forms import JobForm
 
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from jobs.inclusive_language import InclusiveLanguageValidator
+
 @login_required
 def create_job_view(request):
     """Vista para crear una nueva oferta de trabajo"""
@@ -112,4 +116,21 @@ def toggle_job_status(request, job_id):
     messages.success(request, f'Oferta "{job.title}" {status} correctamente.')
     
     return redirect('core:dashboard')
+
+# Añadir esta función al final del archivo
+@login_required
+@require_http_methods(["POST"])
+def validate_language_ajax(request):
+    """Valida lenguaje en tiempo real"""
+    text = request.POST.get('text', '')
+    
+    if not text:
+        return JsonResponse({'valid': True, 'issues': []})
+    
+    issues = InclusiveLanguageValidator.scan_text(text)
+    
+    return JsonResponse({
+        'valid': len(issues) == 0,
+        'issues': issues
+    })
 
