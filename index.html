@@ -3,44 +3,136 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bolsa de Empleo</title>
+  <meta name="description" content="Plataforma de empleo inclusiva para personas con discapacidad en Colombia. Conectamos talento con empresas comprometidas con la inclusión laboral.">
+  <meta name="keywords" content="empleo inclusivo, discapacidad, trabajo, inclusión laboral, Colombia, ODS, Ley 1618">
+  <meta name="author" content="Tossy06">
+  <title>Bolsa de Empleo Inclusiva | Trabajo Decente y Crecimiento Económico</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Sección Autores -->
-  <section id="autores" class="autor-section">
-    <h2>Autores</h2>
-    <div id="autores-cards" class="autor-cards" aria-live="polite"></div>
+  <!-- Header & Navigation -->
+  <header>
+    <nav>
+      <div class="logo">
+        <span class="logo-icon">♿</span>
+        <span>Bolsa de Empleo Inclusiva</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#overview">Inicio</a></li>
+        <li><a href="#features">Características</a></li>
+        <li><a href="#requerimientos">Requerimientos</a></li>
+        <li><a href="#historias-usuario">Historias</a></li>
+        <li><a href="#autores">Autores</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="#login" class="btn-login">Iniciar Sesión</a>
+        <a href="#register" class="btn-register">Registrarse</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Trabajo Decente para Todos</h1>
+      <p class="hero-subtitle">
+        Plataforma que conecta personas con discapacidad y empresas comprometidas 
+        con la inclusión laboral en Colombia
+      </p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number" data-target="100">0</span>
+          <span class="stat-label">Empresas Registradas</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number" data-target="500">0</span>
+          <span class="stat-label">Candidatos Activos</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number" data-target="250">0</span>
+          <span class="stat-label">Empleos Publicados</span>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Sección Overview -->
   <section id="overview">
-    <h2>Descripción</h2>
+    <h2>Descripción del Proyecto</h2>
     <p>
       Nuestro proyecto consiste en una plataforma web que actúa como intermediario entre las personas con discapacidad que buscan empleo y las empresas que necesitan cumplir con la legislación vigente y, al mismo tiempo, mejorar sus prácticas de inclusión laboral. Este proyecto busca cumplir con los ODS de Trabajo Decente y Crecimiento Económico.
     </p>
   </section>
 
+  <!-- Características Principales -->
+  <section id="features">
+    <h2>¿Por Qué Elegirnos?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Cumplimiento Legal</h3>
+        <p>Validación automática de ofertas según Ley 1618, Ley 1346 y normativas colombianas de inclusión laboral.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">♿</div>
+        <h3>Accesibilidad Total</h3>
+        <p>Diseño accesible con soporte para lectores de pantalla, alto contraste y navegación por teclado.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Seguimiento de Cuotas</h3>
+        <p>Reportes automáticos al Ministerio del Trabajo según Ley 2466/2025 y seguimiento del 2% de empleados con discapacidad.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎓</div>
+        <h3>Formación SENA</h3>
+        <p>Integración con programas de capacitación del SENA para mejorar las oportunidades laborales.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Canal de Denuncias</h3>
+        <p>Sistema confidencial para reportar discriminación o incumplimiento de normativas de inclusión.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📚</div>
+        <h3>Recursos Educativos</h3>
+        <p>Biblioteca de guías, leyes y mejores prácticas para empresas y candidatos.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- Sección Requerimientos -->
   <section id="requerimientos">
-    <div class="funcionales">
-      <h2>Requerimientos Funcionales</h2>
-      <ul>
-        <li>Alta disponibilidad.</li>
-        <li>Protección de datos personales (Ley 1581 de 2012 - Colombia).</li>
-        <li>Escalabilidad para soportar más usuarios.</li>
-        <li>Diseño responsive.</li>
-      </ul>
-    </div>
-    <div class="no-funcionales">
-      <h2>Requerimientos No funcionales</h2>
-      <ul>
-        <li>Alta disponibilidad (99%).</li>
-        <li>Protección de datos personales (Ley 1581 de 2012 - Colombia).</li>
-        <li>Escalabilidad para soportar más usuarios.</li>
-        <li>Diseño responsive.</li>
-      </ul>
+    <h2>Requerimientos del Sistema</h2>
+    <div class="requerimientos-container">
+      <div class="funcionales">
+        <h3>Requerimientos Funcionales</h3>
+        <ul>
+          <li>✅ Registro y autenticación de usuarios (candidatos y empresas)</li>
+          <li>✅ Publicación y gestión de ofertas laborales</li>
+          <li>✅ Validación automática de cumplimiento legal</li>
+          <li>✅ Sistema de mensajería entre candidatos y empresas</li>
+          <li>✅ Programación de entrevistas</li>
+          <li>✅ Reportes al Ministerio del Trabajo</li>
+          <li>✅ Seguimiento de cuotas de empleo (2%)</li>
+          <li>✅ Canal de denuncias confidencial</li>
+          <li>✅ Integración con SENA para capacitación</li>
+        </ul>
+      </div>
+      <div class="no-funcionales">
+        <h3>Requerimientos No Funcionales</h3>
+        <ul>
+          <li>⚡ Alta disponibilidad (99% uptime)</li>
+          <li>🔐 Protección de datos personales (Ley 1581 de 2012)</li>
+          <li>📈 Escalabilidad para soportar crecimiento de usuarios</li>
+          <li>📱 Diseño responsive y accesible (WCAG 2.1 AA)</li>
+          <li>🚀 Tiempos de respuesta menores a 2 segundos</li>
+          <li>🔒 Cifrado de datos sensibles (SSL/TLS)</li>
+          <li>💾 Backup automático diario de base de datos</li>
+          <li>🌐 Soporte multiidioma (futuro)</li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -49,46 +141,137 @@
     <h2>Historias de Usuario</h2>
     <div class="historias-container">
       <div class="card">
+        <span class="card-number">1</span>
         <h3>Registro accesible de candidatos</h3>
         <p>Como persona con discapacidad, quiero registrarme en la plataforma con un formulario accesible (lectores de pantalla, contraste, texto alternativo), para ejercer mi derecho a buscar empleo sin barreras (Ley 1346 – Convención ONU).</p>
+        <div class="card-tag">Ley 1346</div>
       </div>
       <div class="card">
+        <span class="card-number">2</span>
         <h3>Publicación de ofertas incluyentes</h3>
         <p>Como empresa, quiero publicar ofertas laborales indicando ajustes razonables ofrecidos, para cumplir con la Ley 1618 y evitar prácticas discriminatorias.</p>
+        <div class="card-tag">Ley 1618</div>
       </div>
       <div class="card">
+        <span class="card-number">3</span>
         <h3>Validación legal automática de ofertas</h3>
         <p>Como administrador, quiero que la plataforma valide que cada oferta cumple criterios de inclusión laboral, para asegurar conformidad con la Ley 1346 y la Ley 1618.</p>
+        <div class="card-tag">Validación</div>
       </div>
       <div class="card">
+        <span class="card-number">4</span>
         <h3>Reporte de contratación al Ministerio del Trabajo</h3>
         <p>Como empresa, quiero que la plataforma me permita reportar de forma automática las contrataciones de personas con discapacidad, cumpliendo la Ley 2466/2025.</p>
+        <div class="card-tag">Ley 2466/2025</div>
       </div>
       <div class="card">
+        <span class="card-number">5</span>
         <h3>Seguimiento de inclusión y cuotas</h3>
         <p>Como empresa pública o privada, quiero que el sistema muestre reportes sobre el cumplimiento de cuotas de vinculación laboral exigidas por el Decreto 2011/2017 y Decreto 392/2018, para evitar sanciones y aprovechar incentivos.</p>
+        <div class="card-tag">Decreto 2011/2017</div>
       </div>
       <div class="card">
+        <span class="card-number">6</span>
         <h3>Sección educativa de inclusión laboral</h3>
         <p>Como empresa, quiero acceder a recursos, guías y normativas sobre inclusión laboral, para mejorar mis prácticas y cumplir las leyes (Ley 361 y Decreto 2177/2017).</p>
+        <div class="card-tag">Ley 361</div>
       </div>
       <div class="card">
+        <span class="card-number">7</span>
         <h3>Módulo de formación (integración con SENA)</h3>
         <p>Como candidato, quiero acceder a programas de formación y capacitación del SENA, para aumentar mis oportunidades de empleo (Ley 361/1997).</p>
+        <div class="card-tag">SENA</div>
       </div>
       <div class="card">
+        <span class="card-number">8</span>
         <h3>Canal de denuncia y apoyo legal</h3>
         <p>Como persona con discapacidad, quiero un canal para denunciar ofertas o empresas que incumplen la ley, para garantizar mi derecho a un trato justo (Ley 1618, Convención ONU).</p>
+        <div class="card-tag">Denuncias</div>
       </div>
     </div>
   </section>
 
+  <!-- Tecnologías Utilizadas -->
+  <section id="tecnologias">
+    <h2>Stack Tecnológico</h2>
+    <div class="tech-grid">
+      <div class="tech-item">
+        <div class="tech-icon">🐍</div>
+        <h4>Django 5.1</h4>
+        <p>Framework backend</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">🗄️</div>
+        <h4>SQLite / PostgreSQL</h4>
+        <p>Base de datos</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">🎨</div>
+        <h4>Bootstrap 5</h4>
+        <p>Framework CSS</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">📝</div>
+        <h4>Django Forms</h4>
+        <p>Crispy Forms</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">🔐</div>
+        <h4>hCaptcha</h4>
+        <p>Seguridad</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">📡</div>
+        <h4>Django REST</h4>
+        <p>API Framework</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Autores -->
+  <section id="autores" class="autor-section">
+    <h2>Equipo de Desarrollo</h2>
+    <p class="autores-subtitle">Desarrolladores comprometidos con la inclusión laboral</p>
+    <div id="autores-cards" class="autor-cards" aria-live="polite"></div>
+  </section>
+
   <!-- Footer -->
   <footer>
-    <p>© 2025 Bolsa-De-Empleo</p>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Bolsa de Empleo Inclusiva</h4>
+        <p>Plataforma comprometida con el ODS 8: Trabajo Decente y Crecimiento Económico</p>
+      </div>
+      <div class="footer-section">
+        <h4>Marco Legal</h4>
+        <ul>
+          <li>Ley 1346 - Convención ONU</li>
+          <li>Ley 1618 - Inclusión Laboral</li>
+          <li>Ley 2466/2025 - Reportes</li>
+          <li>Ley 1581/2012 - Protección de Datos</li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Enlaces</h4>
+        <ul>
+          <li><a href="https://github.com/Tossy06/Bolsa-De-Empleo" target="_blank">GitHub</a></li>
+          <li><a href="#requerimientos">Documentación</a></li>
+          <li><a href="#historias-usuario">Historias de Usuario</a></li>
+          <li><a href="#autores">Contacto</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Bolsa-De-Empleo | Desarrollado con ❤️ para la inclusión laboral</p>
+    </div>
   </footer>
 
-  <noscript>Activa JavaScript para ver la sección de autores.</noscript>
+  <noscript>
+    <div class="noscript-warning">
+      ⚠️ Activa JavaScript para ver todas las funcionalidades de la plataforma.
+    </div>
+  </noscript>
+  
   <script src="autores.js"></script>
 </body>
 </html>
