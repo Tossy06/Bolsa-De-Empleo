@@ -1,22 +1,24 @@
-// ===== CONFIGURACIÓN =====
+// =============================================
+// BOLSA DE EMPLEO INCLUSIVA - AUTORES.JS
+// Carga colaboradores desde GitHub API
+// =============================================
+
 const repoOwner = "Tossy06";
 const repoName = "Bolsa-De-Empleo";
 
-// ===== CARGAR AUTORES DESDE GITHUB =====
 async function cargarAutores() {
   const contenedor = document.getElementById("autores-cards");
-  if (!contenedor) return;
+  if (!contenedor) {
+    console.warn("⚠️ No se encontró el contenedor #autores-cards");
+    return;
+  }
 
-  // Mostrar mensaje de carga
   const loadingMsg = document.createElement("p");
   loadingMsg.className = "loading-msg";
   loadingMsg.textContent = "⏳ Cargando colaboradores...";
-  loadingMsg.style.color = "#fff";
-  loadingMsg.style.textAlign = "center";
-  loadingMsg.style.width = "100%";
+  loadingMsg.style.cssText = "color: #fff; text-align: center; width: 100%; font-size: 1.1rem;";
   contenedor.appendChild(loadingMsg);
 
-  // Autor principal fijo
   const autorCardPrincipal = document.createElement("div");
   autorCardPrincipal.className = "autor-card";
   autorCardPrincipal.innerHTML = `
@@ -29,41 +31,33 @@ async function cargarAutores() {
   `;
   contenedor.appendChild(autorCardPrincipal);
 
-  // Traer colaboradores desde GitHub API
   try {
     const response = await fetch(
       `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`
     );
 
     if (!response.ok) {
-      throw new Error(`Error GitHub API: ${response.status} - ${response.statusText}`);
+      throw new Error(`Error GitHub API: ${response.status}`);
     }
 
     const autores = await response.json();
 
-    // Remover mensaje de carga
     if (loadingMsg.parentNode) {
       loadingMsg.remove();
     }
 
-    // Verificar si hay colaboradores
     console.log("✅ Colaboradores encontrados:", autores.length);
 
-    // Filtrar y mostrar colaboradores (excluir al owner principal)
     const colaboradores = autores.filter(autor => autor?.login && autor.login !== repoOwner);
 
     if (colaboradores.length === 0) {
       const noColabMsg = document.createElement("p");
-      noColabMsg.style.color = "#fff";
-      noColabMsg.style.textAlign = "center";
-      noColabMsg.style.width = "100%";
-      noColabMsg.style.opacity = "0.9";
+      noColabMsg.style.cssText = "color: #fff; text-align: center; width: 100%; opacity: 0.9; font-size: 1rem;";
       noColabMsg.textContent = "Actualmente solo hay un colaborador en el proyecto.";
       contenedor.appendChild(noColabMsg);
       return;
     }
 
-    // Crear tarjetas para cada colaborador
     colaboradores.forEach((autor, index) => {
       const autorCard = document.createElement("div");
       autorCard.className = "autor-card";
@@ -85,30 +79,35 @@ async function cargarAutores() {
   } catch (err) {
     console.error("❌ Error al cargar colaboradores:", err);
     
-    // Remover mensaje de carga
     if (loadingMsg.parentNode) {
       loadingMsg.remove();
     }
 
-    // Mostrar mensaje de error
     const msg = document.createElement("p");
     msg.className = "msg-error";
     msg.innerHTML = `
       <strong>⚠️ Error al cargar colaboradores</strong><br>
-      No pudimos conectar con GitHub en este momento. Por favor, intenta más tarde.
+      No pudimos conectar con GitHub en este momento.
     `;
-    msg.style.maxWidth = "500px";
-    msg.style.margin = "1rem auto";
+    msg.style.cssText = `
+      max-width: 500px;
+      margin: 1rem auto;
+      padding: 1rem;
+      background: #7a1f1f;
+      color: #ffd2d2;
+      border-radius: 10px;
+      text-align: center;
+    `;
     contenedor.appendChild(msg);
   }
 }
 
-// ===== ANIMACIÓN DE ESCRITURA Y BORRADO =====
 function escribirYBorrarDescripcion() {
-  const parrafo = document.querySelector("#overview p");
+  const parrafo = document.querySelector("#overview .overview-content > p");
   if (!parrafo) return;
 
-  const texto = `Nuestro proyecto consiste en una plataforma web que actúa como intermediario entre las personas con discapacidad que buscan empleo y las empresas que necesitan cumplir con la legislación vigente y, al mismo tiempo, mejorar sus prácticas de inclusión laboral. Este proyecto busca cumplir con los ODS de Trabajo Decente y Crecimiento Económico.`;
+  const textoOriginal = parrafo.textContent;
+  const texto = textoOriginal.trim();
   
   let index = 0;
   let escribiendo = true;
@@ -121,69 +120,32 @@ function escribirYBorrarDescripcion() {
       
       if (index > texto.length) {
         escribiendo = false;
-        timeoutId = setTimeout(escribirOBorrar, 3000); // Pausa de 3s antes de borrar
+        timeoutId = setTimeout(escribirOBorrar, 3000);
         return;
       }
       
-      timeoutId = setTimeout(escribirOBorrar, 30); // Velocidad de escritura
+      timeoutId = setTimeout(escribirOBorrar, 30);
     } else {
       parrafo.textContent = texto.substring(0, index);
       index--;
       
       if (index < 0) {
         escribiendo = true;
-        timeoutId = setTimeout(escribirOBorrar, 2000); // Pausa de 2s antes de reescribir
+        timeoutId = setTimeout(escribirOBorrar, 2000);
         return;
       }
       
-      timeoutId = setTimeout(escribirOBorrar, 15); // Velocidad de borrado (más rápido)
+      timeoutId = setTimeout(escribirOBorrar, 15);
     }
   }
 
   escribirOBorrar();
 
-  // Limpiar timeout si el usuario sale de la página
   window.addEventListener('beforeunload', () => {
     if (timeoutId) clearTimeout(timeoutId);
   });
 }
 
-// ===== CONTADOR ANIMADO PARA ESTADÍSTICAS =====
-function animarContadores() {
-  const contadores = document.querySelectorAll('.stat-number');
-  
-  contadores.forEach(contador => {
-    const target = parseInt(contador.getAttribute('data-target'));
-    const duration = 2000; // 2 segundos
-    const increment = target / (duration / 16); // 60 FPS
-    let current = 0;
-
-    const updateCounter = () => {
-      current += increment;
-      
-      if (current < target) {
-        contador.textContent = Math.floor(current);
-        requestAnimationFrame(updateCounter);
-      } else {
-        contador.textContent = target;
-      }
-    };
-
-    // Iniciar animación cuando el elemento sea visible
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          updateCounter();
-          observer.disconnect();
-        }
-      });
-    }, { threshold: 0.5 });
-
-    observer.observe(contador);
-  });
-}
-
-// ===== NAVEGACIÓN SUAVE =====
 function configurarNavegacionSuave() {
   const enlaces = document.querySelectorAll('a[href^="#"]');
   
@@ -191,15 +153,14 @@ function configurarNavegacionSuave() {
     enlace.addEventListener('click', (e) => {
       const href = enlace.getAttribute('href');
       
-      // Evitar interferir con links de login/register
-      if (href === '#login' || href === '#register') return;
+      if (href === '#' || href === '#login' || href === '#register') return;
       
       e.preventDefault();
       const targetId = href.substring(1);
       const targetElement = document.getElementById(targetId);
       
       if (targetElement) {
-        const headerOffset = 80; // Altura del header sticky
+        const headerOffset = 80;
         const elementPosition = targetElement.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -212,9 +173,8 @@ function configurarNavegacionSuave() {
   });
 }
 
-// ===== ANIMACIÓN DE ENTRADA PARA TARJETAS =====
 function animarTarjetas() {
-  const tarjetas = document.querySelectorAll('.card, .feature-card, .tech-item');
+  const tarjetas = document.querySelectorAll('.card, .stat-card, .model-card, .app-card');
   
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -233,42 +193,6 @@ function animarTarjetas() {
   });
 }
 
-// ===== MENÚ RESPONSIVE =====
-function configurarMenuResponsive() {
-  const nav = document.querySelector('nav');
-  const navLinks = document.querySelector('.nav-links');
-  
-  // Crear botón de menú móvil si no existe
-  if (window.innerWidth <= 768 && !document.querySelector('.menu-toggle')) {
-    const menuToggle = document.createElement('button');
-    menuToggle.className = 'menu-toggle';
-    menuToggle.setAttribute('aria-label', 'Abrir menú de navegación');
-    menuToggle.innerHTML = '☰';
-    menuToggle.style.cssText = `
-      display: none;
-      background: none;
-      border: 2px solid white;
-      color: white;
-      font-size: 1.5rem;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      border-radius: 5px;
-    `;
-    
-    if (window.innerWidth <= 768) {
-      menuToggle.style.display = 'block';
-    }
-    
-    menuToggle.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
-      menuToggle.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
-    });
-    
-    nav.insertBefore(menuToggle, navLinks);
-  }
-}
-
-// ===== INDICADOR DE SCROLL =====
 function crearIndicadorScroll() {
   const indicador = document.createElement('div');
   indicador.id = 'scroll-indicator';
@@ -280,6 +204,7 @@ function crearIndicadorScroll() {
     background: linear-gradient(90deg, #175058, #1e6b75);
     z-index: 9999;
     transition: width 0.1s ease;
+    width: 0;
   `;
   document.body.appendChild(indicador);
 
@@ -291,41 +216,78 @@ function crearIndicadorScroll() {
   });
 }
 
-// ===== INICIALIZACIÓN =====
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("🚀 Inicializando Bolsa de Empleo Inclusiva...");
+function crearBotonVolverArriba() {
+  const boton = document.createElement('button');
+  boton.id = 'btn-volver-arriba';
+  boton.innerHTML = '↑';
+  boton.setAttribute('aria-label', 'Volver arriba');
+  boton.style.cssText = `
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    background: #175058;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 999;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  `;
   
-  // Cargar autores
-  cargarAutores();
-  
-  // Animación de escritura
-  escribirYBorrarDescripcion();
-  
-  // Animar contadores
-  animarContadores();
-  
-  // Configurar navegación suave
-  configurarNavegacionSuave();
-  
-  // Animar tarjetas
-  animarTarjetas();
-  
-  // Menú responsive
-  configurarMenuResponsive();
-  
-  // Indicador de scroll
-  crearIndicadorScroll();
-  
-  console.log("✅ Sitio cargado correctamente");
-});
+  boton.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
 
-// ===== MANEJADORES DE EVENTOS GLOBALES =====
-window.addEventListener('resize', () => {
-  configurarMenuResponsive();
-});
+  window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+      boton.style.opacity = '1';
+      boton.style.visibility = 'visible';
+    } else {
+      boton.style.opacity = '0';
+      boton.style.visibility = 'hidden';
+    }
+  });
 
-// Añadir estilos adicionales para autor-role y autor-contributions
-document.addEventListener("DOMContentLoaded", () => {
+  boton.addEventListener('mouseenter', () => {
+    boton.style.transform = 'scale(1.1)';
+  });
+
+  boton.addEventListener('mouseleave', () => {
+    boton.style.transform = 'scale(1)';
+  });
+
+  document.body.appendChild(boton);
+}
+
+function animarAlScroll() {
+  const elementos = document.querySelectorAll('section');
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+  });
+
+  elementos.forEach(elemento => {
+    observer.observe(elemento);
+  });
+}
+
+function añadirEstilosDinamicos() {
   const style = document.createElement('style');
   style.textContent = `
     .autor-role {
@@ -354,6 +316,75 @@ document.addEventListener("DOMContentLoaded", () => {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
+
+    section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #btn-volver-arriba:hover {
+      background: #1e6b75;
+    }
+
+    @media (max-width: 768px) {
+      #btn-volver-arriba {
+        bottom: 1rem;
+        right: 1rem;
+        width: 45px;
+        height: 45px;
+      }
+    }
   `;
   document.head.appendChild(style);
+}
+
+function mostrarInfoDebug() {
+  console.log(`
+  ╔═══════════════════════════════════════════╗
+  ║   BOLSA DE EMPLEO INCLUSIVA - v1.0.0     ║
+  ║   Plataforma de Inclusión Laboral        ║
+  ╠═══════════════════════════════════════════╣
+  ║   Repo: ${repoName}                       
+  ║   Owner: ${repoOwner}                     
+  ║   Tech: Django 5.1 + JavaScript Vanilla  ║
+  ╚═══════════════════════════════════════════╝
+  `);
+  
+  console.log("📊 Estado de la página:");
+  console.log("- Secciones:", document.querySelectorAll('section').length);
+  console.log("- Tarjetas:", document.querySelectorAll('.card').length);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("🚀 Inicializando Bolsa de Empleo Inclusiva...");
+  
+  mostrarInfoDebug();
+  añadirEstilosDinamicos();
+  cargarAutores();
+  escribirYBorrarDescripcion();
+  configurarNavegacionSuave();
+  animarTarjetas();
+  crearIndicadorScroll();
+  crearBotonVolverArriba();
+  animarAlScroll();
+  
+  console.log("✅ Sitio cargado correctamente");
+});
+
+window.addEventListener('error', (e) => {
+  console.error('❌ Error global:', e.message);
+});
+
+window.addEventListener('load', () => {
+  if (window.performance) {
+    const perfData = window.performance.timing;
+    const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+    console.log(`⚡ Tiempo de carga: ${pageLoadTime}ms`);
+  }
 });
