@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Plataforma de empleo inclusiva para personas con discapacidad en Colombia. Conectamos talento con empresas comprometidas con la inclusión laboral.">
-  <meta name="keywords" content="empleo inclusivo, discapacidad, trabajo, inclusión laboral, Colombia, ODS, Ley 1618">
-  <meta name="author" content="Tossy06">
-  <title>Bolsa de Empleo Inclusiva | Trabajo Decente y Crecimiento Económico</title>
+  <meta name="description" content="Documentación completa del proyecto Bolsa de Empleo Inclusiva - Sistema de empleo para personas con discapacidad en Colombia">
+  <title>Documentación - Bolsa de Empleo Inclusiva</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -15,122 +13,572 @@
   <header>
     <nav>
       <div class="logo">
-        <span class="logo-icon">♿</span>
-        <span>Bolsa de Empleo Inclusiva</span>
+        <span class="logo-icon">📚</span>
+        <span>Documentación del Proyecto</span>
       </div>
       <ul class="nav-links">
-        <li><a href="#overview">Inicio</a></li>
-        <li><a href="#features">Características</a></li>
+        <li><a href="#overview">Descripción</a></li>
+        <li><a href="#arquitectura">Arquitectura</a></li>
+        <li><a href="#modelos">Modelos</a></li>
+        <li><a href="#apps">Aplicaciones</a></li>
         <li><a href="#requerimientos">Requerimientos</a></li>
         <li><a href="#historias-usuario">Historias</a></li>
+        <li><a href="#marco-legal">Marco Legal</a></li>
         <li><a href="#autores">Autores</a></li>
       </ul>
-      <div class="nav-actions">
-        <a href="#login" class="btn-login">Iniciar Sesión</a>
-        <a href="#register" class="btn-register">Registrarse</a>
-      </div>
     </nav>
   </header>
 
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-content">
-      <h1>Trabajo Decente para Todos</h1>
+      <h1>Bolsa de Empleo Inclusiva</h1>
       <p class="hero-subtitle">
-        Plataforma que conecta personas con discapacidad y empresas comprometidas 
-        con la inclusión laboral en Colombia
+        Sistema web para intermediar entre personas con discapacidad y empresas,<br>
+        cumpliendo la legislación colombiana de inclusión laboral
       </p>
-      <div class="hero-stats">
-        <div class="stat">
-          <span class="stat-number" data-target="100">0</span>
-          <span class="stat-label">Empresas Registradas</span>
-        </div>
-        <div class="stat">
-          <span class="stat-number" data-target="500">0</span>
-          <span class="stat-label">Candidatos Activos</span>
-        </div>
-        <div class="stat">
-          <span class="stat-number" data-target="250">0</span>
-          <span class="stat-label">Empleos Publicados</span>
-        </div>
+      <div class="hero-badges">
+        <span class="badge">Django 5.1</span>
+        <span class="badge">Python 3.x</span>
+        <span class="badge">PostgreSQL</span>
+        <span class="badge">Bootstrap 5</span>
+        <span class="badge">REST API</span>
       </div>
     </div>
   </section>
 
   <!-- Sección Overview -->
   <section id="overview">
-    <h2>Descripción del Proyecto</h2>
-    <p>
-      Nuestro proyecto consiste en una plataforma web que actúa como intermediario entre las personas con discapacidad que buscan empleo y las empresas que necesitan cumplir con la legislación vigente y, al mismo tiempo, mejorar sus prácticas de inclusión laboral. Este proyecto busca cumplir con los ODS de Trabajo Decente y Crecimiento Económico.
-    </p>
+    <h2>📋 Descripción del Proyecto</h2>
+    <div class="overview-content">
+      <p>
+        Nuestro proyecto consiste en una plataforma web que actúa como intermediario entre las personas con discapacidad que buscan empleo y las empresas que necesitan cumplir con la legislación vigente y, al mismo tiempo, mejorar sus prácticas de inclusión laboral. Este proyecto busca cumplir con los ODS de Trabajo Decente y Crecimiento Económico.
+      </p>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <h3>10 Aplicaciones Django</h3>
+          <p>Sistema modular y escalable</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <h3>15+ Modelos</h3>
+          <p>Base de datos completa</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔒</div>
+          <h3>100% Cumplimiento Legal</h3>
+          <p>Ley 1618, 1346, 2466/2025</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">♿</div>
+          <h3>WCAG 2.1 AA</h3>
+          <p>Totalmente accesible</p>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- Características Principales -->
-  <section id="features">
-    <h2>¿Por Qué Elegirnos?</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>Cumplimiento Legal</h3>
-        <p>Validación automática de ofertas según Ley 1618, Ley 1346 y normativas colombianas de inclusión laboral.</p>
+  <!-- Arquitectura del Sistema -->
+  <section id="arquitectura">
+    <h2>🏗️ Arquitectura del Sistema</h2>
+    
+    <div class="architecture-container">
+      <div class="arch-column">
+        <h3>Backend (Django)</h3>
+        <ul class="tech-list">
+          <li><strong>Framework:</strong> Django 5.1.12</li>
+          <li><strong>Base de datos:</strong> SQLite (dev) / PostgreSQL (prod)</li>
+          <li><strong>API:</strong> Django REST Framework</li>
+          <li><strong>Auth:</strong> Django Authentication + Custom User Model</li>
+          <li><strong>Forms:</strong> Crispy Forms + Bootstrap 5</li>
+          <li><strong>Storage:</strong> Whitenoise para archivos estáticos</li>
+        </ul>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">♿</div>
-        <h3>Accesibilidad Total</h3>
-        <p>Diseño accesible con soporte para lectores de pantalla, alto contraste y navegación por teclado.</p>
+
+      <div class="arch-column">
+        <h3>Seguridad</h3>
+        <ul class="tech-list">
+          <li><strong>CAPTCHA:</strong> hCaptcha + django-simple-captcha</li>
+          <li><strong>Honeypot:</strong> django-honeypot (anti-spam)</li>
+          <li><strong>CSRF:</strong> Protección nativa Django</li>
+          <li><strong>Datos:</strong> Ley 1581/2012 (Protección de Datos)</li>
+          <li><strong>Encriptación:</strong> django.contrib.auth.hashers</li>
+        </ul>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <h3>Seguimiento de Cuotas</h3>
-        <p>Reportes automáticos al Ministerio del Trabajo según Ley 2466/2025 y seguimiento del 2% de empleados con discapacidad.</p>
+
+      <div class="arch-column">
+        <h3>Frontend</h3>
+        <ul class="tech-list">
+          <li><strong>CSS:</strong> Bootstrap 5 + Crispy Forms</li>
+          <li><strong>JS:</strong> Vanilla JavaScript</li>
+          <li><strong>Accesibilidad:</strong> ARIA labels, alto contraste</li>
+          <li><strong>Responsive:</strong> Mobile-first design</li>
+          <li><strong>Templates:</strong> Django Template Engine</li>
+        </ul>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">🎓</div>
-        <h3>Formación SENA</h3>
-        <p>Integración con programas de capacitación del SENA para mejorar las oportunidades laborales.</p>
+    </div>
+
+    <div class="folder-structure">
+      <h3>📁 Estructura de Carpetas</h3>
+      <pre><code>Bolsa-De-Empleo/
+├── 📁 accounts/          # Gestión de usuarios y autenticación
+├── 📁 admin_jobs/        # Panel administrativo para validar ofertas
+├── 📁 companies/         # Gestión de empresas y ofertas laborales
+├── 📁 jobs/              # Modelos de empleos y compliance
+├── 📁 accessibility/     # Features de accesibilidad
+├── 📁 core/              # Vistas principales y dashboard
+├── 📁 training/          # Integración con SENA
+├── 📁 library/           # Recursos educativos
+├── 📁 complaints/        # Sistema de denuncias
+├── 📁 messaging/         # Chat entre candidatos y empresas
+├── 📁 interviews/        # Programación de entrevistas
+├── 📁 config/            # Configuración Django (settings.py)
+├── 📁 templates/         # Plantillas HTML
+├── 📁 static/            # CSS, JS, imágenes
+├── 📁 media/             # Archivos subidos por usuarios
+└── 📄 manage.py          # CLI de Django</code></pre>
+    </div>
+  </section>
+
+  <!-- Modelos de Base de Datos -->
+  <section id="modelos">
+    <h2>🗄️ Modelos de Base de Datos</h2>
+
+    <div class="models-grid">
+      
+      <!-- User Model -->
+      <div class="model-card">
+        <div class="model-header">
+          <h3>👤 User (accounts)</h3>
+          <span class="model-type">AbstractUser</span>
+        </div>
+        <div class="model-body">
+          <h4>Campos principales:</h4>
+          <ul>
+            <li><code>user_type</code>: candidate | company | admin</li>
+            <li><code>disability_type</code>: visual | auditive | motor | cognitive...</li>
+            <li><code>requires_screen_reader</code>: Boolean</li>
+            <li><code>high_contrast_mode</code>: Boolean</li>
+            <li><code>large_text_mode</code>: Boolean</li>
+            <li><code>email_verified</code>: Boolean</li>
+          </ul>
+          <p class="model-description">
+            Modelo personalizado de usuario que extiende AbstractUser para soportar 
+            diferentes tipos de usuarios y preferencias de accesibilidad.
+          </p>
+        </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3>Canal de Denuncias</h3>
-        <p>Sistema confidencial para reportar discriminación o incumplimiento de normativas de inclusión.</p>
+
+      <!-- Job Model -->
+      <div class="model-card">
+        <div class="model-header">
+          <h3>💼 Job (companies)</h3>
+          <span class="model-type">Model</span>
+        </div>
+        <div class="model-body">
+          <h4>Campos principales:</h4>
+          <ul>
+            <li><code>company</code>: ForeignKey(User)</li>
+            <li><code>title</code>, <code>description</code>, <code>responsibilities</code></li>
+            <li><code>job_type</code>: full_time | part_time | contract | remote</li>
+            <li><code>disability_focus</code>: Tipo de discapacidad</li>
+            <li><code>reasonable_accommodations</code>: TEXT (OBLIGATORIO)</li>
+            <li><code>compliance_status</code>: draft | pending | approved | rejected</li>
+            <li><code>reviewed_by</code>, <code>reviewed_at</code></li>
+          </ul>
+          <p class="model-description">
+            Ofertas laborales con validación automática de cumplimiento legal (Ley 1618).
+            Incluye auditoría completa de cambios de estado.
+          </p>
+        </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">📚</div>
-        <h3>Recursos Educativos</h3>
-        <p>Biblioteca de guías, leyes y mejores prácticas para empresas y candidatos.</p>
+
+      <!-- HiringReport Model -->
+      <div class="model-card">
+        <div class="model-header">
+          <h3>📊 HiringReport (companies)</h3>
+          <span class="model-type">Model</span>
+        </div>
+        <div class="model-body">
+          <h4>Campos principales:</h4>
+          <ul>
+            <li><code>company</code>, <code>company_nit</code></li>
+            <li><code>contract_number</code>, <code>contract_date</code></li>
+            <li><code>disability_type</code>: Codificado (Type A-G)</li>
+            <li><code>status</code>: pending | sent | confirmed | failed</li>
+            <li><code>pdf_file</code>, <code>xml_file</code></li>
+            <li><code>digital_signature</code>: SHA-256 hash</li>
+            <li><code>ministry_receipt_number</code></li>
+          </ul>
+          <p class="model-description">
+            <strong>Ley 2466/2025:</strong> Reportes automáticos de contratación al 
+            Ministerio del Trabajo con firma digital.
+          </p>
+        </div>
       </div>
+
+      <!-- EmployeeQuotaTracking Model -->
+      <div class="model-card">
+        <div class="model-header">
+          <h3>📈 EmployeeQuotaTracking (companies)</h3>
+          <span class="model-type">Model</span>
+        </div>
+        <div class="model-body">
+          <h4>Campos principales:</h4>
+          <ul>
+            <li><code>company</code>: OneToOne(User)</li>
+            <li><code>total_employees</code>: PositiveInteger</li>
+            <li><code>employees_with_disability</code>: PositiveInteger</li>
+            <li><code>required_employees_with_disability</code>: Property (2%)</li>
+            <li><code>compliance_percentage</code>: Property</li>
+            <li><code>is_compliant</code>: Property</li>
+          </ul>
+          <p class="model-description">
+            <strong>Decreto 2011/2017:</strong> Seguimiento del cumplimiento de cuotas 
+            (2% de empleados con discapacidad).
+          </p>
+        </div>
+      </div>
+
+      <!-- Complaint Model -->
+      <div class="model-card">
+        <div class="model-header">
+          <h3>⚠️ Complaint (complaints)</h3>
+          <span class="model-type">Model</span>
+        </div>
+        <div class="model-body">
+          <h4>Campos principales:</h4>
+          <ul>
+            <li><code>tracking_code</code>: Código único de 12 caracteres</li>
+            <li><code>complaint_type</code>: job_offer | discrimination | etc.</li>
+            <li><code>is_anonymous</code>: Boolean</li>
+            <li><code>complainant_user</code>: ForeignKey(User) nullable</li>
+            <li><code>status</code>: pending | under_review | resolved | rejected</li>
+            <li><code>evidence_file1/2/3</code>: FileField</li>
+          </ul>
+          <p class="model-description">
+            Canal confidencial de denuncias para reportar discriminación o 
+            incumplimiento legal (Ley 1618, Convención ONU).
+          </p>
+        </div>
+      </div>
+
+      <!-- Conversation Model -->
+      <div class="model-card">
+        <div class="model-header">
+          <h3>💬 Conversation (messaging)</h3>
+          <span class="model-type">Model</span>
+        </div>
+        <div class="model-body">
+          <h4>Campos principales:</h4>
+          <ul>
+            <li><code>candidate</code>, <code>company</code>: ForeignKey(User)</li>
+            <li><code>job</code>: ForeignKey(Job) nullable</li>
+            <li><code>last_message_at</code>: DateTimeField</li>
+            <li><code>is_archived_by_candidate/company</code>: Boolean</li>
+            <li>Método: <code>get_unread_count_for_candidate()</code></li>
+          </ul>
+          <p class="model-description">
+            Sistema de mensajería directa entre candidatos y empresas para coordinación.
+          </p>
+        </div>
+      </div>
+
+      <!-- Interview Model -->
+      <div class="model-card">
+        <div class="model-header">
+          <h3>📅 Interview (interviews)</h3>
+          <span class="model-type">Model</span>
+        </div>
+        <div class="model-body">
+          <h4>Campos principales:</h4>
+          <ul>
+            <li><code>candidate</code>, <code>company</code>: ForeignKey(User)</li>
+            <li><code>scheduled_date</code>, <code>scheduled_time</code></li>
+            <li><code>status</code>: proposed | confirmed | cancelled | completed</li>
+            <li><code>interview_type</code>: in_person | virtual | phone</li>
+            <li><code>location</code>, <code>meeting_link</code></li>
+          </ul>
+          <p class="model-description">
+            Gestión de entrevistas con notificaciones automáticas.
+          </p>
+        </div>
+      </div>
+
+      <!-- CourseEnrollment Model -->
+      <div class="model-card">
+        <div class="model-header">
+          <h3>🎓 CourseEnrollment (training)</h3>
+          <span class="model-type">Model</span>
+        </div>
+        <div class="model-body">
+          <h4>Campos principales:</h4>
+          <ul>
+            <li><code>candidate</code>: ForeignKey(User)</li>
+            <li><code>course</code>: ForeignKey(Course)</li>
+            <li><code>status</code>: enrolled | in_progress | completed</li>
+            <li><code>certificate_issued</code>: Boolean</li>
+            <li><code>completion_date</code>: DateField</li>
+          </ul>
+          <p class="model-description">
+            <strong>Ley 361/1997:</strong> Integración con SENA para capacitación.
+          </p>
+        </div>
+      </div>
+
+      <!-- AuditLog Model -->
+      <div class="model-card">
+        <div class="model-header">
+          <h3>📝 AuditLog (companies)</h3>
+          <span class="model-type">Model</span>
+        </div>
+        <div class="model-body">
+          <h4>Campos principales:</h4>
+          <ul>
+            <li><code>job</code>: ForeignKey(Job)</li>
+            <li><code>action</code>: created | approved | rejected...</li>
+            <li><code>user</code>: ForeignKey(User)</li>
+            <li><code>timestamp</code>: DateTimeField (indexed)</li>
+            <li><code>details</code>: JSONField</li>
+            <li><code>ip_address</code>: GenericIPAddressField</li>
+          </ul>
+          <p class="model-description">
+            Registro completo de auditoría para trazabilidad y cumplimiento legal.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Aplicaciones Django -->
+  <section id="apps">
+    <h2>📦 Aplicaciones Django</h2>
+
+    <div class="apps-grid">
+      
+      <div class="app-card">
+        <div class="app-icon">👥</div>
+        <h3>accounts</h3>
+        <p><strong>Propósito:</strong> Gestión de usuarios y autenticación</p>
+        <ul>
+          <li>Modelo personalizado User (AbstractUser)</li>
+          <li>Registro con validación hCaptcha</li>
+          <li>Login con "recordarme"</li>
+          <li>Preferencias de accesibilidad</li>
+        </ul>
+        <div class="app-files">
+          <span>models.py</span>
+          <span>views.py</span>
+          <span>forms.py</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-icon">💼</div>
+        <h3>jobs</h3>
+        <p><strong>Propósito:</strong> Modelos de empleos y compliance</p>
+        <ul>
+          <li>Job: Ofertas laborales</li>
+          <li>HiringReport: Reportes al Ministerio</li>
+          <li>EmployeeQuotaTracking: Seguimiento de cuotas</li>
+          <li>AuditLog: Auditoría completa</li>
+        </ul>
+        <div class="app-files">
+          <span>models.py (15+ models)</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-icon">🏢</div>
+        <h3>companies</h3>
+        <p><strong>Propósito:</strong> Gestión de empresas</p>
+        <ul>
+          <li>Publicación de ofertas laborales</li>
+          <li>Validación de ajustes razonables</li>
+          <li>Reportes de contratación</li>
+          <li>Dashboard de empresa</li>
+        </ul>
+        <div class="app-files">
+          <span>views.py</span>
+          <span>forms.py</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-icon">🛡️</div>
+        <h3>admin_jobs</h3>
+        <p><strong>Propósito:</strong> Panel administrativo</p>
+        <ul>
+          <li>Validación de ofertas (compliance)</li>
+          <li>Aprobación/rechazo de publicaciones</li>
+          <li>Solicitud de cambios</li>
+          <li>Historial de auditoría</li>
+        </ul>
+        <div class="app-files">
+          <span>views.py</span>
+          <span>permissions.py</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-icon">♿</div>
+        <h3>accessibility</h3>
+        <p><strong>Propósito:</strong> Features de accesibilidad</p>
+        <ul>
+          <li>Alto contraste</li>
+          <li>Tamaño de texto ajustable</li>
+          <li>Soporte para lectores de pantalla</li>
+          <li>Navegación por teclado</li>
+        </ul>
+        <div class="app-files">
+          <span>middleware.py</span>
+          <span>context_processors.py</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-icon">🏠</div>
+        <h3>core</h3>
+        <p><strong>Propósito:</strong> Vistas principales y dashboards</p>
+        <ul>
+          <li>home_view: Página de inicio</li>
+          <li>dashboard_candidate_view</li>
+          <li>dashboard_company_view</li>
+          <li>dashboard_admin_view</li>
+        </ul>
+        <div class="app-files">
+          <span>views.py</span>
+          <span>urls.py</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-icon">🎓</div>
+        <h3>training</h3>
+        <p><strong>Propósito:</strong> Integración con SENA</p>
+        <ul>
+          <li>Cursos de capacitación</li>
+          <li>Inscripción de candidatos</li>
+          <li>Certificados digitales</li>
+          <li>Seguimiento de progreso</li>
+        </ul>
+        <div class="app-files">
+          <span>models.py</span>
+          <span>views.py</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-icon">📚</div>
+        <h3>library</h3>
+        <p><strong>Propósito:</strong> Recursos educativos</p>
+        <ul>
+          <li>Guías de inclusión laboral</li>
+          <li>Normativas (Ley 1618, 1346...)</li>
+          <li>Mejores prácticas</li>
+          <li>FAQ para empresas y candidatos</li>
+        </ul>
+        <div class="app-files">
+          <span>models.py</span>
+          <span>views.py</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-icon">⚠️</div>
+        <h3>complaints</h3>
+        <p><strong>Propósito:</strong> Sistema de denuncias</p>
+        <ul>
+          <li>Denuncias anónimas</li>
+          <li>Código de seguimiento único</li>
+          <li>Evidencia (archivos adjuntos)</li>
+          <li>Gestión por administradores</li>
+        </ul>
+        <div class="app-files">
+          <span>models.py</span>
+          <span>forms.py</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-icon">💬</div>
+        <h3>messaging</h3>
+        <p><strong>Propósito:</strong> Chat entre usuarios</p>
+        <ul>
+          <li>Conversaciones candidato-empresa</li>
+          <li>Notificaciones de mensajes nuevos</li>
+          <li>Archivar conversaciones</li>
+          <li>Contador de no leídos</li>
+        </ul>
+        <div class="app-files">
+          <span>models.py</span>
+          <span>views.py</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-icon">📅</div>
+        <h3>interviews</h3>
+        <p><strong>Propósito:</strong> Gestión de entrevistas</p>
+        <ul>
+          <li>Proponer entrevistas</li>
+          <li>Confirmar/cancelar citas</li>
+          <li>Entrevistas presenciales y virtuales</li>
+          <li>Notificaciones automáticas</li>
+        </ul>
+        <div class="app-files">
+          <span>models.py</span>
+          <span>views.py</span>
+        </div>
+      </div>
+
     </div>
   </section>
 
   <!-- Sección Requerimientos -->
   <section id="requerimientos">
-    <h2>Requerimientos del Sistema</h2>
+    <h2>📋 Requerimientos del Sistema</h2>
     <div class="requerimientos-container">
       <div class="funcionales">
-        <h3>Requerimientos Funcionales</h3>
+        <h3>⚙️ Requerimientos Funcionales</h3>
         <ul>
-          <li>✅ Registro y autenticación de usuarios (candidatos y empresas)</li>
-          <li>✅ Publicación y gestión de ofertas laborales</li>
-          <li>✅ Validación automática de cumplimiento legal</li>
-          <li>✅ Sistema de mensajería entre candidatos y empresas</li>
-          <li>✅ Programación de entrevistas</li>
-          <li>✅ Reportes al Ministerio del Trabajo</li>
-          <li>✅ Seguimiento de cuotas de empleo (2%)</li>
-          <li>✅ Canal de denuncias confidencial</li>
-          <li>✅ Integración con SENA para capacitación</li>
+          <li>Registro y autenticación de usuarios (candidatos, empresas, admin)</li>
+          <li>Publicación y gestión de ofertas laborales por empresas</li>
+          <li>Validación automática de cumplimiento legal (Ley 1618, 1346)</li>
+          <li>Sistema de mensajería directa candidato-empresa</li>
+          <li>Programación y gestión de entrevistas (presenciales/virtuales)</li>
+          <li>Generación automática de reportes al Ministerio del Trabajo (Ley 2466/2025)</li>
+          <li>Seguimiento de cuotas de empleo (2% empleados con discapacidad)</li>
+          <li>Canal de denuncias confidencial con código de seguimiento</li>
+          <li>Integración con SENA para módulos de capacitación</li>
+          <li>Biblioteca de recursos educativos sobre inclusión laboral</li>
+          <li>Dashboard personalizado por tipo de usuario</li>
+          <li>Notificaciones por email para eventos importantes</li>
+          <li>Auditoría completa de cambios de estado en ofertas</li>
+          <li>Búsqueda y filtrado avanzado de empleos</li>
+          <li>Generación de certificados digitales de capacitación</li>
         </ul>
       </div>
       <div class="no-funcionales">
-        <h3>Requerimientos No Funcionales</h3>
+        <h3>🛡️ Requerimientos No Funcionales</h3>
         <ul>
-          <li>⚡ Alta disponibilidad (99% uptime)</li>
-          <li>🔐 Protección de datos personales (Ley 1581 de 2012)</li>
-          <li>📈 Escalabilidad para soportar crecimiento de usuarios</li>
-          <li>📱 Diseño responsive y accesible (WCAG 2.1 AA)</li>
-          <li>🚀 Tiempos de respuesta menores a 2 segundos</li>
-          <li>🔒 Cifrado de datos sensibles (SSL/TLS)</li>
-          <li>💾 Backup automático diario de base de datos</li>
-          <li>🌐 Soporte multiidioma (futuro)</li>
+          <li><strong>Disponibilidad:</strong> 99% uptime (alta disponibilidad)</li>
+          <li><strong>Seguridad:</strong> Protección de datos personales (Ley 1581/2012)</li>
+          <li><strong>Escalabilidad:</strong> Arquitectura modular para crecimiento</li>
+          <li><strong>Accesibilidad:</strong> WCAG 2.1 AA (lectores de pantalla, alto contraste)</li>
+          <li><strong>Performance:</strong> Tiempos de respuesta < 2 segundos</li>
+          <li><strong>Encriptación:</strong> SSL/TLS para datos sensibles</li>
+          <li><strong>Backup:</strong> Respaldos automáticos diarios de base de datos</li>
+          <li><strong>Responsive:</strong> Diseño adaptable a móviles, tablets y desktop</li>
+          <li><strong>SEO:</strong> Optimizado para motores de búsqueda</li>
+          <li><strong>Auditoría:</strong> Logs completos de acciones críticas</li>
+          <li><strong>Compatibilidad:</strong> Chrome, Firefox, Safari, Edge (últimas 2 versiones)</li>
+          <li><strong>Documentación:</strong> Código documentado y README detallado</li>
+          <li><strong>Testing:</strong> Cobertura mínima del 80% en tests unitarios</li>
+          <li><strong>Multiidioma:</strong> Preparado para internacionalización (futuro)</li>
         </ul>
       </div>
     </div>
@@ -138,99 +586,253 @@
 
   <!-- Sección Historias de Usuario -->
   <section id="historias-usuario" class="historias-section">
-    <h2>Historias de Usuario</h2>
+    <h2>📖 Historias de Usuario</h2>
     <div class="historias-container">
       <div class="card">
         <span class="card-number">1</span>
         <h3>Registro accesible de candidatos</h3>
         <p>Como persona con discapacidad, quiero registrarme en la plataforma con un formulario accesible (lectores de pantalla, contraste, texto alternativo), para ejercer mi derecho a buscar empleo sin barreras (Ley 1346 – Convención ONU).</p>
+        <div class="implementation">
+          <strong>Implementación:</strong>
+          <ul>
+            <li>Modelo User con campos de accesibilidad</li>
+            <li>AccessibleUserCreationForm con validación</li>
+            <li>Soporte hCaptcha</li>
+          </ul>
+        </div>
         <div class="card-tag">Ley 1346</div>
       </div>
+      
       <div class="card">
         <span class="card-number">2</span>
         <h3>Publicación de ofertas incluyentes</h3>
         <p>Como empresa, quiero publicar ofertas laborales indicando ajustes razonables ofrecidos, para cumplir con la Ley 1618 y evitar prácticas discriminatorias.</p>
+        <div class="implementation">
+          <strong>Implementación:</strong>
+          <ul>
+            <li>Job model con reasonable_accommodations (OBLIGATORIO)</li>
+            <li>Validación automática validate_legal_compliance()</li>
+          </ul>
+        </div>
         <div class="card-tag">Ley 1618</div>
       </div>
+
       <div class="card">
         <span class="card-number">3</span>
         <h3>Validación legal automática de ofertas</h3>
         <p>Como administrador, quiero que la plataforma valide que cada oferta cumple criterios de inclusión laboral, para asegurar conformidad con la Ley 1346 y la Ley 1618.</p>
-        <div class="card-tag">Validación</div>
+        <div class="implementation">
+          <strong>Implementación:</strong>
+          <ul>
+            <li>ComplianceStatus: draft | pending | approved | rejected</li>
+            <li>Métodos: approve(), reject(), request_changes()</li>
+            <li>AuditLog para trazabilidad completa</li>
+          </ul>
+        </div>
+        <div class="card-tag">Admin</div>
       </div>
+
       <div class="card">
         <span class="card-number">4</span>
         <h3>Reporte de contratación al Ministerio del Trabajo</h3>
         <p>Como empresa, quiero que la plataforma me permita reportar de forma automática las contrataciones de personas con discapacidad, cumpliendo la Ley 2466/2025.</p>
+        <div class="implementation">
+          <strong>Implementación:</strong>
+          <ul>
+            <li>HiringReport model con status tracking</li>
+            <li>Generación de PDF y XML</li>
+            <li>Firma digital SHA-256</li>
+            <li>Reintento automático si falla el envío</li>
+          </ul>
+        </div>
         <div class="card-tag">Ley 2466/2025</div>
       </div>
+
       <div class="card">
         <span class="card-number">5</span>
         <h3>Seguimiento de inclusión y cuotas</h3>
         <p>Como empresa pública o privada, quiero que el sistema muestre reportes sobre el cumplimiento de cuotas de vinculación laboral exigidas por el Decreto 2011/2017 y Decreto 392/2018, para evitar sanciones y aprovechar incentivos.</p>
+        <div class="implementation">
+          <strong>Implementación:</strong>
+          <ul>
+            <li>EmployeeQuotaTracking: cálculo automático del 2%</li>
+            <li>QuotaHistoricalRecord: snapshots mensuales</li>
+            <li>Dashboard con métricas de cumplimiento</li>
+          </ul>
+        </div>
         <div class="card-tag">Decreto 2011/2017</div>
       </div>
+
       <div class="card">
         <span class="card-number">6</span>
         <h3>Sección educativa de inclusión laboral</h3>
         <p>Como empresa, quiero acceder a recursos, guías y normativas sobre inclusión laboral, para mejorar mis prácticas y cumplir las leyes (Ley 361 y Decreto 2177/2017).</p>
+        <div class="implementation">
+          <strong>Implementación:</strong>
+          <ul>
+            <li>App library con modelos de recursos</li>
+            <li>Categorización por temas</li>
+            <li>Descarga de PDFs y documentos</li>
+          </ul>
+        </div>
         <div class="card-tag">Ley 361</div>
       </div>
+
       <div class="card">
         <span class="card-number">7</span>
         <h3>Módulo de formación (integración con SENA)</h3>
         <p>Como candidato, quiero acceder a programas de formación y capacitación del SENA, para aumentar mis oportunidades de empleo (Ley 361/1997).</p>
+        <div class="implementation">
+          <strong>Implementación:</strong>
+          <ul>
+            <li>CourseEnrollment model</li>
+            <li>Status: enrolled | in_progress | completed</li>
+            <li>Generación de certificados digitales</li>
+          </ul>
+        </div>
         <div class="card-tag">SENA</div>
       </div>
+
       <div class="card">
         <span class="card-number">8</span>
         <h3>Canal de denuncia y apoyo legal</h3>
         <p>Como persona con discapacidad, quiero un canal para denunciar ofertas o empresas que incumplen la ley, para garantizar mi derecho a un trato justo (Ley 1618, Convención ONU).</p>
+        <div class="implementation">
+          <strong>Implementación:</strong>
+          <ul>
+            <li>Complaint model con tracking_code único</li>
+            <li>Denuncias anónimas opcionales</li>
+            <li>Evidencia adjunta (hasta 3 archivos)</li>
+            <li>Estado: pending | under_review | resolved</li>
+          </ul>
+        </div>
         <div class="card-tag">Denuncias</div>
       </div>
     </div>
   </section>
 
-  <!-- Tecnologías Utilizadas -->
-  <section id="tecnologias">
-    <h2>Stack Tecnológico</h2>
-    <div class="tech-grid">
-      <div class="tech-item">
-        <div class="tech-icon">🐍</div>
-        <h4>Django 5.1</h4>
-        <p>Framework backend</p>
+  <!-- Marco Legal -->
+  <section id="marco-legal">
+    <h2>⚖️ Marco Legal Colombiano</h2>
+    
+    <div class="legal-grid">
+      
+      <div class="legal-card">
+        <div class="legal-icon">📜</div>
+        <h3>Ley 1346 de 2009</h3>
+        <p class="legal-subtitle">Convención ONU sobre los Derechos de las Personas con Discapacidad</p>
+        <ul>
+          <li>Reconoce el derecho al trabajo en igualdad de condiciones</li>
+          <li>Prohíbe la discriminación por motivos de discapacidad</li>
+          <li>Obliga a realizar ajustes razonables en el lugar de trabajo</li>
+        </ul>
+        <div class="legal-implementation">
+          <strong>En el sistema:</strong> Validación de ofertas sin barreras discriminatorias
+        </div>
       </div>
-      <div class="tech-item">
-        <div class="tech-icon">🗄️</div>
-        <h4>SQLite / PostgreSQL</h4>
-        <p>Base de datos</p>
+
+      <div class="legal-card">
+        <div class="legal-icon">📜</div>
+        <h3>Ley 1618 de 2013</h3>
+        <p class="legal-subtitle">Garantía de derechos de personas con discapacidad</p>
+        <ul>
+          <li>Establece responsabilidades del Estado y sector privado</li>
+          <li>Obliga a empresas a implementar medidas de inclusión</li>
+          <li>Campo obligatorio: <code>reasonable_accommodations</code></li>
+        </ul>
+        <div class="legal-implementation">
+          <strong>En el sistema:</strong> Campos obligatorios de ajustes razonables y accesibilidad
+        </div>
       </div>
-      <div class="tech-item">
-        <div class="tech-icon">🎨</div>
-        <h4>Bootstrap 5</h4>
-        <p>Framework CSS</p>
+
+      <div class="legal-card">
+        <div class="legal-icon">📜</div>
+        <h3>Ley 361 de 1997</h3>
+        <p class="legal-subtitle">Mecanismos de integración social de personas con limitación</p>
+        <ul>
+          <li>Incentivos tributarios para empresas inclusivas</li>
+          <li>Preferencia en licitaciones públicas</li>
+          <li>Acceso a programas de formación (SENA)</li>
+        </ul>
+        <div class="legal-implementation">
+          <strong>En el sistema:</strong> Integración con módulos de capacitación del SENA
+        </div>
       </div>
-      <div class="tech-item">
-        <div class="tech-icon">📝</div>
-        <h4>Django Forms</h4>
-        <p>Crispy Forms</p>
+
+      <div class="legal-card">
+        <div class="legal-icon">📜</div>
+        <h3>Ley 2466 de 2025</h3>
+        <p class="legal-subtitle">Reporte de contrataciones al Ministerio del Trabajo</p>
+        <ul>
+          <li>Obligación de reportar contrataciones de personas con discapacidad</li>
+          <li>Formato digital con firma electrónica</li>
+          <li>Plazo: 30 días desde la contratación</li>
+        </ul>
+        <div class="legal-implementation">
+          <strong>En el sistema:</strong> HiringReport model con generación automática de PDF/XML
+        </div>
       </div>
-      <div class="tech-item">
-        <div class="tech-icon">🔐</div>
-        <h4>hCaptcha</h4>
-        <p>Seguridad</p>
+
+      <div class="legal-card">
+        <div class="legal-icon">📜</div>
+        <h3>Decreto 2011 de 2017</h3>
+        <p class="legal-subtitle">Porcentaje de vinculación laboral (Sector Público)</p>
+        <ul>
+          <li>Entidades públicas deben vincular al menos 2% de personas con discapacidad</li>
+          <li>Monitoreo y sanciones por incumplimiento</li>
+        </ul>
+        <div class="legal-implementation">
+          <strong>En el sistema:</strong> EmployeeQuotaTracking calcula automáticamente el 2%
+        </div>
       </div>
-      <div class="tech-item">
-        <div class="tech-icon">📡</div>
-        <h4>Django REST</h4>
-        <p>API Framework</p>
+
+      <div class="legal-card">
+        <div class="legal-icon">📜</div>
+        <h3>Decreto 392 de 2018</h3>
+        <p class="legal-subtitle">Cuota de empleo (Sector Privado)</p>
+        <ul>
+          <li>Empresas con más de 50 empleados deben cumplir cuota</li>
+          <li>Incentivos fiscales por cumplimiento</li>
+        </ul>
+        <div class="legal-implementation">
+          <strong>En el sistema:</strong> QuotaHistoricalRecord guarda snapshots mensuales
+        </div>
       </div>
+
+      <div class="legal-card">
+        <div class="legal-icon">📜</div>
+        <h3>Ley 1581 de 2012</h3>
+        <p class="legal-subtitle">Protección de Datos Personales</p>
+        <ul>
+          <li>Regula recolección y uso de datos personales</li>
+          <li>Consentimiento informado obligatorio</li>
+          <li>Datos de discapacidad son sensibles y confidenciales</li>
+        </ul>
+        <div class="legal-implementation">
+          <strong>En el sistema:</strong> Encriptación de datos, codificación de tipos de discapacidad
+        </div>
+      </div>
+
+      <div class="legal-card">
+        <div class="legal-icon">📜</div>
+        <h3>Decreto 2177 de 2017</h3>
+        <p class="legal-subtitle">Buenas prácticas de inclusión laboral</p>
+        <ul>
+          <li>Guías para implementar políticas inclusivas</li>
+          <li>Capacitación a empleadores</li>
+          <li>Sensibilización sobre discapacidad</li>
+        </ul>
+        <div class="legal-implementation">
+          <strong>En el sistema:</strong> App library con recursos educativos
+        </div>
+      </div>
+
     </div>
   </section>
 
   <!-- Sección Autores -->
   <section id="autores" class="autor-section">
-    <h2>Equipo de Desarrollo</h2>
+    <h2>👥 Equipo de Desarrollo</h2>
     <p class="autores-subtitle">Desarrolladores comprometidos con la inclusión laboral</p>
     <div id="autores-cards" class="autor-cards" aria-live="polite"></div>
   </section>
@@ -239,36 +841,50 @@
   <footer>
     <div class="footer-content">
       <div class="footer-section">
-        <h4>Bolsa de Empleo Inclusiva</h4>
-        <p>Plataforma comprometida con el ODS 8: Trabajo Decente y Crecimiento Económico</p>
+        <h4>📚 Bolsa de Empleo Inclusiva</h4>
+        <p>Sistema Django para intermediar entre personas con discapacidad y empresas, cumpliendo la legislación colombiana de inclusión laboral.</p>
+        <p><strong>ODS 8:</strong> Trabajo Decente y Crecimiento Económico</p>
       </div>
       <div class="footer-section">
-        <h4>Marco Legal</h4>
+        <h4>⚖️ Marco Legal</h4>
         <ul>
-          <li>Ley 1346 - Convención ONU</li>
-          <li>Ley 1618 - Inclusión Laboral</li>
-          <li>Ley 2466/2025 - Reportes</li>
-          <li>Ley 1581/2012 - Protección de Datos</li>
+          <li>Ley 1346 de 2009 - Convención ONU</li>
+          <li>Ley 1618 de 2013 - Inclusión</li>
+          <li>Ley 2466 de 2025 - Reportes</li>
+          <li>Ley 1581 de 2012 - Protección de Datos</li>
+          <li>Decreto 2011/2017 - Cuotas Públicas</li>
+          <li>Decreto 392/2018 - Cuotas Privadas</li>
         </ul>
       </div>
       <div class="footer-section">
-        <h4>Enlaces</h4>
+        <h4>🔗 Enlaces</h4>
         <ul>
-          <li><a href="https://github.com/Tossy06/Bolsa-De-Empleo" target="_blank">GitHub</a></li>
-          <li><a href="#requerimientos">Documentación</a></li>
-          <li><a href="#historias-usuario">Historias de Usuario</a></li>
-          <li><a href="#autores">Contacto</a></li>
+          <li><a href="https://github.com/Tossy06/Bolsa-De-Empleo" target="_blank">GitHub Repository</a></li>
+          <li><a href="#arquitectura">Arquitectura</a></li>
+          <li><a href="#modelos">Modelos</a></li>
+          <li><a href="#apps">Aplicaciones</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>🛠️ Tecnologías</h4>
+        <ul>
+          <li>Django 5.1.12</li>
+          <li>Python 3.x</li>
+          <li>PostgreSQL / SQLite</li>
+          <li>Bootstrap 5</li>
+          <li>Django REST Framework</li>
+          <li>hCaptcha</li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 Bolsa-De-Empleo | Desarrollado con ❤️ para la inclusión laboral</p>
+      <p>© 2025 Bolsa-De-Empleo | Documentación del Proyecto | Desarrollado con ❤️ para la inclusión laboral</p>
     </div>
   </footer>
 
   <noscript>
     <div class="noscript-warning">
-      ⚠️ Activa JavaScript para ver todas las funcionalidades de la plataforma.
+      ⚠️ Activa JavaScript para ver todas las funcionalidades de la documentación.
     </div>
   </noscript>
   
