@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Conversación: {{ conversation.subject }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'messaging:inbox' %}">Mensajes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ conversation.subject|truncatewords:5 }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Columna principal - Conversación -->
+        <div class="col-lg-8">
+            <!-- Encabezado de conversación -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h1 class="h4 mb-2">{{ conversation.subject }}</h1>
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-person-circle me-1" aria-hidden="true"></i>
+                                Conversación con <strong>{{ other_participant.get_full_name }}</strong>
+                                {% if conversation.job_title %}
+                                <br>
+                                <i class="bi bi-briefcase me-1" aria-hidden="true"></i>
+                                {{ conversation.job_title }}
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" 
+                                    type="button" 
+                                    id="conversationMenu" 
+                                    data-bs-toggle="dropdown" 
+                                    aria-expanded="false"
+                                    aria-label="Opciones de conversación">
+                                <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="conversationMenu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'messaging:archive_conversation' conversation.pk %}">
+                                        <i class="bi bi-archive me-2" aria-hidden="true"></i>
+                                        {% if user == conversation.candidate %}
+                                            {% if conversation.is_archived_by_candidate %}Desarchivar{% else %}Archivar{% endif %}
+                                        {% else %}
+                                            {% if conversation.is_archived_by_company %}Desarchivar{% else %}Archivar{% endif %}
+                                        {% endif %}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensajes -->
+            <div class="card border-0 shadow-sm mb-4" style="max-height: 600px; overflow-y: auto;" id="messagesContainer">
+                <div class="card-body">
+                    {% for message in messages %}
+                    <div class="mb-4 {% if message.sender == user %}text-end{% endif %}">
+                        <div class="d-inline-block text-start" style="max-width: 75%;">
+                            <!-- Encabezado del mensaje -->
+                            <div class="small text-muted mb-1">
+                                <strong>{{ message.sender.get_full_name }}</strong>
+                                <span class="mx-2">•</span>
+                                <time datetime="{{ message.created_at|date:'c' }}">
+                                    {{ message.created_at|date:"d/m/Y H:i" }}
+                                </time>
+                                {% if message.is_read and message.sender == user %}
+                                <span class="mx-2">•</span>
+                                <i class="bi bi-check-all text-primary" 
+                                   aria-label="Leído"
+                                   title="Leído el {{ message.read_at|date:'d/m/Y H:i' }}"></i>
+                                {% endif %}
+                            </div>
+
+                            <!-- Contenido del mensaje -->
+                            <div class="card border-0 {% if message.sender == user %}bg-primary text-white{% else %}bg-light{% endif %}">
+                                <div class="card-body p-3">
+                                    <p class="mb-0" style="white-space: pre-wrap;">{{ message.content }}</p>
+                                    
+                                    <!-- Archivo adjunto -->
+                                    {% if message.attachment %}
+                                    <div class="mt-3 pt-3 border-top {% if message.sender == user %}border-white border-opacity-25{% else %}border-secondary border-opacity-25{% endif %}">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-paperclip me-2 fs-4" aria-hidden="true"></i>
+                                            <div class="flex-grow-1">
+                                                <a href="{{ message.attachment.url }}" 
+                                                   target="_blank"
+                                                   class="{% if message.sender == user %}text-white{% else %}text-primary{% endif %} text-decoration-none"
+                                                   download>
+                                                    <strong>{{ message.attachment.name|slice:"33:" }}</strong>
+                                                </a>
+                                                <div class="small {% if message.sender == user %}text-white-50{% else %}text-muted{% endif %}">
+                                                    {{ message.get_attachment_size_display }}
+                                                </div>
+                                                {% if message.attachment_alt_text %}
+                                                <div class="small fst-italic mt-1 {% if message.sender == user %}text-white-50{% else %}text-muted{% endif %}">
+                                                    <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+                                                    {{ message.attachment_alt_text }}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted py-5">
+                        <i class="bi bi-chat" style="font-size: 4rem; opacity: 0.3;" aria-hidden="true"></i>
+                        <p class="mt-3">No hay mensajes en esta conversación</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Formulario para nuevo mensaje -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">
+                        <i class="bi bi-reply me-2" aria-hidden="true"></i>
+                        Responder
+                    </h2>
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Errores generales -->
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Contenido del mensaje -->
+                        <div class="mb-3">
+                            <label for="{{ form.content.id_for_label }}" class="form-label visually-hidden">
+                                {{ form.content.label }}
+                            </label>
+                            {{ form.content }}
+                            {% if form.content.errors %}
+                            <div class="text-danger small mt-1">{{ form.content.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Archivo adjunto -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.attachment.id_for_label }}" class="form-label">
+                                    {{ form.attachment.label }}
+                                </label>
+                                {{ form.attachment }}
+                                <div class="form-text">{{ form.attachment.help_text }}</div>
+                                {% if form.attachment.errors %}
+                                <div class="text-danger small mt-1">{{ form.attachment.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.attachment_alt_text.id_for_label }}" class="form-label">
+                                    {{ form.attachment_alt_text.label }}
+                                </label>
+                                {{ form.attachment_alt_text }}
+                                <div class="form-text">{{ form.attachment_alt_text.help_text }}</div>
+                                {% if form.attachment_alt_text.errors %}
+                                <div class="text-danger small mt-1">{{ form.attachment_alt_text.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Botón de envío -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send me-2" aria-hidden="true"></i>
+                                Enviar Mensaje
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna lateral - Información -->
+        <div class="col-lg-4">
+            <!-- Información del participante -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-person-circle text-primary me-2" aria-hidden="true"></i>
+                        Información del Participante
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        {% if other_participant.profile_picture %}
+                        <img src="{{ other_participant.profile_picture.url }}" 
+                             alt="Foto de {{ other_participant.get_full_name }}"
+                             class="rounded-circle mb-2"
+                             style="width: 80px; height: 80px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                             style="width: 80px; height: 80px;">
+                            <i class="bi bi-person-fill text-primary fs-1" aria-hidden="true"></i>
+                        </div>
+                        {% endif %}
+                        <h3 class="h6 mb-1">{{ other_participant.get_full_name }}</h3>
+                        <p class="text-muted small mb-0">
+                            {% if other_participant.user_type == 'candidate' %}
+                            Candidato
+                            {% else %}
+                            Empresa
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <dl class="row mb-0 small">
+                        <dt class="col-5">Email:</dt>
+                        <dd class="col-7">
+                            <a href="mailto:{{ other_participant.email }}">{{ other_participant.email }}</a>
+                        </dd>
+                        
+                        {% if other_participant.phone_number %}
+                        <dt class="col-5">Teléfono:</dt>
+                        <dd class="col-7">{{ other_participant.phone_number }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Detalles de la conversación -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-info-circle text-primary me-2" aria-hidden="true"></i>
+                        Detalles de la Conversación
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0 small">
+                        <dt class="col-5">Iniciada:</dt>
+                        <dd class="col-7">{{ conversation.created_at|date:"d/m/Y H:i" }}</dd>
+                        
+                        <dt class="col-5">Última actividad:</dt>
+                        <dd class="col-7">{{ conversation.updated_at|date:"d/m/Y H:i" }}</dd>
+                        
+                        <dt class="col-5">Mensajes:</dt>
+                        <dd class="col-7">{{ messages|length }}</dd>
+                        
+                        {% if conversation.job_title %}
+                        <dt class="col-5">Oferta:</dt>
+                        <dd class="col-7">{{ conversation.job_title }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Scroll automático al final de los mensajes
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('messagesContainer');
+    if (container) {
+        container.scrollTop = container.scrollHeight;
+    }
+    
+    // Focus en el campo de mensaje
+    const messageField = document.getElementById('{{ form.content.id_for_label }}');
+    if (messageField) {
+        messageField.focus();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Presentar Denuncia{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'complaints:home' %}">Canal de Denuncias</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Presentar Denuncia</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Encabezado -->
+            <div class="text-center mb-4">
+                <i class="bi bi-file-earmark-text text-danger" style="font-size: 4rem;" aria-hidden="true"></i>
+                <h1 class="h3 mt-3 mb-2">Presentar una Denuncia</h1>
+                <p class="text-muted">
+                    Complete el formulario de manera detallada. Todos los campos marcados con (*) son obligatorios.
+                </p>
+            </div>
+
+            <!-- Alerta de confidencialidad -->
+            <div class="alert alert-info mb-4" role="alert">
+                <h2 class="h6 mb-2">
+                    <i class="bi bi-shield-check me-2" aria-hidden="true"></i>
+                    Su privacidad está protegida
+                </h2>
+                <p class="small mb-0">
+                    Sus datos personales están protegidos. Solo el personal autorizado tendrá acceso 
+                    a esta información con el único propósito de investigar y resolver su denuncia.
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Errores generales -->
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Tipo de denuncia -->
+                        <div class="mb-3">
+                            <label for="{{ form.complaint_type.id_for_label }}" class="form-label">
+                                {{ form.complaint_type.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.complaint_type }}
+                            {% if form.complaint_type.errors %}
+                            <div class="text-danger small mt-1">{{ form.complaint_type.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Asunto -->
+                        <div class="mb-3">
+                            <label for="{{ form.subject.id_for_label }}" class="form-label">
+                                {{ form.subject.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.subject }}
+                            <div class="form-text">{{ form.subject.help_text }}</div>
+                            {% if form.subject.errors %}
+                            <div class="text-danger small mt-1">{{ form.subject.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                {{ form.description.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.description }}
+                            <div class="form-text">{{ form.description.help_text }}</div>
+                            {% if form.description.errors %}
+                            <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h3 class="h6 mb-3">Información sobre el Denunciado</h3>
+
+                        <!-- Nombre de la empresa -->
+                        <div class="mb-3">
+                            <label for="{{ form.company_name.id_for_label }}" class="form-label">
+                                {{ form.company_name.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.company_name }}
+                            {% if form.company_name.errors %}
+                            <div class="text-danger small mt-1">{{ form.company_name.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- URL de la oferta -->
+                        <div class="mb-3">
+                            <label for="{{ form.job_posting_url.id_for_label }}" class="form-label">
+                                {{ form.job_posting_url.label }}
+                            </label>
+                            {{ form.job_posting_url }}
+                            <div class="form-text">Si la denuncia está relacionada con una oferta específica.</div>
+                            {% if form.job_posting_url.errors %}
+                            <div class="text-danger small mt-1">{{ form.job_posting_url.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h3 class="h6 mb-3">Evidencias (Opcional)</h3>
+                        <p class="small text-muted mb-3">
+                            Puede adjuntar hasta 3 archivos como evidencia (capturas de pantalla, documentos, etc.)
+                        </p>
+
+                        <!-- Archivos -->
+                        <div class="mb-3">
+                            <label for="{{ form.evidence_file1.id_for_label }}" class="form-label">
+                                {{ form.evidence_file1.label }}
+                            </label>
+                            {{ form.evidence_file1 }}
+                            <div class="form-text">{{ form.evidence_file1.help_text }}</div>
+                            {% if form.evidence_file1.errors %}
+                            <div class="text-danger small mt-1">{{ form.evidence_file1.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.evidence_file2.id_for_label }}" class="form-label">
+                                {{ form.evidence_file2.label }}
+                            </label>
+                            {{ form.evidence_file2 }}
+                            {% if form.evidence_file2.errors %}
+                            <div class="text-danger small mt-1">{{ form.evidence_file2.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.evidence_file3.id_for_label }}" class="form-label">
+                                {{ form.evidence_file3.label }}
+                            </label>
+                            {{ form.evidence_file3 }}
+                            {% if form.evidence_file3.errors %}
+                            <div class="text-danger small mt-1">{{ form.evidence_file3.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h3 class="h6 mb-3">Datos de Contacto (Opcional)</h3>
+                        
+                        <!-- Checkbox para proporcionar datos -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ form.provide_contact_info }}
+                                <label class="form-check-label" for="{{ form.provide_contact_info.id_for_label }}">
+                                    {{ form.provide_contact_info.label }}
+                                </label>
+                                <div class="form-text">{{ form.provide_contact_info.help_text }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Campos de contacto (ocultos por defecto) -->
+                        <div id="contactFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="{{ form.contact_name.id_for_label }}" class="form-label">
+                                    {{ form.contact_name.label }}
+                                </label>
+                                {{ form.contact_name }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.contact_email.id_for_label }}" class="form-label">
+                                    {{ form.contact_email.label }}
+                                </label>
+                                {{ form.contact_email }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.contact_phone.id_for_label }}" class="form-label">
+                                    {{ form.contact_phone.label }}
+                                </label>
+                                {{ form.contact_phone }}
+                            </div>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-send me-2" aria-hidden="true"></i>
+                                Enviar Denuncia
+                            </button>
+                            <a href="{% url 'complaints:home' %}" class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Mostrar/ocultar campos de contacto
+document.addEventListener('DOMContentLoaded', function() {
+    const checkbox = document.getElementById('{{ form.provide_contact_info.id_for_label }}');
+    const contactFields = document.getElementById('contactFields');
+    
+    checkbox.addEventListener('change', function() {
+        contactFields.style.display = this.checked ? 'block' : 'none';
+    });
+});
+</script>
+{% endblock %}

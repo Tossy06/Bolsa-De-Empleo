@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cancelar Entrevista{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'interviews:list' %}">Entrevistas</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'interviews:detail' interview.pk %}">{{ interview.title|truncatewords:3 }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Cancelar</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <!-- Encabezado -->
+            <div class="text-center mb-4">
+                <i class="bi bi-x-circle text-danger" style="font-size: 4rem;" aria-hidden="true"></i>
+                <h1 class="h3 mt-3 mb-2">Cancelar Entrevista</h1>
+                <p class="text-muted">
+                    ¿Estás seguro de que deseas cancelar esta entrevista?
+                </p>
+            </div>
+
+            <!-- Resumen de la entrevista -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Detalles de la Entrevista</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="h6 mb-3">{{ interview.title }}</h3>
+                    
+                    <dl class="row mb-0 small">
+                        <dt class="col-4">
+                            {% if user == interview.candidate %}Empresa:{% else %}Candidato:{% endif %}
+                        </dt>
+                        <dd class="col-8">
+                            {% if user == interview.candidate %}
+                            {{ interview.company.get_full_name }}
+                            {% else %}
+                            {{ interview.candidate.get_full_name }}
+                            {% endif %}
+                        </dd>
+
+                        <dt class="col-4">Fecha:</dt>
+                        <dd class="col-8">{{ interview.scheduled_date|date:"d/m/Y" }}</dd>
+
+                        <dt class="col-4">Hora:</dt>
+                        <dd class="col-8">{{ interview.scheduled_time|time:"H:i" }}</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Formulario -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="alert alert-warning" role="alert">
+                            <h3 class="h6 mb-2">
+                                <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>
+                                Esta acción no se puede deshacer
+                            </h3>
+                            <p class="small mb-0">
+                                La otra parte será notificada de la cancelación inmediatamente.
+                            </p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.reason.id_for_label }}" class="form-label">
+                                {{ form.reason.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.reason }}
+                            <div class="form-text">Por favor explica el motivo de la cancelación</div>
+                            {% if form.reason.errors %}
+                            <div class="text-danger small mt-1">{{ form.reason.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-x-circle me-2" aria-hidden="true"></i>
+                                Confirmar Cancelación
+                            </button>
+                            <a href="{% url 'interviews:detail' interview.pk %}" class="btn btn-outline-secondary">
+                                Volver sin cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sugerencia -->
+            <div class="alert alert-info" role="alert">
+                <h3 class="h6 mb-2">
+                    <i class="bi bi-lightbulb me-2" aria-hidden="true"></i>
+                    Sugerencia
+                </h3>
+                <p class="small mb-0">
+                    Si necesitas cambiar la fecha u hora, considera 
+                    <a href="{% url 'interviews:reschedule' interview.pk %}">solicitar una reprogramación</a> 
+                    en lugar de cancelar.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

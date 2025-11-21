@@ -53,11 +53,11 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="bg-warning bg-opacity-10 rounded p-3 me-3">
-                            <i class="bi bi-eye text-warning fs-4" aria-hidden="true"></i>
+                            <i class="bi bi-calendar-check text-warning fs-4" aria-hidden="true"></i>
                         </div>
                         <div>
-                            <h6 class="mb-1 text-muted small">Vistas Perfil</h6>
-                            <h3 class="mb-0">0</h3>
+                            <h6 class="mb-1 text-muted small">Entrevistas</h6>
+                            <h3 class="mb-0">{{ upcoming_interviews_count|default:0 }}</h3>
                         </div>
                     </div>
                 </div>
@@ -69,13 +69,205 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="bg-info bg-opacity-10 rounded p-3 me-3">
-                            <i class="bi bi-bell text-info fs-4" aria-hidden="true"></i>
+                            <i class="bi bi-envelope text-info fs-4" aria-hidden="true"></i>
                         </div>
                         <div>
-                            <h6 class="mb-1 text-muted small">Notificaciones</h6>
-                            <h3 class="mb-0">0</h3>
+                            <h6 class="mb-1 text-muted small">Mensajes</h6>
+                            <h3 class="mb-0">{{ unread_messages_count|default:0 }}</h3>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✨ SECCIÓN: Canal de Denuncias -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm border-start border-danger border-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-lg-1 text-center mb-3 mb-lg-0">
+                            <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px;">
+                                <i class="bi bi-shield-exclamation text-danger fs-3" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 mb-3 mb-lg-0">
+                            <h5 class="mb-2">
+                                <i class="bi bi-megaphone text-danger me-2" aria-hidden="true"></i>
+                                Canal de Denuncias
+                                <span class="badge bg-danger ms-2">Protegemos tus Derechos</span>
+                            </h5>
+                            <p class="text-muted mb-2 small">
+                                Reporta ofertas discriminatorias, falta de accesibilidad o incumplimiento de normas de inclusión laboral. 
+                                Tu denuncia puede ser anónima y está completamente protegida.
+                            </p>
+                            <ul class="list-unstyled mb-0 small text-muted">
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Denuncias anónimas y confidenciales</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Seguimiento con código único</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Respuesta en 5-10 días hábiles</li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 text-lg-end">
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'complaints:file_complaint' %}" class="btn btn-danger">
+                                    <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>
+                                    Presentar Denuncia
+                                </a>
+                                <a href="{% url 'complaints:track' %}" class="btn btn-outline-danger">
+                                    <i class="bi bi-search me-2" aria-hidden="true"></i>
+                                    Rastrear mi Denuncia
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✨ NUEVA SECCIÓN: Próximas Entrevistas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="h5 mb-0">
+                            <i class="bi bi-calendar-check text-primary me-2" aria-hidden="true"></i>
+                            Próximas Entrevistas
+                            {% if upcoming_interviews_count > 0 %}
+                            <span class="badge bg-primary">{{ upcoming_interviews_count }}</span>
+                            {% endif %}
+                        </h2>
+                        <a href="{% url 'interviews:list' %}" class="btn btn-sm btn-outline-primary">
+                            Ver todas
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_interviews %}
+                    <div class="list-group list-group-flush">
+                        {% for interview in upcoming_interviews %}
+                        <a href="{% url 'interviews:detail' interview.pk %}" 
+                           class="list-group-item list-group-item-action {% if not interview.candidate_confirmed %}list-group-item-warning{% endif %}">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <h3 class="h6 mb-0 me-2">{{ interview.title }}</h3>
+                                        <span class="badge bg-{% if interview.status == 'confirmed' %}success{% else %}warning{% endif %}">
+                                            {{ interview.get_status_display }}
+                                        </span>
+                                    </div>
+                                    <p class="mb-1 small text-muted">
+                                        <i class="bi bi-building me-1" aria-hidden="true"></i>
+                                        {{ interview.company.get_full_name }}
+                                        {% if interview.job_title %}
+                                        | <i class="bi bi-briefcase me-1" aria-hidden="true"></i>{{ interview.job_title }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-0 small">
+                                        <i class="bi bi-calendar3 text-primary me-1" aria-hidden="true"></i>
+                                        {{ interview.scheduled_date|date:"d/m/Y" }} a las {{ interview.scheduled_time|time:"H:i" }}
+                                        {% if interview.interview_type == 'online' %}
+                                        <i class="bi bi-camera-video text-info ms-2" aria-hidden="true"></i>
+                                        En línea
+                                        {% elif interview.interview_type == 'in_person' %}
+                                        <i class="bi bi-geo-alt text-info ms-2" aria-hidden="true"></i>
+                                        Presencial
+                                        {% endif %}
+                                    </p>
+                                    {% if not interview.candidate_confirmed %}
+                                    <small class="text-warning">
+                                        <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>
+                                        Pendiente de confirmación
+                                    </small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-calendar-x text-muted" style="font-size: 4rem; opacity: 0.3;" aria-hidden="true"></i>
+                        <h3 class="h6 mt-3 mb-2">No tienes entrevistas próximas</h3>
+                        <p class="text-muted mb-0">Las empresas pueden programar entrevistas contigo</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✨ SECCIÓN: Mensajes Recientes -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="h5 mb-0">
+                            <i class="bi bi-envelope text-primary me-2" aria-hidden="true"></i>
+                            Mensajes Recientes
+                            {% if unread_messages_count > 0 %}
+                            <span class="badge bg-danger">{{ unread_messages_count }} nuevos</span>
+                            {% endif %}
+                        </h2>
+                        <div>
+                            <a href="{% url 'messaging:start_conversation' %}" class="btn btn-sm btn-primary me-2">
+                                <i class="bi bi-plus-circle" aria-hidden="true"></i>
+                                Nuevo
+                            </a>
+                            <a href="{% url 'messaging:inbox' %}" class="btn btn-sm btn-outline-primary">
+                                Ver todos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if recent_conversations %}
+                    <div class="list-group list-group-flush">
+                        {% for conversation in recent_conversations %}
+                        <a href="{% url 'messaging:conversation_detail' conversation.pk %}" 
+                           class="list-group-item list-group-item-action {% if conversation.get_unread_count_for_candidate > 0 %}list-group-item-primary{% endif %}">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <h3 class="h6 mb-0 me-2">{{ conversation.subject }}</h3>
+                                        {% if conversation.get_unread_count_for_candidate > 0 %}
+                                        <span class="badge bg-danger">{{ conversation.get_unread_count_for_candidate }} nuevos</span>
+                                        {% endif %}
+                                    </div>
+                                    <p class="mb-1 small text-muted">
+                                        <i class="bi bi-building me-1" aria-hidden="true"></i>
+                                        {{ conversation.company.get_full_name }}
+                                    </p>
+                                    {% with last_message=conversation.get_last_message %}
+                                    {% if last_message %}
+                                    <p class="mb-0 small text-muted">
+                                        {{ last_message.content|truncatewords:15 }}
+                                    </p>
+                                    {% endif %}
+                                    {% endwith %}
+                                </div>
+                                <small class="text-muted">{{ conversation.updated_at|timesince }} atrás</small>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox text-muted" style="font-size: 4rem; opacity: 0.3;" aria-hidden="true"></i>
+                        <h3 class="h6 mt-3 mb-2">No tienes mensajes</h3>
+                        <p class="text-muted mb-3">
+                            Comienza una conversación con una empresa para coordinar entrevistas o resolver dudas.
+                        </p>
+                        <a href="{% url 'messaging:start_conversation' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+                            Enviar Mensaje
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -171,7 +363,7 @@
                 </div>
             </div>
 
-            <!-- ✨ NUEVA SECCIÓN: Formación en Habilidades Sociales -->
+            <!-- ✨ SECCIÓN: Formación en Habilidades Sociales -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0 pt-4">
                     <div class="d-flex justify-content-between align-items-center">
@@ -310,18 +502,31 @@
                         <i class="bi bi-search me-2" aria-hidden="true"></i>
                         Buscar Empleos
                     </a>
-                    <!-- ✨ NUEVO ENLACE -->
+                    <a href="{% url 'interviews:list' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-calendar-check me-2" aria-hidden="true"></i>
+                        Mis Entrevistas
+                        {% if upcoming_interviews_count > 0 %}
+                        <span class="badge bg-primary float-end">{{ upcoming_interviews_count }}</span>
+                        {% endif %}
+                    </a>
                     <a href="{% url 'training:courses_list' %}" class="list-group-item list-group-item-action">
                         <i class="bi bi-mortarboard me-2" aria-hidden="true"></i>
                         Cursos de Formación
                     </a>
+                    <a href="{% url 'complaints:home' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-shield-exclamation me-2" aria-hidden="true"></i>
+                        Canal de Denuncias
+                    </a>
+                    <a href="{% url 'messaging:inbox' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-envelope me-2" aria-hidden="true"></i>
+                        Mensajes
+                        {% if unread_messages_count > 0 %}
+                        <span class="badge bg-danger float-end">{{ unread_messages_count }}</span>
+                        {% endif %}
+                    </a>
                     <a href="#" class="list-group-item list-group-item-action">
                         <i class="bi bi-file-earmark-person me-2" aria-hidden="true"></i>
                         Mi CV
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <i class="bi bi-envelope me-2" aria-hidden="true"></i>
-                        Mensajes
                     </a>
                     <a href="#" class="list-group-item list-group-item-action">
                         <i class="bi bi-question-circle me-2" aria-hidden="true"></i>

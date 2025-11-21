@@ -27,6 +27,12 @@ urlpatterns = [
 
     path('biblioteca/', include('library.urls')),
 
+    path('denuncias/', include('complaints.urls')),
+
+    path('mensajes/', include('messaging.urls')),
+
+    path('entrevistas/', include('interviews.urls')),
+
     # URLs de la aplicación core (home, dashboard, etc)
     path('', include('core.urls')),
     

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Rastrear Denuncia{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <!-- Encabezado -->
+            <div class="text-center mb-4">
+                <i class="bi bi-search text-primary" style="font-size: 4rem;" aria-hidden="true"></i>
+                <h1 class="h3 mt-3 mb-2">Rastrear mi Denuncia</h1>
+                <p class="text-muted">
+                    Ingrese su código de seguimiento para consultar el estado de su denuncia.
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Campo de código -->
+                        <div class="mb-3">
+                            <label for="{{ form.tracking_code.id_for_label }}" class="form-label">
+                                {{ form.tracking_code.label }}
+                            </label>
+                            {{ form.tracking_code }}
+                            <div class="form-text">{{ form.tracking_code.help_text }}</div>
+                            {% if form.tracking_code.errors %}
+                            <div class="text-danger small mt-2">{{ form.tracking_code.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-search me-2" aria-hidden="true"></i>
+                                Buscar Denuncia
+                            </button>
+                            <a href="{% url 'complaints:home' %}" class="btn btn-outline-secondary">
+                                Volver
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="alert alert-info mt-4" role="alert">
+                <h2 class="h6 mb-2">
+                    <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+                    ¿No encuentras tu código?
+                </h2>
+                <p class="small mb-0">
+                    El código de seguimiento se proporcionó al momento de presentar la denuncia. 
+                    Si no lo guardó, lamentablemente no será posible recuperarlo debido a políticas de privacidad.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

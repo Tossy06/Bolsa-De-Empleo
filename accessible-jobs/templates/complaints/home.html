@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Canal de Denuncias{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <i class="bi bi-shield-exclamation text-danger" style="font-size: 5rem;" aria-hidden="true"></i>
+            <h1 class="display-4 mt-3 mb-3">Canal de Denuncias</h1>
+            <p class="lead text-muted">
+                Espacio seguro y confidencial para reportar incumplimientos de normas de inclusión laboral.
+            </p>
+        </div>
+    </div>
+
+    <!-- Información importante -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">
+                        <i class="bi bi-info-circle text-primary me-2" aria-hidden="true"></i>
+                        ¿Cuándo usar este canal?
+                    </h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2" aria-hidden="true"></i>
+                                    Ofertas de empleo discriminatorias
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2" aria-hidden="true"></i>
+                                    Procesos de reclutamiento no inclusivos
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2" aria-hidden="true"></i>
+                                    Falta de accesibilidad en el trabajo
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2" aria-hidden="true"></i>
+                                    Discriminación o acoso
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2" aria-hidden="true"></i>
+                                    Negación de ajustes razonables
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2" aria-hidden="true"></i>
+                                    Incumplimiento de cuotas de empleo
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Garantías -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="h4 mb-4 text-center">Nuestras Garantías</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-incognito text-primary" style="font-size: 3rem;" aria-hidden="true"></i>
+                            <h3 class="h5 mt-3 mb-2">Anonimato</h3>
+                            <p class="text-muted small mb-0">
+                                Puede presentar su denuncia de forma completamente anónima si lo prefiere.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-shield-lock text-success" style="font-size: 3rem;" aria-hidden="true"></i>
+                            <h3 class="h5 mt-3 mb-2">Seguridad</h3>
+                            <p class="text-muted small mb-0">
+                                Sus datos están protegidos con cifrado de nivel empresarial.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-eye-slash text-info" style="font-size: 3rem;" aria-hidden="true"></i>
+                            <h3 class="h5 mt-3 mb-2">Confidencialidad</h3>
+                            <p class="text-muted small mb-0">
+                                Solo el personal autorizado tendrá acceso a su denuncia.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones principales -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-grid gap-3">
+                <a href="{% url 'complaints:file_complaint' %}" class="btn btn-danger btn-lg">
+                    <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>
+                    Presentar una Denuncia
+                </a>
+                <a href="{% url 'complaints:track' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-search me-2" aria-hidden="true"></i>
+                    Rastrear mi Denuncia
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información legal -->
+    <div class="row mt-5">
+        <div class="col-lg-10 mx-auto">
+            <div class="alert alert-light" role="alert">
+                <h3 class="h6 mb-2">
+                    <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+                    Base Legal
+                </h3>
+                <p class="small mb-0">
+                    Este canal de denuncias opera en conformidad con la <strong>Ley 1618 de 2013</strong> 
+                    (Derechos de personas con discapacidad) y la <strong>Ley 2466 de 2025</strong> 
+                    (Cuotas de empleo). Las denuncias son tratadas con estricta confidencialidad y 
+                    atendidas por personal especializado.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

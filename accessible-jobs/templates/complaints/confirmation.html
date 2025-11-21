@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Denuncia Recibida{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Mensaje de éxito -->
+            <div class="text-center mb-4">
+                <div class="mb-4">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 6rem;" aria-hidden="true"></i>
+                </div>
+                <h1 class="h3 mb-3">¡Denuncia Recibida Exitosamente!</h1>
+                <p class="lead text-muted">
+                    Su denuncia ha sido registrada en nuestro sistema y será revisada por nuestro equipo.
+                </p>
+            </div>
+
+            <!-- Tarjeta con código de seguimiento -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-body p-5 text-center">
+                    <h2 class="h5 mb-3">Código de Seguimiento</h2>
+                    <div class="alert alert-warning d-inline-block px-5 py-3 mb-3" role="alert">
+                        <h3 class="h2 mb-0 font-monospace" id="trackingCode">{{ complaint.tracking_code }}</h3>
+                    </div>
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+                        <strong>Importante:</strong> Guarde este código para consultar el estado de su denuncia.
+                    </p>
+                    <button class="btn btn-outline-primary" onclick="copyTrackingCode()">
+                        <i class="bi bi-clipboard me-2" aria-hidden="true"></i>
+                        Copiar Código
+                    </button>
+                </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">
+                        <i class="bi bi-clock-history text-primary me-2" aria-hidden="true"></i>
+                        ¿Qué sigue ahora?
+                    </h2>
+                    <ol class="mb-0">
+                        <li class="mb-2">
+                            Nuestro equipo revisará su denuncia en un plazo de <strong>5 días hábiles</strong>.
+                        </li>
+                        <li class="mb-2">
+                            Recibirá actualizaciones sobre el estado de su caso.
+                        </li>
+                        <li class="mb-2">
+                            Si proporcionó datos de contacto, nos comunicaremos con usted si necesitamos información adicional.
+                        </li>
+                        <li class="mb-0">
+                            Puede consultar el estado de su denuncia en cualquier momento usando el código de seguimiento.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Detalles de la denuncia -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-file-earmark-text text-primary me-2" aria-hidden="true"></i>
+                        Resumen de su Denuncia
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Tipo de denuncia:</dt>
+                        <dd class="col-sm-8">{{ complaint.get_complaint_type_display }}</dd>
+
+                        <dt class="col-sm-4">Asunto:</dt>
+                        <dd class="col-sm-8">{{ complaint.subject }}</dd>
+
+                        <dt class="col-sm-4">Empresa:</dt>
+                        <dd class="col-sm-8">{{ complaint.company_name|default:"No especificada" }}</dd>
+
+                        <dt class="col-sm-4">Fecha de registro:</dt>
+                        <dd class="col-sm-8">{{ complaint.created_at|date:"d/m/Y H:i" }}</dd>
+
+                        <dt class="col-sm-4">Estado:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-{{ complaint.get_status_badge_class }}">
+                                {{ complaint.get_status_display }}
+                            </span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="d-grid gap-2">
+                <a href="{% url 'complaints:complaint_status' complaint.tracking_code %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-eye me-2" aria-hidden="true"></i>
+                    Ver Estado de mi Denuncia
+                </a>
+                <a href="{% url 'complaints:home' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-house me-2" aria-hidden="true"></i>
+                    Volver al Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyTrackingCode() {
+    const code = document.getElementById('trackingCode').innerText;
+    navigator.clipboard.writeText(code).then(function() {
+        alert('Código copiado al portapapeles: ' + code);
+    }, function(err) {
+        console.error('Error al copiar: ', err);
+    });
+}
+</script>
+{% endblock %}

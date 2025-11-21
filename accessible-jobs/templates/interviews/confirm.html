@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirmar Entrevista{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'interviews:list' %}">Entrevistas</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'interviews:detail' interview.pk %}">{{ interview.title|truncatewords:3 }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Confirmar</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <!-- Encabezado -->
+            <div class="text-center mb-4">
+                <i class="bi bi-check-circle text-success" style="font-size: 4rem;" aria-hidden="true"></i>
+                <h1 class="h3 mt-3 mb-2">Confirmar Asistencia</h1>
+                <p class="text-muted">
+                    Por favor confirma tu asistencia a esta entrevista
+                </p>
+            </div>
+
+            <!-- Resumen de la entrevista -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">Detalles de la Entrevista</h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="h6 mb-3">{{ interview.title }}</h3>
+                    
+                    <dl class="row mb-0 small">
+                        <dt class="col-4">Empresa:</dt>
+                        <dd class="col-8">{{ interview.company.get_full_name }}</dd>
+
+                        <dt class="col-4">Fecha:</dt>
+                        <dd class="col-8">{{ interview.scheduled_date|date:"d/m/Y" }}</dd>
+
+                        <dt class="col-4">Hora:</dt>
+                        <dd class="col-8">{{ interview.scheduled_time|time:"H:i" }} ({{ interview.duration_minutes }} min)</dd>
+
+                        <dt class="col-4">Tipo:</dt>
+                        <dd class="col-8">{{ interview.get_interview_type_display }}</dd>
+
+                        {% if interview.meeting_url %}
+                        <dt class="col-4">Link:</dt>
+                        <dd class="col-8">
+                            <a href="{{ interview.meeting_url }}" target="_blank" rel="noopener noreferrer">
+                                Ver enlace de reunión
+                            </a>
+                        </dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Formulario -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ form.confirm }}
+                                <label class="form-check-label" for="{{ form.confirm.id_for_label }}">
+                                    {{ form.confirm.label }}
+                                </label>
+                                {% if form.confirm.errors %}
+                                <div class="text-danger small mt-1">{{ form.confirm.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.notes.id_for_label }}" class="form-label">
+                                {{ form.notes.label }}
+                            </label>
+                            {{ form.notes }}
+                            {% if form.notes.errors %}
+                            <div class="text-danger small mt-1">{{ form.notes.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-2" aria-hidden="true"></i>
+                                Confirmar Asistencia
+                            </button>
+                            <a href="{% url 'interviews:detail' interview.pk %}" class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información -->
+            <div class="alert alert-info" role="alert">
+                <h3 class="h6 mb-2">
+                    <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+                    Importante
+                </h3>
+                <ul class="small mb-0">
+                    <li>Al confirmar, recibirás un correo de confirmación</li>
+                    <li>La empresa será notificada de tu confirmación</li>
+                    <li>Puedes reprogramar o cancelar hasta 24 horas antes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

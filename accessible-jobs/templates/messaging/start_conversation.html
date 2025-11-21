@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nueva Conversación{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'messaging:inbox' %}">Mensajes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Nueva Conversación</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Encabezado -->
+            <div class="text-center mb-4">
+                <i class="bi bi-chat-dots text-primary" style="font-size: 4rem;" aria-hidden="true"></i>
+                <h1 class="h3 mt-3 mb-2">Iniciar Nueva Conversación</h1>
+                <p class="text-muted">
+                    Complete los siguientes campos para enviar un mensaje.
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Errores generales -->
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Destinatario -->
+                        <div class="mb-3">
+                            <label for="{{ form.recipient.id_for_label }}" class="form-label">
+                                {{ form.recipient.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.recipient }}
+                            {% if form.recipient.errors %}
+                            <div class="text-danger small mt-1">{{ form.recipient.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Asunto -->
+                        <div class="mb-3">
+                            <label for="{{ form.subject.id_for_label }}" class="form-label">
+                                {{ form.subject.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.subject }}
+                            {% if form.subject.errors %}
+                            <div class="text-danger small mt-1">{{ form.subject.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Oferta relacionada -->
+                        <div class="mb-3">
+                            <label for="{{ form.job_title.id_for_label }}" class="form-label">
+                                {{ form.job_title.label }}
+                            </label>
+                            {{ form.job_title }}
+                            {% if form.job_title.errors %}
+                            <div class="text-danger small mt-1">{{ form.job_title.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Mensaje -->
+                        <div class="mb-3">
+                            <label for="{{ form.message_content.id_for_label }}" class="form-label">
+                                {{ form.message_content.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.message_content }}
+                            {% if form.message_content.errors %}
+                            <div class="text-danger small mt-1">{{ form.message_content.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send me-2" aria-hidden="true"></i>
+                                Enviar Mensaje
+                            </button>
+                            <a href="{% url 'messaging:inbox' %}" class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información de accesibilidad -->
+            <div class="alert alert-info mt-4" role="alert">
+                <h2 class="h6 mb-2">
+                    <i class="bi bi-universal-access me-2" aria-hidden="true"></i>
+                    Características de Accesibilidad
+                </h2>
+                <ul class="small mb-0">
+                    <li>Compatible con lectores de pantalla (NVDA, JAWS, VoiceOver)</li>
+                    <li>Navegación completa por teclado (Tab, Enter, Esc)</li>
+                    <li>Soporte para archivos adjuntos con descripciones alternativas</li>
+                    <li>Notificaciones por email de nuevos mensajes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

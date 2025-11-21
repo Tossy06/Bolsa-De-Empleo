@@ -167,7 +167,7 @@
       </div>
     </div>
 
-    <!-- ✨ NUEVA SECCIÓN: Biblioteca de Mejores Prácticas -->
+    <!-- Biblioteca de Mejores Prácticas -->
     <div class="col-md-6 mb-4">
       <div class="card shadow-sm h-100 border-start border-success border-4">
         <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
@@ -193,6 +193,39 @@
             <a href="/admin/library/resourcecategory/" class="btn btn-outline-success">
               <i class="bi bi-folder-plus me-2"></i>
               Gestionar Categorías
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✨ NUEVA SECCIÓN: Canal de Denuncias -->
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm h-100 border-start border-danger border-4">
+        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="bi bi-shield-exclamation me-2"></i>
+            Canal de Denuncias
+          </h5>
+          <span class="badge bg-light text-danger">Protección</span>
+        </div>
+        <div class="card-body">
+          <p class="mb-3">
+            Gestiona denuncias sobre incumplimiento de normas de inclusión laboral. Revisa reportes de discriminación, 
+            falta de accesibilidad y otras violaciones.
+          </p>
+          <div class="d-grid gap-2">
+            <a href="{% url 'complaints:admin_dashboard' %}" class="btn btn-danger text-white">
+              <i class="bi bi-graph-up me-2"></i>
+              Dashboard de Denuncias
+            </a>
+            <a href="{% url 'complaints:admin_list' %}" class="btn btn-outline-danger">
+              <i class="bi bi-list-ul me-2"></i>
+              Ver Todas las Denuncias
+            </a>
+            <a href="/admin/complaints/" class="btn btn-outline-danger">
+              <i class="bi bi-gear me-2"></i>
+              Administrar Denuncias
             </a>
           </div>
         </div>

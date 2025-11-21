@@ -1,0 +1,351 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Denuncia #{{ complaint.tracking_code }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Panel Admin</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'complaints:admin_dashboard' %}">Denuncias</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'complaints:admin_list' %}">Lista</a></li>
+            <li class="breadcrumb-item active" aria-current="page">#{{ complaint.tracking_code }}</li>
+        </ol>
+    </nav>
+
+    <!-- Mensajes -->
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="row">
+        <!-- Columna principal -->
+        <div class="col-lg-8 mb-4">
+            <!-- Encabezado -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="h4 mb-2">Denuncia #{{ complaint.tracking_code }}</h1>
+                            <p class="text-muted mb-0">
+                                {{ complaint.get_complaint_type_display }}
+                            </p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-{{ complaint.get_status_badge_class }} fs-6 mb-2">
+                                {{ complaint.get_status_display }}
+                            </span>
+                            <br>
+                            {% if complaint.priority == 4 %}
+                            <span class="badge bg-danger">Urgente</span>
+                            {% elif complaint.priority == 3 %}
+                            <span class="badge bg-warning">Alta</span>
+                            {% elif complaint.priority == 2 %}
+                            <span class="badge bg-info">Media</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Baja</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">Fecha de registro:</dt>
+                        <dd class="col-sm-9">
+                            {{ complaint.created_at|date:"d/m/Y H:i" }}
+                            <small class="text-muted">({{ complaint.get_days_since_filed }} días)</small>
+                        </dd>
+
+                        <dt class="col-sm-3">Última actualización:</dt>
+                        <dd class="col-sm-9">{{ complaint.updated_at|date:"d/m/Y H:i" }}</dd>
+
+                        {% if complaint.resolved_at %}
+                        <dt class="col-sm-3">Fecha de resolución:</dt>
+                        <dd class="col-sm-9">{{ complaint.resolved_at|date:"d/m/Y H:i" }}</dd>
+                        {% endif %}
+
+                        {% if complaint.assigned_to %}
+                        <dt class="col-sm-3">Asignado a:</dt>
+                        <dd class="col-sm-9">{{ complaint.assigned_to.get_full_name }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Detalles de la denuncia -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-file-text text-primary me-2" aria-hidden="true"></i>
+                        Detalles de la Denuncia
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="h6 mb-2">Asunto</h3>
+                    <p>{{ complaint.subject }}</p>
+
+                    <h3 class="h6 mb-2 mt-3">Descripción</h3>
+                    <p class="mb-3">{{ complaint.description }}</p>
+
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">Empresa:</dt>
+                        <dd class="col-sm-9">{{ complaint.company_name|default:"No especificada" }}</dd>
+
+                        {% if complaint.job_posting_url %}
+                        <dt class="col-sm-3">URL de oferta:</dt>
+                        <dd class="col-sm-9">
+                            <a href="{{ complaint.job_posting_url }}" target="_blank" rel="noopener noreferrer">
+                                {{ complaint.job_posting_url }}
+                                <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i>
+                            </a>
+                        </dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Información del denunciante -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-person text-primary me-2" aria-hidden="true"></i>
+                        Información del Denunciante
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">Tipo:</dt>
+                        <dd class="col-sm-9">
+                            {% if complaint.is_anonymous %}
+                            <span class="badge bg-secondary">Anónima</span>
+                            {% else %}
+                            <span class="badge bg-info">Con datos de contacto</span>
+                            {% endif %}
+                        </dd>
+
+                        {% if not complaint.is_anonymous %}
+                        <dt class="col-sm-3">Nombre:</dt>
+                        <dd class="col-sm-9">{{ complaint.complainant_name|default:"No proporcionado" }}</dd>
+
+                        <dt class="col-sm-3">Email:</dt>
+                        <dd class="col-sm-9">{{ complaint.complainant_email|default:"No proporcionado" }}</dd>
+
+                        <dt class="col-sm-3">Teléfono:</dt>
+                        <dd class="col-sm-9">{{ complaint.complainant_phone|default:"No proporcionado" }}</dd>
+                        {% endif %}
+
+                        {% if complaint.complainant_user %}
+                        <dt class="col-sm-3">Usuario registrado:</dt>
+                        <dd class="col-sm-9">{{ complaint.complainant_user.get_full_name }} ({{ complaint.complainant_user.email }})</dd>
+                        {% endif %}
+
+                        <dt class="col-sm-3">IP:</dt>
+                        <dd class="col-sm-9">{{ complaint.ip_address|default:"No registrada" }}</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Archivos adjuntos -->
+            {% if complaint.evidence_file1 or complaint.evidence_file2 or complaint.evidence_file3 %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-paperclip text-primary me-2" aria-hidden="true"></i>
+                        Evidencias Adjuntas
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% if complaint.evidence_file1 %}
+                        <a href="{{ complaint.evidence_file1.url }}" target="_blank" class="list-group-item list-group-item-action">
+                            <i class="bi bi-file-earmark me-2" aria-hidden="true"></i>
+                            Evidencia 1
+                        </a>
+                        {% endif %}
+                        {% if complaint.evidence_file2 %}
+                        <a href="{{ complaint.evidence_file2.url }}" target="_blank" class="list-group-item list-group-item-action">
+                            <i class="bi bi-file-earmark me-2" aria-hidden="true"></i>
+                            Evidencia 2
+                        </a>
+                        {% endif %}
+                        {% if complaint.evidence_file3 %}
+                        <a href="{{ complaint.evidence_file3.url }}" target="_blank" class="list-group-item list-group-item-action">
+                            <i class="bi bi-file-earmark me-2" aria-hidden="true"></i>
+                            Evidencia 3
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Comentarios -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-chat-dots text-primary me-2" aria-hidden="true"></i>
+                        Comentarios Internos
+                    </h2>
+                </div>
+                <div class="card-body">
+                    {% if comments %}
+                    <div class="mb-3">
+                        {% for comment in comments %}
+                        <div class="card mb-2 {% if comment.is_internal %}bg-light{% endif %}">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <strong>{{ comment.author.get_full_name }}</strong>
+                                    <small class="text-muted">{{ comment.created_at|date:"d/m/Y H:i" }}</small>
+                                </div>
+                                <p class="mb-0">{{ comment.comment }}</p>
+                                {% if comment.is_internal %}
+                                <small class="text-muted">
+                                    <i class="bi bi-lock me-1" aria-hidden="true"></i>
+                                    Comentario interno
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Formulario para agregar comentario -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="add_comment" value="1">
+                        
+                        <div class="mb-3">
+                            {{ comment_form.comment }}
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            {{ comment_form.is_internal }}
+                            <label class="form-check-label" for="{{ comment_form.is_internal.id_for_label }}">
+                                {{ comment_form.is_internal.label }}
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+                            Agregar Comentario
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Historial de estados -->
+            {% if status_history %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-clock-history text-primary me-2" aria-hidden="true"></i>
+                        Historial de Estados
+                    </h2>
+                </div>
+                <div class="card-body">
+                    {% for history in status_history %}
+                    <div class="mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ history.get_previous_status_display }}</strong>
+                                <i class="bi bi-arrow-right mx-2" aria-hidden="true"></i>
+                                <strong>{{ history.get_new_status_display }}</strong>
+                                {% if history.changed_by %}
+                                <br>
+                                <small class="text-muted">Por: {{ history.changed_by.get_full_name }}</small>
+                                {% endif %}
+                                {% if history.reason %}
+                                <p class="small mt-2 mb-0">{{ history.reason }}</p>
+                                {% endif %}
+                            </div>
+                            <small class="text-muted">{{ history.created_at|date:"d/m/Y H:i" }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Columna lateral - Gestión -->
+        <div class="col-lg-4">
+            <!-- Actualizar estado -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-gear text-primary me-2" aria-hidden="true"></i>
+                        Gestionar Denuncia
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="update_status" value="1">
+
+                        <div class="mb-3">
+                            <label for="{{ status_form.status.id_for_label }}" class="form-label">Estado</label>
+                            {{ status_form.status }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ status_form.priority.id_for_label }}" class="form-label">Prioridad</label>
+                            {{ status_form.priority }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ status_form.assigned_to.id_for_label }}" class="form-label">Asignar a</label>
+                            {{ status_form.assigned_to }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ status_form.reason.id_for_label }}" class="form-label">Razón del cambio</label>
+                            {{ status_form.reason }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ status_form.admin_response.id_for_label }}" class="form-label">Respuesta oficial</label>
+                            {{ status_form.admin_response }}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2" aria-hidden="true"></i>
+                                Actualizar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Acciones rápidas -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-lightning text-primary me-2" aria-hidden="true"></i>
+                        Acciones Rápidas
+                    </h2>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'complaints:complaint_status' complaint.tracking_code %}" 
+                       target="_blank"
+                       class="list-group-item list-group-item-action">
+                        <i class="bi bi-eye me-2" aria-hidden="true"></i>
+                        Ver como usuario
+                    </a>
+                    <a href="{% url 'complaints:admin_list' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>
+                        Volver a la lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

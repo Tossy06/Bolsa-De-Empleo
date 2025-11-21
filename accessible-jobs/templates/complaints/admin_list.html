@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lista de Denuncias - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Panel Admin</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'complaints:admin_dashboard' %}">Denuncias</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Lista</li>
+        </ol>
+    </nav>
+
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-2">
+                <i class="bi bi-list-ul text-primary me-2" aria-hidden="true"></i>
+                Todas las Denuncias
+            </h1>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="search" class="form-label">Buscar</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="search" 
+                           name="search" 
+                           placeholder="Código, asunto, empresa..." 
+                           value="{{ search_query }}"
+                           aria-label="Buscar denuncias">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Estado</label>
+                    <select class="form-select" id="status" name="status" aria-label="Filtrar por estado">
+                        <option value="">Todos</option>
+                        <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pendiente</option>
+                        <option value="under_review" {% if status_filter == 'under_review' %}selected{% endif %}>En Revisión</option>
+                        <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Resuelta</option>
+                        <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rechazada</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="priority" class="form-label">Prioridad</label>
+                    <select class="form-select" id="priority" name="priority" aria-label="Filtrar por prioridad">
+                        <option value="">Todas</option>
+                        <option value="1" {% if priority_filter == '1' %}selected{% endif %}>Baja</option>
+                        <option value="2" {% if priority_filter == '2' %}selected{% endif %}>Media</option>
+                        <option value="3" {% if priority_filter == '3' %}selected{% endif %}>Alta</option>
+                        <option value="4" {% if priority_filter == '4' %}selected{% endif %}>Urgente</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-1" aria-hidden="true"></i>
+                        Filtrar
+                    </button>
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <a href="{% url 'complaints:admin_list' %}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-x-circle me-1" aria-hidden="true"></i>
+                        Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de denuncias -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="h6 mb-0">
+                    Resultados: {{ page_obj.paginator.count }} denuncia{{ page_obj.paginator.count|pluralize }}
+                </h2>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Código</th>
+                        <th>Tipo</th>
+                        <th>Asunto</th>
+                        <th>Empresa</th>
+                        <th>Estado</th>
+                        <th>Prioridad</th>
+                        <th>Fecha</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for complaint in page_obj %}
+                    <tr>
+                        <td>
+                            <span class="font-monospace">#{{ complaint.tracking_code }}</span>
+                        </td>
+                        <td>
+                            <small>{{ complaint.get_complaint_type_display }}</small>
+                        </td>
+                        <td>
+                            <div style="max-width: 250px;">
+                                {{ complaint.subject|truncatewords:8 }}
+                            </div>
+                        </td>
+                        <td>
+                            {{ complaint.company_name|default:"N/A"|truncatewords:5 }}
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ complaint.get_status_badge_class }}">
+                                {{ complaint.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if complaint.priority == 4 %}
+                            <span class="badge bg-danger">Urgente</span>
+                            {% elif complaint.priority == 3 %}
+                            <span class="badge bg-warning">Alta</span>
+                            {% elif complaint.priority == 2 %}
+                            <span class="badge bg-info">Media</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Baja</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small>{{ complaint.created_at|date:"d/m/Y" }}</small>
+                            <br>
+                            <small class="text-muted">{{ complaint.created_at|timesince }} atrás</small>
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'complaints:admin_detail' complaint.tracking_code %}" 
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye me-1" aria-hidden="true"></i>
+                                Ver
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            No se encontraron denuncias con los filtros seleccionados.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        {% if page_obj.has_other_pages %}
+        <div class="card-footer bg-white">
+            <nav aria-label="Paginación de denuncias">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&status={{ status_filter }}&priority={{ priority_filter }}">
+                            Anterior
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}&search={{ search_query }}&status={{ status_filter }}&priority={{ priority_filter }}">
+                            {{ num }}
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&status={{ status_filter }}&priority={{ priority_filter }}">
+                            Siguiente
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

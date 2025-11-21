@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Programar Entrevista{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'interviews:list' %}">Entrevistas</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Programar</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Encabezado -->
+            <div class="text-center mb-4">
+                <i class="bi bi-calendar-plus text-primary" style="font-size: 4rem;" aria-hidden="true"></i>
+                <h1 class="h3 mt-3 mb-2">Programar Entrevista</h1>
+                <p class="text-muted">
+                    Complete el formulario para agendar una entrevista con un candidato
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Información básica -->
+                        <h2 class="h5 mb-3">
+                            <i class="bi bi-info-circle text-primary me-2" aria-hidden="true"></i>
+                            Información Básica
+                        </h2>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.candidate.id_for_label }}" class="form-label">
+                                    {{ form.candidate.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.candidate }}
+                                {% if form.candidate.errors %}
+                                <div class="text-danger small mt-1">{{ form.candidate.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.job_title.id_for_label }}" class="form-label">
+                                    {{ form.job_title.label }}
+                                </label>
+                                {{ form.job_title }}
+                                {% if form.job_title.errors %}
+                                <div class="text-danger small mt-1">{{ form.job_title.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.title.id_for_label }}" class="form-label">
+                                    {{ form.title.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                <div class="text-danger small mt-1">{{ form.title.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">
+                                    {{ form.description.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Fecha y hora -->
+                        <h2 class="h5 mb-3">
+                            <i class="bi bi-calendar3 text-primary me-2" aria-hidden="true"></i>
+                            Fecha y Hora
+                        </h2>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="{{ form.scheduled_date.id_for_label }}" class="form-label">
+                                    {{ form.scheduled_date.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.scheduled_date }}
+                                {% if form.scheduled_date.errors %}
+                                <div class="text-danger small mt-1">{{ form.scheduled_date.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="{{ form.scheduled_time.id_for_label }}" class="form-label">
+                                    {{ form.scheduled_time.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.scheduled_time }}
+                                {% if form.scheduled_time.errors %}
+                                <div class="text-danger small mt-1">{{ form.scheduled_time.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="{{ form.duration_minutes.id_for_label }}" class="form-label">
+                                    {{ form.duration_minutes.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.duration_minutes }}
+                                {% if form.duration_minutes.errors %}
+                                <div class="text-danger small mt-1">{{ form.duration_minutes.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Tipo de entrevista -->
+                        <h2 class="h5 mb-3">
+                            <i class="bi bi-camera-video text-primary me-2" aria-hidden="true"></i>
+                            Modalidad de la Entrevista
+                        </h2>
+
+                        <div class="mb-3">
+                            <label for="{{ form.interview_type.id_for_label }}" class="form-label">
+                                {{ form.interview_type.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.interview_type }}
+                            {% if form.interview_type.errors %}
+                            <div class="text-danger small mt-1">{{ form.interview_type.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Campos para entrevista en línea -->
+                        <div id="onlineFields" style="display: none;">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.platform.id_for_label }}" class="form-label">
+                                        {{ form.platform.label }}
+                                    </label>
+                                    {{ form.platform }}
+                                    {% if form.platform.errors %}
+                                    <div class="text-danger small mt-1">{{ form.platform.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="{{ form.meeting_id.id_for_label }}" class="form-label">
+                                        {{ form.meeting_id.label }}
+                                    </label>
+                                    {{ form.meeting_id }}
+                                    {% if form.meeting_id.errors %}
+                                    <div class="text-danger small mt-1">{{ form.meeting_id.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="{{ form.meeting_url.id_for_label }}" class="form-label">
+                                        {{ form.meeting_url.label }}
+                                    </label>
+                                    {{ form.meeting_url }}
+                                    {% if form.meeting_url.errors %}
+                                    <div class="text-danger small mt-1">{{ form.meeting_url.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="{{ form.meeting_password.id_for_label }}" class="form-label">
+                                        {{ form.meeting_password.label }}
+                                    </label>
+                                    {{ form.meeting_password }}
+                                    {% if form.meeting_password.errors %}
+                                    <div class="text-danger small mt-1">{{ form.meeting_password.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Campos para entrevista presencial -->
+                        <div id="inPersonFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="{{ form.location_address.id_for_label }}" class="form-label">
+                                    {{ form.location_address.label }}
+                                </label>
+                                {{ form.location_address }}
+                                {% if form.location_address.errors %}
+                                <div class="text-danger small mt-1">{{ form.location_address.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.location_instructions.id_for_label }}" class="form-label">
+                                    {{ form.location_instructions.label }}
+                                </label>
+                                {{ form.location_instructions }}
+                                {% if form.location_instructions.errors %}
+                                <div class="text-danger small mt-1">{{ form.location_instructions.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Opciones de accesibilidad -->
+                        <h2 class="h5 mb-3">
+                            <i class="bi bi-universal-access text-success me-2" aria-hidden="true"></i>
+                            Opciones de Accesibilidad
+                        </h2>
+
+                        <p class="text-muted small mb-3">
+                            Seleccione los requisitos de accesibilidad necesarios para esta entrevista
+                        </p>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    {{ form.requires_sign_language_interpreter }}
+                                    <label class="form-check-label" for="{{ form.requires_sign_language_interpreter.id_for_label }}">
+                                        {{ form.requires_sign_language_interpreter.label }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    {{ form.requires_accessible_location }}
+                                    <label class="form-check-label" for="{{ form.requires_accessible_location.id_for_label }}">
+                                        {{ form.requires_accessible_location.label }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    {{ form.requires_screen_reader_support }}
+                                    <label class="form-check-label" for="{{ form.requires_screen_reader_support.id_for_label }}">
+                                        {{ form.requires_screen_reader_support.label }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    {{ form.requires_captioning }}
+                                    <label class="form-check-label" for="{{ form.requires_captioning.id_for_label }}">
+                                        {{ form.requires_captioning.label }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.other_accessibility_needs.id_for_label }}" class="form-label">
+                                    {{ form.other_accessibility_needs.label }}
+                                </label>
+                                {{ form.other_accessibility_needs }}
+                                {% if form.other_accessibility_needs.errors %}
+                                <div class="text-danger small mt-1">{{ form.other_accessibility_needs.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Notas internas -->
+                        <h2 class="h5 mb-3">
+                            <i class="bi bi-pencil text-primary me-2" aria-hidden="true"></i>
+                            Notas Internas
+                        </h2>
+
+                        <div class="mb-4">
+                            <label for="{{ form.company_notes.id_for_label }}" class="form-label">
+                                {{ form.company_notes.label }}
+                            </label>
+                            {{ form.company_notes }}
+                            <div class="form-text">Estas notas no serán visibles para el candidato</div>
+                            {% if form.company_notes.errors %}
+                            <div class="text-danger small mt-1">{{ form.company_notes.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-calendar-check me-2" aria-hidden="true"></i>
+                                Programar Entrevista
+                            </button>
+                            <a href="{% url 'interviews:list' %}" class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Mostrar/ocultar campos según tipo de entrevista
+document.addEventListener('DOMContentLoaded', function() {
+    const typeSelect = document.getElementById('{{ form.interview_type.id_for_label }}');
+    const onlineFields = document.getElementById('onlineFields');
+    const inPersonFields = document.getElementById('inPersonFields');
+    
+    function toggleFields() {
+        const type = typeSelect.value;
+        onlineFields.style.display = type === 'online' || type === 'hybrid' ? 'block' : 'none';
+        inPersonFields.style.display = type === 'in_person' || type === 'hybrid' ? 'block' : 'none';
+    }
+    
+    typeSelect.addEventListener('change', toggleFields);
+    toggleFields(); // Ejecutar al cargar
+});
+</script>
+{% endblock %}

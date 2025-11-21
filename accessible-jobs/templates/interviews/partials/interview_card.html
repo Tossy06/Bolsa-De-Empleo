@@ -1,0 +1,81 @@
+<!-- Partial para mostrar una tarjeta de entrevista -->
+<div class="col-md-6 col-lg-4">
+    <div class="card border-0 shadow-sm h-100 {% if interview.status == 'confirmed' %}border-start border-success border-4{% elif interview.status == 'cancelled' %}border-start border-danger border-4{% elif interview.status == 'proposed' %}border-start border-warning border-4{% endif %}">
+        <div class="card-body">
+            <!-- Estado -->
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <h3 class="h6 mb-0">{{ interview.title }}</h3>
+                <span class="badge bg-{% if interview.status == 'confirmed' %}success{% elif interview.status == 'proposed' %}warning{% elif interview.status == 'cancelled' %}danger{% else %}secondary{% endif %}">
+                    {{ interview.get_status_display }}
+                </span>
+            </div>
+
+            <!-- Participante -->
+            <p class="text-muted small mb-2">
+                {% if user == interview.company %}
+                <i class="bi bi-person me-1" aria-hidden="true"></i>
+                {{ interview.candidate.get_full_name }}
+                {% else %}
+                <i class="bi bi-building me-1" aria-hidden="true"></i>
+                {{ interview.company.get_full_name }}
+                {% endif %}
+            </p>
+
+            <!-- Fecha y hora -->
+            <p class="mb-2">
+                <i class="bi bi-calendar3 text-primary me-2" aria-hidden="true"></i>
+                <strong>{{ interview.scheduled_date|date:"d/m/Y" }}</strong>
+            </p>
+            <p class="mb-2">
+                <i class="bi bi-clock text-primary me-2" aria-hidden="true"></i>
+                {{ interview.scheduled_time|time:"H:i" }} ({{ interview.duration_minutes }} min)
+            </p>
+
+            <!-- Tipo de entrevista -->
+            <p class="mb-2">
+                {% if interview.interview_type == 'online' %}
+                <i class="bi bi-camera-video text-info me-2" aria-hidden="true"></i>
+                {{ interview.get_interview_type_display }}
+                {% if interview.platform %}
+                - {{ interview.get_platform_display_with_icon }}
+                {% endif %}
+                {% elif interview.interview_type == 'in_person' %}
+                <i class="bi bi-geo-alt text-info me-2" aria-hidden="true"></i>
+                {{ interview.get_interview_type_display }}
+                {% else %}
+                <i class="bi bi-telephone text-info me-2" aria-hidden="true"></i>
+                {{ interview.get_interview_type_display }}
+                {% endif %}
+            </p>
+
+            <!-- Requisitos de accesibilidad -->
+            {% with accessibility=interview.get_accessibility_requirements_list %}
+            {% if accessibility %}
+            <div class="mb-2">
+                <small class="text-muted">
+                    <i class="bi bi-universal-access text-success me-1" aria-hidden="true"></i>
+                    {{ accessibility|length }} requisito{{ accessibility|length|pluralize }} de accesibilidad
+                </small>
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Confirmación -->
+            {% if interview.status == 'proposed' and user == interview.candidate and not interview.candidate_confirmed %}
+            <div class="alert alert-warning small py-2 mb-2" role="alert">
+                <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>
+                Pendiente de confirmación
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="card-footer bg-white border-0">
+            <div class="d-grid">
+                <a href="{% url 'interviews:detail' interview.pk %}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-eye me-1" aria-hidden="true"></i>
+                    Ver Detalles
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

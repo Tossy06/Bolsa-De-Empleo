@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Entrevista: {{ interview.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'interviews:list' %}">Entrevistas</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ interview.title|truncatewords:5 }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Columna principal -->
+        <div class="col-lg-8">
+            <!-- Encabezado -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="h4 mb-2">{{ interview.title }}</h1>
+                            {% if interview.job_title %}
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-briefcase me-1" aria-hidden="true"></i>
+                                {{ interview.job_title }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        <span class="badge bg-{% if interview.status == 'confirmed' %}success{% elif interview.status == 'proposed' %}warning{% elif interview.status == 'cancelled' %}danger{% else %}secondary{% endif %} fs-6">
+                            {{ interview.get_status_display }}
+                        </span>
+                    </div>
+
+                    <!-- Alerta de confirmación pendiente -->
+                    {% if interview.status == 'proposed' and user == interview.candidate and not interview.candidate_confirmed %}
+                    <div class="alert alert-warning" role="alert">
+                        <h2 class="h6 mb-2">
+                            <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>
+                            Acción Requerida
+                        </h2>
+                        <p class="mb-2">Esta entrevista está pendiente de tu confirmación.</p>
+                        <a href="{% url 'interviews:confirm' interview.pk %}" class="btn btn-sm btn-warning">
+                            <i class="bi bi-check-circle me-1" aria-hidden="true"></i>
+                            Confirmar Asistencia
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <!-- Descripción -->
+                    <div class="mt-3">
+                        <h2 class="h6 mb-2">Descripción</h2>
+                        <p class="mb-0">{{ interview.description }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detalles de la entrevista -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-calendar3 text-primary me-2" aria-hidden="true"></i>
+                        Detalles de la Entrevista
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Fecha:</dt>
+                        <dd class="col-sm-8">
+                            <strong>{{ interview.scheduled_date|date:"l, d \d\e F \d\e Y" }}</strong>
+                        </dd>
+
+                        <dt class="col-sm-4">Hora:</dt>
+                        <dd class="col-sm-8">
+                            <strong>{{ interview.scheduled_time|time:"H:i" }}</strong>
+                            ({{ interview.duration_minutes }} minutos)
+                        </dd>
+
+                        <dt class="col-sm-4">Tipo:</dt>
+                        <dd class="col-sm-8">
+                            {% if interview.interview_type == 'online' %}
+                            <i class="bi bi-camera-video text-info me-1" aria-hidden="true"></i>
+                            {% elif interview.interview_type == 'in_person' %}
+                            <i class="bi bi-geo-alt text-info me-1" aria-hidden="true"></i>
+                            {% else %}
+                            <i class="bi bi-telephone text-info me-1" aria-hidden="true"></i>
+                            {% endif %}
+                            {{ interview.get_interview_type_display }}
+                        </dd>
+
+                        {% if interview.interview_type == 'online' or interview.interview_type == 'hybrid' %}
+                        <dt class="col-sm-4">Plataforma:</dt>
+                        <dd class="col-sm-8">{{ interview.get_platform_display_with_icon }}</dd>
+
+                        {% if interview.meeting_url %}
+                        <dt class="col-sm-4">Link de reunión:</dt>
+                        <dd class="col-sm-8">
+                            <a href="{{ interview.meeting_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary">
+                                <i class="bi bi-box-arrow-up-right me-1" aria-hidden="true"></i>
+                                Unirse a la reunión
+                            </a>
+                        </dd>
+                        {% endif %}
+
+                        {% if interview.meeting_id %}
+                        <dt class="col-sm-4">ID de reunión:</dt>
+                        <dd class="col-sm-8">
+                            <code>{{ interview.meeting_id }}</code>
+                        </dd>
+                        {% endif %}
+
+                        {% if interview.meeting_password %}
+                        <dt class="col-sm-4">Contraseña:</dt>
+                        <dd class="col-sm-8">
+                            <code>{{ interview.meeting_password }}</code>
+                        </dd>
+                        {% endif %}
+                        {% endif %}
+
+                        {% if interview.interview_type == 'in_person' or interview.interview_type == 'hybrid' %}
+                        {% if interview.location_address %}
+                        <dt class="col-sm-4">Dirección:</dt>
+                        <dd class="col-sm-8">{{ interview.location_address }}</dd>
+                        {% endif %}
+
+                        {% if interview.location_instructions %}
+                        <dt class="col-sm-4">Instrucciones:</dt>
+                        <dd class="col-sm-8">{{ interview.location_instructions }}</dd>
+                        {% endif %}
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Requisitos de accesibilidad -->
+            {% with accessibility=interview.get_accessibility_requirements_list %}
+            {% if accessibility %}
+            <div class="card border-0 shadow-sm border-start border-success border-4 mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-universal-access text-success me-2" aria-hidden="true"></i>
+                        Requisitos de Accesibilidad
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        {% for requirement in accessibility %}
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2" aria-hidden="true"></i>
+                            {{ requirement }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Información de cancelación -->
+            {% if interview.status == 'cancelled' %}
+            <div class="card border-0 shadow-sm border-start border-danger border-4 mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-x-circle text-danger me-2" aria-hidden="true"></i>
+                        Información de Cancelación
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Cancelado por:</dt>
+                        <dd class="col-sm-8">{{ interview.cancelled_by.get_full_name }}</dd>
+
+                        <dt class="col-sm-4">Fecha de cancelación:</dt>
+                        <dd class="col-sm-8">{{ interview.cancelled_at|date:"d/m/Y H:i" }}</dd>
+
+                        {% if interview.cancellation_reason %}
+                        <dt class="col-sm-4">Razón:</dt>
+                        <dd class="col-sm-8">{{ interview.cancellation_reason }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Solicitudes de reprogramación -->
+            {% if reschedule_requests %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-clock-history text-primary me-2" aria-hidden="true"></i>
+                        Historial de Reprogramaciones
+                    </h2>
+                </div>
+                <div class="card-body">
+                    {% for request in reschedule_requests %}
+                    <div class="mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <strong>{{ request.requested_by.get_full_name }}</strong>
+                                <span class="badge bg-{% if request.status == 'accepted' %}success{% elif request.status == 'rejected' %}danger{% else %}warning{% endif %} ms-2">
+                                    {{ request.get_status_display }}
+                                </span>
+                            </div>
+                            <small class="text-muted">{{ request.created_at|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        <p class="mb-1 small">
+                            <strong>Nueva fecha propuesta:</strong> {{ request.proposed_date|date:"d/m/Y" }} a las {{ request.proposed_time|time:"H:i" }}
+                        </p>
+                        <p class="mb-1 small"><strong>Razón:</strong> {{ request.reason }}</p>
+                        {% if request.response %}
+                        <p class="mb-0 small text-muted"><strong>Respuesta:</strong> {{ request.response }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Notas internas (solo para empresa) -->
+            {% if user == interview.company and interview.company_notes %}
+            <div class="card border-0 shadow-sm bg-light mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-lock text-warning me-2" aria-hidden="true"></i>
+                        Notas Internas (Privadas)
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ interview.company_notes }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Columna lateral -->
+        <div class="col-lg-4">
+            <!-- Participante -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-person-circle text-primary me-2" aria-hidden="true"></i>
+                        {% if user == interview.company %}Candidato{% else %}Empresa{% endif %}
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        {% if user == interview.company %}
+                            {% if interview.candidate.profile_picture %}
+                            <img src="{{ interview.candidate.profile_picture.url }}" 
+                                 alt="Foto de {{ interview.candidate.get_full_name }}"
+                                 class="rounded-circle mb-2"
+                                 style="width: 80px; height: 80px; object-fit: cover;">
+                            {% else %}
+                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+                                 style="width: 80px; height: 80px;">
+                                <i class="bi bi-person-fill text-primary fs-1" aria-hidden="true"></i>
+                            </div>
+                            {% endif %}
+                            <h3 class="h6 mb-1">{{ interview.candidate.get_full_name }}</h3>
+                            <p class="text-muted small mb-0">Candidato</p>
+                        {% else %}
+                            <div class="bg-primary bg-opacity-10 rounded d-inline-flex align-items-center justify-content-center mb-2" 
+                                 style="width: 80px; height: 80px;">
+                                <i class="bi bi-building text-primary fs-1" aria-hidden="true"></i>
+                            </div>
+                            <h3 class="h6 mb-1">{{ interview.company.get_full_name }}</h3>
+                            <p class="text-muted small mb-0">Empresa</p>
+                        {% endif %}
+                    </div>
+                    
+                    <dl class="row mb-0 small">
+                        <dt class="col-5">Email:</dt>
+                        <dd class="col-7">
+                            {% if user == interview.company %}
+                            <a href="mailto:{{ interview.candidate.email }}">{{ interview.candidate.email }}</a>
+                            {% else %}
+                            <a href="mailto:{{ interview.company.email }}">{{ interview.company.email }}</a>
+                            {% endif %}
+                        </dd>
+                        
+                        {% if user == interview.company and interview.candidate.phone_number %}
+                        <dt class="col-5">Teléfono:</dt>
+                        <dd class="col-7">{{ interview.candidate.phone_number }}</dd>
+                        {% elif user == interview.candidate and interview.company.phone_number %}
+                        <dt class="col-5">Teléfono:</dt>
+                        <dd class="col-7">{{ interview.company.phone_number }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Estado de confirmación -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-check2-square text-primary me-2" aria-hidden="true"></i>
+                        Estado de Confirmación
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        {% if interview.company_confirmed %}
+                        <i class="bi bi-check-circle-fill text-success me-2" aria-hidden="true"></i>
+                        {% else %}
+                        <i class="bi bi-circle text-muted me-2" aria-hidden="true"></i>
+                        {% endif %}
+                        Empresa confirmada
+                    </div>
+                    <div>
+                        {% if interview.candidate_confirmed %}
+                        <i class="bi bi-check-circle-fill text-success me-2" aria-hidden="true"></i>
+                        {% else %}
+                        <i class="bi bi-circle text-muted me-2" aria-hidden="true"></i>
+                        {% endif %}
+                        Candidato confirmado
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-lightning text-primary me-2" aria-hidden="true"></i>
+                        Acciones
+                    </h2>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% if can_confirm %}
+                    <a href="{% url 'interviews:confirm' interview.pk %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-check-circle text-success me-2" aria-hidden="true"></i>
+                        Confirmar Asistencia
+                    </a>
+                    {% endif %}
+
+                    {% if can_reschedule %}
+                    <a href="{% url 'interviews:reschedule' interview.pk %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-clock-history text-warning me-2" aria-hidden="true"></i>
+                        Solicitar Reprogramación
+                    </a>
+                    {% endif %}
+
+                    {% if can_cancel %}
+                    <a href="{% url 'interviews:cancel' interview.pk %}" class="list-group-item list-group-item-action text-danger">
+                        <i class="bi bi-x-circle me-2" aria-hidden="true"></i>
+                        Cancelar Entrevista
+                    </a>
+                    {% endif %}
+
+                    <a href="{% url 'interviews:list' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>
+                        Volver a la lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -53,11 +53,11 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="bg-warning bg-opacity-10 rounded p-3 me-3">
-                            <i class="bi bi-eye text-warning fs-4" aria-hidden="true"></i>
+                            <i class="bi bi-calendar-check text-warning fs-4" aria-hidden="true"></i>
                         </div>
                         <div>
-                            <h6 class="mb-1 text-muted small">Vistas de Ofertas</h6>
-                            <h3 class="mb-0">{{ job_views_count }}</h3>
+                            <h6 class="mb-1 text-muted small">Entrevistas</h6>
+                            <h3 class="mb-0">{{ upcoming_interviews_count|default:0 }}</h3>
                         </div>
                     </div>
                 </div>
@@ -69,11 +69,11 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="bg-info bg-opacity-10 rounded p-3 me-3">
-                            <i class="bi bi-bell text-info fs-4" aria-hidden="true"></i>
+                            <i class="bi bi-envelope text-info fs-4" aria-hidden="true"></i>
                         </div>
                         <div>
-                            <h6 class="mb-1 text-muted small">Notificaciones</h6>
-                            <h3 class="mb-0">{{ notifications_count }}</h3>
+                            <h6 class="mb-1 text-muted small">Mensajes</h6>
+                            <h3 class="mb-0">{{ unread_messages_count|default:0 }}</h3>
                         </div>
                     </div>
                 </div>
@@ -169,7 +169,7 @@
         </div>
     </div>
 
-    <!-- ✨ NUEVA SECCIÓN: Biblioteca de Mejores Prácticas -->
+    <!-- ✨ SECCIÓN: Biblioteca de Mejores Prácticas -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm border-start border-success border-4">
@@ -210,6 +210,167 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✨ NUEVA SECCIÓN: Próximas Entrevistas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="h5 mb-0">
+                            <i class="bi bi-calendar-check text-primary me-2" aria-hidden="true"></i>
+                            Próximas Entrevistas
+                            {% if upcoming_interviews_count > 0 %}
+                            <span class="badge bg-primary">{{ upcoming_interviews_count }}</span>
+                            {% endif %}
+                        </h2>
+                        <div>
+                            <a href="{% url 'interviews:schedule' %}" class="btn btn-sm btn-primary me-2">
+                                <i class="bi bi-plus-circle" aria-hidden="true"></i>
+                                Programar Entrevista
+                            </a>
+                            <a href="{% url 'interviews:list' %}" class="btn btn-sm btn-outline-primary">
+                                Ver todas
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_interviews %}
+                    <div class="list-group list-group-flush">
+                        {% for interview in upcoming_interviews %}
+                        <a href="{% url 'interviews:detail' interview.pk %}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <h3 class="h6 mb-0 me-2">{{ interview.title }}</h3>
+                                        <span class="badge bg-{% if interview.status == 'confirmed' %}success{% else %}warning{% endif %}">
+                                            {{ interview.get_status_display }}
+                                        </span>
+                                    </div>
+                                    <p class="mb-1 small text-muted">
+                                        <i class="bi bi-person me-1" aria-hidden="true"></i>
+                                        {{ interview.candidate.get_full_name }}
+                                        {% if interview.job_title %}
+                                        | <i class="bi bi-briefcase me-1" aria-hidden="true"></i>{{ interview.job_title }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-0 small">
+                                        <i class="bi bi-calendar3 text-primary me-1" aria-hidden="true"></i>
+                                        {{ interview.scheduled_date|date:"d/m/Y" }} a las {{ interview.scheduled_time|time:"H:i" }}
+                                        {% if interview.interview_type == 'online' %}
+                                        <i class="bi bi-camera-video text-info ms-2" aria-hidden="true"></i>
+                                        En línea
+                                        {% elif interview.interview_type == 'in_person' %}
+                                        <i class="bi bi-geo-alt text-info ms-2" aria-hidden="true"></i>
+                                        Presencial
+                                        {% endif %}
+                                    </p>
+                                    {% if interview.get_accessibility_requirements_list %}
+                                    <small class="text-success">
+                                        <i class="bi bi-universal-access me-1" aria-hidden="true"></i>
+                                        {{ interview.get_accessibility_requirements_list|length }} requisito{{ interview.get_accessibility_requirements_list|length|pluralize }} de accesibilidad
+                                    </small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-calendar-x text-muted" style="font-size: 4rem; opacity: 0.3;" aria-hidden="true"></i>
+                        <h3 class="h6 mt-3 mb-2">No tienes entrevistas próximas</h3>
+                        <p class="text-muted mb-3">
+                            Programa entrevistas con candidatos para tu proceso de selección
+                        </p>
+                        <a href="{% url 'interviews:schedule' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+                            Programar Primera Entrevista
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✨ SECCIÓN: Mensajes con Candidatos -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="h5 mb-0">
+                            <i class="bi bi-envelope text-primary me-2" aria-hidden="true"></i>
+                            Mensajes con Candidatos
+                            {% if unread_messages_count > 0 %}
+                            <span class="badge bg-danger">{{ unread_messages_count }} nuevos</span>
+                            {% endif %}
+                        </h2>
+                        <div>
+                            <a href="{% url 'messaging:start_conversation' %}" class="btn btn-sm btn-primary me-2">
+                                <i class="bi bi-plus-circle" aria-hidden="true"></i>
+                                Nuevo Mensaje
+                            </a>
+                            <a href="{% url 'messaging:inbox' %}" class="btn btn-sm btn-outline-primary">
+                                Ver todos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if recent_conversations %}
+                    <div class="list-group list-group-flush">
+                        {% for conversation in recent_conversations %}
+                        <a href="{% url 'messaging:conversation_detail' conversation.pk %}" 
+                           class="list-group-item list-group-item-action {% if conversation.get_unread_count_for_company > 0 %}list-group-item-primary{% endif %}">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <h3 class="h6 mb-0 me-2">{{ conversation.subject }}</h3>
+                                        {% if conversation.get_unread_count_for_company > 0 %}
+                                        <span class="badge bg-danger">{{ conversation.get_unread_count_for_company }} nuevos</span>
+                                        {% endif %}
+                                    </div>
+                                    <p class="mb-1 small text-muted">
+                                        <i class="bi bi-person me-1" aria-hidden="true"></i>
+                                        {{ conversation.candidate.get_full_name }}
+                                        {% if conversation.job_title %}
+                                        | <i class="bi bi-briefcase me-1" aria-hidden="true"></i>{{ conversation.job_title }}
+                                        {% endif %}
+                                    </p>
+                                    {% with last_message=conversation.get_last_message %}
+                                    {% if last_message %}
+                                    <p class="mb-0 small text-muted">
+                                        {{ last_message.content|truncatewords:15 }}
+                                    </p>
+                                    {% endif %}
+                                    {% endwith %}
+                                </div>
+                                <small class="text-muted">{{ conversation.updated_at|timesince }} atrás</small>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox text-muted" style="font-size: 4rem; opacity: 0.3;" aria-hidden="true"></i>
+                        <h3 class="h6 mt-3 mb-2">No tienes mensajes</h3>
+                        <p class="text-muted mb-3">
+                            Comienza una conversación con candidatos para coordinar entrevistas.
+                        </p>
+                        <a href="{% url 'messaging:start_conversation' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+                            Enviar Mensaje
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -341,21 +502,32 @@
                     <a href="{% url 'company:create_job' %}" class="list-group-item list-group-item-action">
                         <i class="bi bi-plus me-2" aria-hidden="true"></i> Crear Oferta
                     </a>
+                    <a href="{% url 'interviews:schedule' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-calendar-plus me-2" aria-hidden="true"></i> Programar Entrevista
+                    </a>
+                    <a href="{% url 'interviews:list' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-calendar-check me-2" aria-hidden="true"></i> Mis Entrevistas
+                        {% if upcoming_interviews_count > 0 %}
+                        <span class="badge bg-primary float-end">{{ upcoming_interviews_count }}</span>
+                        {% endif %}
+                    </a>
                     <a href="{% url 'company:quota_compliance' %}" class="list-group-item list-group-item-action">
                         <i class="bi bi-graph-up-arrow me-2" aria-hidden="true"></i> Dashboard de Cuotas
                     </a>
                     <a href="{% url 'company:hiring_reports' %}" class="list-group-item list-group-item-action">
                         <i class="bi bi-file-earmark-text me-2" aria-hidden="true"></i> Informes al Ministerio
                     </a>
-                    <!-- ✨ NUEVO ENLACE -->
                     <a href="{% url 'library:home' %}" class="list-group-item list-group-item-action">
                         <i class="bi bi-book me-2" aria-hidden="true"></i> Biblioteca de Recursos
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <i class="bi bi-person-check me-2" aria-hidden="true"></i> Ver Postulaciones
+                    <a href="{% url 'messaging:inbox' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-envelope me-2" aria-hidden="true"></i> Mensajes
+                        {% if unread_messages_count > 0 %}
+                        <span class="badge bg-danger float-end">{{ unread_messages_count }}</span>
+                        {% endif %}
                     </a>
                     <a href="#" class="list-group-item list-group-item-action">
-                        <i class="bi bi-bell me-2" aria-hidden="true"></i> Notificaciones
+                        <i class="bi bi-person-check me-2" aria-hidden="true"></i> Ver Postulaciones
                     </a>
                     <a href="{% url 'core:dashboard' %}" class="list-group-item list-group-item-action">
                         <i class="bi bi-building me-2" aria-hidden="true"></i> Perfil Empresa

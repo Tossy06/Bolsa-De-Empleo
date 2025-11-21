@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Estado de Denuncia #{{ complaint.tracking_code }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'complaints:home' %}">Canal de Denuncias</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'complaints:track' %}">Rastrear</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Denuncia #{{ complaint.tracking_code }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Encabezado -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h1 class="h4 mb-2">Denuncia #{{ complaint.tracking_code }}</h1>
+                            <p class="text-muted mb-0">
+                                {{ complaint.get_complaint_type_display }}
+                            </p>
+                        </div>
+                        <span class="badge bg-{{ complaint.get_status_badge_class }} fs-6">
+                            {{ complaint.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detalles de la denuncia -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-file-text text-primary me-2" aria-hidden="true"></i>
+                        Detalles de la Denuncia
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Asunto:</dt>
+                        <dd class="col-sm-8">{{ complaint.subject }}</dd>
+
+                        <dt class="col-sm-4">Descripción:</dt>
+                        <dd class="col-sm-8">{{ complaint.description }}</dd>
+
+                        <dt class="col-sm-4">Empresa:</dt>
+                        <dd class="col-sm-8">{{ complaint.company_name|default:"No especificada" }}</dd>
+
+                        {% if complaint.job_posting_url %}
+                        <dt class="col-sm-4">URL de oferta:</dt>
+                        <dd class="col-sm-8">
+                            <a href="{{ complaint.job_posting_url }}" target="_blank" rel="noopener noreferrer">
+                                Ver oferta <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i>
+                            </a>
+                        </dd>
+                        {% endif %}
+
+                        <dt class="col-sm-4">Fecha de registro:</dt>
+                        <dd class="col-sm-8">{{ complaint.created_at|date:"d/m/Y H:i" }}</dd>
+
+                        <dt class="col-sm-4">Días transcurridos:</dt>
+                        <dd class="col-sm-8">{{ complaint.get_days_since_filed }} días</dd>
+
+                        <dt class="col-sm-4">Prioridad:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-secondary">{{ complaint.get_priority_display }}</span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Respuesta del administrador (si existe) -->
+            {% if complaint.admin_response %}
+            <div class="card border-0 shadow-sm mb-4 border-start border-success border-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-reply-fill text-success me-2" aria-hidden="true"></i>
+                        Respuesta Oficial
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ complaint.admin_response }}</p>
+                    {% if complaint.resolved_at %}
+                    <small class="text-muted d-block mt-2">
+                        Resuelta el {{ complaint.resolved_at|date:"d/m/Y H:i" }}
+                    </small>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Historial de estados -->
+            {% if status_history %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-clock-history text-primary me-2" aria-hidden="true"></i>
+                        Historial de Estados
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        {% for history in status_history %}
+                        <div class="mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="badge bg-{{ history.complaint.get_status_badge_class }} me-2">
+                                        {{ history.new_status }}
+                                    </span>
+                                    {% if history.reason %}
+                                    <p class="small text-muted mt-2 mb-0">{{ history.reason }}</p>
+                                    {% endif %}
+                                </div>
+                                <small class="text-muted">{{ history.created_at|date:"d/m/Y H:i" }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Información sobre el proceso -->
+            <div class="alert alert-light" role="alert">
+                <h3 class="h6 mb-2">
+                    <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+                    Sobre el Proceso
+                </h3>
+                <ul class="small mb-0">
+                    <li>Las denuncias son revisadas en orden de llegada y prioridad.</li>
+                    <li>El tiempo promedio de respuesta es de 5-10 días hábiles.</li>
+                    <li>Si necesitamos información adicional, nos comunicaremos con usted (si proporcionó datos de contacto).</li>
+                    <li>Puede volver a consultar el estado en cualquier momento usando su código de seguimiento.</li>
+                </ul>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="d-grid gap-2">
+                <a href="{% url 'complaints:track' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-search me-2" aria-hidden="true"></i>
+                    Rastrear Otra Denuncia
+                </a>
+                <a href="{% url 'complaints:home' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-house me-2" aria-hidden="true"></i>
+                    Volver al Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

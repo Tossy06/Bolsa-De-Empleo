@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'hcaptcha',
     'rest_framework',
     'django_extensions',
-    'honeypot',          # si usas django-honeypot
+    'honeypot',          
 
     # Apss
     'accounts',
@@ -65,7 +65,17 @@ INSTALLED_APPS = [
     'admin_jobs',
     'training',
     'library',
+    'complaints',
+    'messaging',
+    'interviews',
 ]
+
+# Configuración de email para notificaciones
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  
+# En producción usar SMTP real
+
+# Email para notificaciones de denuncias
+ADMIN_EMAIL = 'admin@accessible-jobs.com'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
