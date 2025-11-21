@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Estadísticas de Biblioteca - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Estadísticas de Biblioteca</li>
+        </ol>
+    </nav>
+
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-2">
+                <i class="bi bi-graph-up text-primary me-2" aria-hidden="true"></i>
+                Estadísticas de la Biblioteca de Mejores Prácticas
+            </h1>
+            <p class="text-muted">Monitorea el uso y popularidad de los recursos</p>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-file-earmark-text text-primary fs-3" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted small mb-1">Total Recursos</h6>
+                            <h3 class="mb-0">{{ total_resources }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-info bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-folder text-info fs-3" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted small mb-1">Categorías</h6>
+                            <h3 class="mb-0">{{ total_categories }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-download text-success fs-3" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted small mb-1">Total Descargas</h6>
+                            <h3 class="mb-0">{{ total_downloads }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-eye text-warning fs-3" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted small mb-1">Total Vistas</h6>
+                            <h3 class="mb-0">{{ total_views }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recursos más populares -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-star text-warning me-2" aria-hidden="true"></i>
+                        Top 10 Recursos Más Descargados
+                    </h2>
+                </div>
+                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                    {% if top_resources %}
+                    <div class="list-group list-group-flush">
+                        {% for resource in top_resources %}
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h3 class="h6 mb-1">{{ resource.title }}</h3>
+                                    <small class="text-muted">
+                                        <i class="bi bi-folder me-1" aria-hidden="true"></i>
+                                        {{ resource.category.name }}
+                                    </small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-success">{{ resource.download_count }} descargas</span>
+                                    <br>
+                                    <small class="text-muted">{{ resource.view_count }} vistas</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">No hay datos disponibles</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas por categoría -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-pie-chart text-primary me-2" aria-hidden="true"></i>
+                        Uso por Categoría
+                    </h2>
+                </div>
+                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                    {% if category_stats %}
+                    <div class="list-group list-group-flush">
+                        {% for category in category_stats %}
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h3 class="h6 mb-0">{{ category.name }}</h3>
+                                <span class="badge bg-primary">{{ category.resources_count }} recursos</span>
+                            </div>
+                            <div class="row text-center small">
+                                <div class="col-6">
+                                    <div class="text-muted">Vistas</div>
+                                    <strong>{{ category.total_views|default:0 }}</strong>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-muted">Descargas</div>
+                                    <strong>{{ category.total_downloads|default:0 }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">No hay datos disponibles</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usuarios más activos -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-people text-success me-2" aria-hidden="true"></i>
+                        Empresas Más Activas (Top 10)
+                    </h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Empresa</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Recursos Guardados</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if active_users %}
+                            {% for user in active_users %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ user.get_full_name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ user.bookmarks_count }} marcadores</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    No hay datos de usuarios activos
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

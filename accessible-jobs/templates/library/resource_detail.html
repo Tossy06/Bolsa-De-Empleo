@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ resource.title }} - Biblioteca{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'library:home' %}">Biblioteca</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'library:category_detail' resource.category.slug %}">{{ resource.category.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ resource.title|truncatewords:5 }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Contenido principal -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <!-- Encabezado -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-primary me-2">{{ resource.get_resource_type_display }}</span>
+                            {% if resource.is_accessible %}
+                            <span class="badge bg-success">
+                                <i class="bi bi-universal-access me-1" aria-hidden="true"></i>
+                                Accesible
+                            </span>
+                            {% endif %}
+                            {% if resource.is_featured %}
+                            <span class="badge bg-warning">Destacado</span>
+                            {% endif %}
+                        </div>
+                        
+                        <button type="button" 
+                                class="btn btn-sm {% if is_bookmarked %}btn-success{% else %}btn-outline-secondary{% endif %}" 
+                                id="bookmarkButton"
+                                data-resource-slug="{{ resource.slug }}">
+                            <i class="bi {% if is_bookmarked %}bi-bookmark-fill{% else %}bi-bookmark{% endif %} me-1" aria-hidden="true"></i>
+                            <span id="bookmarkText">{% if is_bookmarked %}Guardado{% else %}Guardar{% endif %}</span>
+                        </button>
+                    </div>
+
+                    <h1 class="h3 mb-3">{{ resource.title }}</h1>
+
+                    <!-- Metadatos -->
+                    <div class="d-flex gap-3 text-muted small mb-4">
+                        <span>
+                            <i class="bi bi-folder me-1" aria-hidden="true"></i>
+                            {{ resource.category.name }}
+                        </span>
+                        {% if resource.author %}
+                        <span>
+                            <i class="bi bi-person me-1" aria-hidden="true"></i>
+                            {{ resource.author }}
+                        </span>
+                        {% endif %}
+                        {% if resource.publication_date %}
+                        <span>
+                            <i class="bi bi-calendar me-1" aria-hidden="true"></i>
+                            {{ resource.publication_date|date:"d/m/Y" }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex gap-3 mb-4">
+                        <small class="text-muted">
+                            <i class="bi bi-eye me-1" aria-hidden="true"></i>
+                            {{ resource.view_count }} vistas
+                        </small>
+                        <small class="text-muted">
+                            <i class="bi bi-download me-1" aria-hidden="true"></i>
+                            {{ resource.download_count }} descargas
+                        </small>
+                    </div>
+
+                    <hr>
+
+                    <!-- Descripción -->
+                    <h2 class="h5 mb-3">Descripción</h2>
+                    <p class="text-muted mb-4">{{ resource.description }}</p>
+
+                    <!-- Contenido completo -->
+                    {% if resource.content %}
+                    <div class="mb-4">
+                        <h2 class="h5 mb-3">Contenido</h2>
+                        <div class="content-area">
+                            {{ resource.content|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Etiquetas -->
+                    {% if resource.tags %}
+                    <div class="mb-4">
+                        <h2 class="h6 mb-2">Etiquetas</h2>
+                        <div class="d-flex gap-2 flex-wrap">
+                            {% for tag in resource.get_tags_list %}
+                            <span class="badge bg-secondary">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Accesibilidad -->
+                    {% if resource.accessibility_notes %}
+                    <div class="alert alert-info" role="alert">
+                        <h2 class="h6 mb-2">
+                            <i class="bi bi-universal-access me-2" aria-hidden="true"></i>
+                            Notas de Accesibilidad
+                        </h2>
+                        <p class="mb-0 small">{{ resource.accessibility_notes }}</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Acciones -->
+                    <div class="d-grid gap-2 d-md-flex">
+                        {% if resource.file %}
+                        <a href="{% url 'library:download_resource' resource.slug %}" class="btn btn-success btn-lg">
+                            <i class="bi bi-download me-2" aria-hidden="true"></i>
+                            Descargar Archivo ({{ resource.get_file_size_display }})
+                        </a>
+                        {% endif %}
+
+                        {% if resource.external_url %}
+                        <a href="{{ resource.external_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-box-arrow-up-right me-2" aria-hidden="true"></i>
+                            Abrir Enlace Externo
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Información adicional -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">Información del Recurso</h2>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2">
+                            <strong>Categoría:</strong><br>
+                            <a href="{% url 'library:category_detail' resource.category.slug %}">
+                                {{ resource.category.name }}
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <strong>Tipo:</strong><br>
+                            {{ resource.get_resource_type_display }}
+                        </li>
+                        {% if resource.author %}
+                        <li class="mb-2">
+                            <strong>Autor/Fuente:</strong><br>
+                            {{ resource.author }}
+                        </li>
+                        {% endif %}
+                        {% if resource.publication_date %}
+                        <li class="mb-2">
+                            <strong>Fecha de publicación:</strong><br>
+                            {{ resource.publication_date|date:"d/m/Y" }}
+                        </li>
+                        {% endif %}
+                        <li class="mb-0">
+                            <strong>Agregado el:</strong><br>
+                            {{ resource.created_at|date:"d/m/Y" }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Recursos relacionados -->
+            {% if related_resources %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-link-45deg text-primary me-2" aria-hidden="true"></i>
+                        Recursos Relacionados
+                    </h2>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for related in related_resources %}
+                    <a href="{% url 'library:resource_detail' related.slug %}" 
+                       class="list-group-item list-group-item-action">
+                        <h3 class="h6 mb-1">{{ related.title }}</h3>
+                        <small class="text-muted">{{ related.get_resource_type_display }}</small>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% csrf_token %}
+
+<!-- Script para marcadores -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const bookmarkButton = document.getElementById('bookmarkButton');
+    const bookmarkText = document.getElementById('bookmarkText');
+    
+    if (bookmarkButton) {
+        bookmarkButton.addEventListener('click', function() {
+            const resourceSlug = this.dataset.resourceSlug;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            fetch(`/biblioteca/recurso/${resourceSlug}/marcar/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.bookmarked) {
+                        bookmarkButton.classList.remove('btn-outline-secondary');
+                        bookmarkButton.classList.add('btn-success');
+                        bookmarkButton.querySelector('i').classList.remove('bi-bookmark');
+                        bookmarkButton.querySelector('i').classList.add('bi-bookmark-fill');
+                        bookmarkText.textContent = 'Guardado';
+                    } else {
+                        bookmarkButton.classList.remove('btn-success');
+                        bookmarkButton.classList.add('btn-outline-secondary');
+                        bookmarkButton.querySelector('i').classList.remove('bi-bookmark-fill');
+                        bookmarkButton.querySelector('i').classList.add('bi-bookmark');
+                        bookmarkText.textContent = 'Guardar';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocurrió un error al guardar el marcador.');
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

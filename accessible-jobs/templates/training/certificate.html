@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Certificado - {{ enrollment.course.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'training:my_courses' %}">Mis Cursos</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Certificado</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Certificado -->
+            <div class="card border-0 shadow-lg" style="border-radius: 15px; overflow: hidden;">
+                <!-- Encabezado decorativo -->
+                <div class="bg-primary text-white py-4 px-5 position-relative" 
+                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <i class="bi bi-award-fill" style="font-size: 4rem;" aria-hidden="true"></i>
+                        </div>
+                        <div class="col">
+                            <h1 class="h3 mb-1">Certificado de Finalización</h1>
+                            <p class="mb-0 opacity-75">Formación en Habilidades Sociales</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenido del certificado -->
+                <div class="card-body p-5">
+                    <div class="text-center mb-5">
+                        <p class="text-muted mb-4">Este certificado se otorga a</p>
+                        
+                        <h2 class="display-5 fw-bold mb-4" style="color: #667eea;">
+                            {{ enrollment.candidate.get_full_name }}
+                        </h2>
+                        
+                        <p class="text-muted mb-4">
+                            Por haber completado exitosamente el curso
+                        </p>
+                        
+                        <h3 class="h4 mb-5">
+                            {{ enrollment.course.title }}
+                        </h3>
+
+                        <!-- Detalles del curso -->
+                        <div class="row justify-content-center mb-5">
+                            <div class="col-md-8">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="border rounded p-3">
+                                            <i class="bi bi-calendar-check text-primary fs-4" aria-hidden="true"></i>
+                                            <p class="small text-muted mb-1 mt-2">Fecha de finalización</p>
+                                            <p class="mb-0 fw-semibold">{{ enrollment.completed_at|date:"d/m/Y" }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="border rounded p-3">
+                                            <i class="bi bi-clock text-primary fs-4" aria-hidden="true"></i>
+                                            <p class="small text-muted mb-1 mt-2">Duración</p>
+                                            <p class="mb-0 fw-semibold">{{ enrollment.course.duration_hours }} horas</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="border rounded p-3">
+                                            <i class="bi bi-star-fill text-warning fs-4" aria-hidden="true"></i>
+                                            <p class="small text-muted mb-1 mt-2">Categoría</p>
+                                            <p class="mb-0 fw-semibold">{{ enrollment.course.get_category_display }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Número de certificado -->
+                        <div class="mb-4">
+                            <p class="small text-muted mb-1">Número de Certificado</p>
+                            <p class="h5 font-monospace">{{ enrollment.certificate_number }}</p>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button onclick="window.print()" class="btn btn-primary">
+                                <i class="bi bi-printer me-2" aria-hidden="true"></i>
+                                Imprimir Certificado
+                            </button>
+                            <a href="{% url 'training:my_courses' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>
+                                Volver a Mis Cursos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pie del certificado -->
+                <div class="bg-light py-3 px-5 text-center border-top">
+                    <p class="small text-muted mb-0">
+                        <i class="bi bi-shield-check text-success me-1" aria-hidden="true"></i>
+                        Este certificado puede ser verificado con el número proporcionado
+                    </p>
+                </div>
+            </div>
+
+            <!-- Compartir (opcional) -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body text-center">
+                    <h3 class="h6 mb-3">
+                        <i class="bi bi-share text-primary me-2" aria-hidden="true"></i>
+                        Comparte tu logro
+                    </h3>
+                    <p class="text-muted small mb-3">
+                        Añade este certificado a tu perfil de LinkedIn o compártelo en redes sociales
+                    </p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button class="btn btn-sm btn-outline-primary" disabled>
+                            <i class="bi bi-linkedin" aria-hidden="true"></i>
+                            LinkedIn
+                        </button>
+                        <button class="btn btn-sm btn-outline-info" disabled>
+                            <i class="bi bi-twitter" aria-hidden="true"></i>
+                            Twitter
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" disabled>
+                            <i class="bi bi-whatsapp" aria-hidden="true"></i>
+                            WhatsApp
+                        </button>
+                    </div>
+                    <p class="small text-muted mt-2 mb-0">
+                        <em>Funcionalidad de compartir en desarrollo</em>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos de impresión -->
+<style>
+@media print {
+    .breadcrumb,
+    .btn,
+    nav,
+    footer,
+    .card:last-child {
+        display: none !important;
+    }
+    
+    .card {
+        box-shadow: none !important;
+        border: 2px solid #667eea !important;
+    }
+}
+</style>
+{% endblock %}

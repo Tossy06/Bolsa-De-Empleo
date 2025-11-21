@@ -81,7 +81,7 @@
         </div>
     </div>
 
-    <!-- NUEVA SECCIÓN: Cumplimiento de Cuotas de Empleo -->
+    <!-- SECCIÓN: Cumplimiento de Cuotas de Empleo -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm border-start border-primary border-4">
@@ -90,12 +90,12 @@
                         <div class="col-lg-1 text-center mb-3 mb-lg-0">
                             <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" 
                                  style="width: 60px; height: 60px;">
-                                <i class="bi bi-graph-up-arrow text-primary fs-3"></i>
+                                <i class="bi bi-graph-up-arrow text-primary fs-3" aria-hidden="true"></i>
                             </div>
                         </div>
                         <div class="col-lg-7 mb-3 mb-lg-0">
                             <h5 class="mb-2">
-                                <i class="bi bi-clipboard-data text-primary me-2"></i>
+                                <i class="bi bi-clipboard-data text-primary me-2" aria-hidden="true"></i>
                                 Cumplimiento de Cuotas de Empleo
                                 <span class="badge bg-primary ms-2">Ley 2466/2025</span>
                             </h5>
@@ -104,15 +104,15 @@
                                 Visualice métricas, históricos y genere reportes para el Ministerio de Trabajo.
                             </p>
                             <ul class="list-unstyled mb-0 small text-muted">
-                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Dashboard con métricas en tiempo real</li>
-                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Gráficos de evolución histórica</li>
-                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Exportación a PDF y Excel</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Dashboard con métricas en tiempo real</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Gráficos de evolución histórica</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Exportación a PDF y Excel</li>
                             </ul>
                         </div>
                         <div class="col-lg-4 text-lg-end">
                             <div class="d-grid gap-2">
                                 <a href="{% url 'company:quota_compliance' %}" class="btn btn-primary">
-                                    <i class="bi bi-graph-up me-2"></i>
+                                    <i class="bi bi-graph-up me-2" aria-hidden="true"></i>
                                     Ver Dashboard de Cuotas
                                 </a>
                             </div>
@@ -123,7 +123,7 @@
         </div>
     </div>
 
-    <!-- NUEVA SECCIÓN: Informes de Contratación -->
+    <!-- SECCIÓN: Informes de Contratación -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm border-start border-info border-4">
@@ -132,12 +132,12 @@
                         <div class="col-lg-1 text-center mb-3 mb-lg-0">
                             <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" 
                                  style="width: 60px; height: 60px;">
-                                <i class="bi bi-file-earmark-text text-info fs-3"></i>
+                                <i class="bi bi-file-earmark-text text-info fs-3" aria-hidden="true"></i>
                             </div>
                         </div>
                         <div class="col-lg-7 mb-3 mb-lg-0">
                             <h5 class="mb-2">
-                                <i class="bi bi-shield-check text-info me-2"></i>
+                                <i class="bi bi-shield-check text-info me-2" aria-hidden="true"></i>
                                 Informes de Contratación al Ministerio
                                 <span class="badge bg-info ms-2">Ley 2466/2025</span>
                             </h5>
@@ -146,20 +146,66 @@
                                 automáticos para el Ministerio de Trabajo con firma digital.
                             </p>
                             <ul class="list-unstyled mb-0 small text-muted">
-                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Generación automática de PDF y XML</li>
-                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Firma digital certificada</li>
-                                <li><i class="bi bi-check-circle-fill text-success me-1"></i> Protección de datos personales</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Generación automática de PDF y XML</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Firma digital certificada</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Protección de datos personales</li>
                             </ul>
                         </div>
                         <div class="col-lg-4 text-lg-end">
                             <div class="d-grid gap-2">
                                 <a href="{% url 'company:hiring_reports' %}" class="btn btn-info">
-                                    <i class="bi bi-list-ul me-2"></i>
+                                    <i class="bi bi-list-ul me-2" aria-hidden="true"></i>
                                     Ver Mis Informes
                                 </a>
                                 <a href="{% url 'company:create_hiring_report' %}" class="btn btn-outline-info">
-                                    <i class="bi bi-plus-circle me-2"></i>
+                                    <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
                                     Registrar Contratación
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✨ NUEVA SECCIÓN: Biblioteca de Mejores Prácticas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm border-start border-success border-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-lg-1 text-center mb-3 mb-lg-0">
+                            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px;">
+                                <i class="bi bi-book text-success fs-3" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 mb-3 mb-lg-0">
+                            <h5 class="mb-2">
+                                <i class="bi bi-book-half text-success me-2" aria-hidden="true"></i>
+                                Biblioteca de Mejores Prácticas
+                                <span class="badge bg-success ms-2">Inclusión Laboral</span>
+                            </h5>
+                            <p class="text-muted mb-2 small">
+                                Accede a guías, plantillas, checklists y casos de éxito sobre inclusión laboral. 
+                                Aprende a implementar políticas de reclutamiento inclusivo, onboarding accesible y más.
+                            </p>
+                            <ul class="list-unstyled mb-0 small text-muted">
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Recursos categorizados y buscables</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Documentos descargables en PDF</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Compatible con lectores de pantalla</li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 text-lg-end">
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'library:home' %}" class="btn btn-success">
+                                    <i class="bi bi-book me-2" aria-hidden="true"></i>
+                                    Explorar Biblioteca
+                                </a>
+                                <a href="{% url 'library:my_bookmarks' %}" class="btn btn-outline-success">
+                                    <i class="bi bi-bookmark me-2" aria-hidden="true"></i>
+                                    Mis Marcadores
                                 </a>
                             </div>
                         </div>
@@ -217,9 +263,6 @@
                         </div>
                     {% endfor %}
                 </div>
-                
-                
-                
             </div>
         </div>
         
@@ -242,7 +285,7 @@
                     <h3 class="h5 mb-1">{{ user.company.name }}</h3>
                     <p class="text-muted small mb-3">{{ user.email }}</p>
                     <a href="{% url 'core:dashboard' %}" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-eye me-1"></i> Ver Perfil Empresa
+                        <i class="bi bi-eye me-1" aria-hidden="true"></i> Ver Perfil Empresa
                     </a>
                 </div>
             </div>
@@ -296,22 +339,26 @@
                 </div>
                 <div class="list-group list-group-flush">
                     <a href="{% url 'company:create_job' %}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-plus me-2"></i> Crear Oferta
+                        <i class="bi bi-plus me-2" aria-hidden="true"></i> Crear Oferta
                     </a>
                     <a href="{% url 'company:quota_compliance' %}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-graph-up-arrow me-2"></i> Dashboard de Cuotas
+                        <i class="bi bi-graph-up-arrow me-2" aria-hidden="true"></i> Dashboard de Cuotas
                     </a>
                     <a href="{% url 'company:hiring_reports' %}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-file-earmark-text me-2"></i> Informes al Ministerio
+                        <i class="bi bi-file-earmark-text me-2" aria-hidden="true"></i> Informes al Ministerio
+                    </a>
+                    <!-- ✨ NUEVO ENLACE -->
+                    <a href="{% url 'library:home' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-book me-2" aria-hidden="true"></i> Biblioteca de Recursos
                     </a>
                     <a href="#" class="list-group-item list-group-item-action">
-                        <i class="bi bi-person-check me-2"></i> Ver Postulaciones
+                        <i class="bi bi-person-check me-2" aria-hidden="true"></i> Ver Postulaciones
                     </a>
                     <a href="#" class="list-group-item list-group-item-action">
-                        <i class="bi bi-bell me-2"></i> Notificaciones
+                        <i class="bi bi-bell me-2" aria-hidden="true"></i> Notificaciones
                     </a>
                     <a href="{% url 'core:dashboard' %}" class="list-group-item list-group-item-action">
-                        <i class="bi bi-building me-2"></i> Perfil Empresa
+                        <i class="bi bi-building me-2" aria-hidden="true"></i> Perfil Empresa
                     </a>
                 </div>
             </div>

@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Biblioteca de Mejores Prácticas{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-2">
+                <i class="bi bi-book text-primary me-2" aria-hidden="true"></i>
+                Biblioteca de Mejores Prácticas en Inclusión Laboral
+            </h1>
+            <p class="text-muted">
+                Accede a guías, plantillas y recursos para implementar políticas de reclutamiento y ambientes de trabajo inclusivos.
+            </p>
+        </div>
+    </div>
+
+    <!-- Barra de búsqueda -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" action="{% url 'library:resources_list' %}" class="row g-3">
+                <div class="col-md-10">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-white">
+                            <i class="bi bi-search" aria-hidden="true"></i>
+                        </span>
+                        <input type="text" 
+                               class="form-control border-start-0" 
+                               name="search" 
+                               placeholder="Buscar recursos, guías, plantillas..." 
+                               aria-label="Buscar recursos">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Categorías -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="h5 mb-3">
+                <i class="bi bi-folder text-primary me-2" aria-hidden="true"></i>
+                Explora por Categoría
+            </h2>
+        </div>
+        {% if categories %}
+        {% for category in categories %}
+        <div class="col-md-4 col-lg-3 mb-3">
+            <a href="{% url 'library:category_detail' category.slug %}" 
+               class="card border-0 shadow-sm h-100 text-decoration-none">
+                <div class="card-body text-center">
+                    <i class="bi {{ category.icon }} text-primary" style="font-size: 3rem;" aria-hidden="true"></i>
+                    <h3 class="h6 mt-3 mb-1">{{ category.name }}</h3>
+                    <small class="text-muted">{{ category.resources_count }} recursos</small>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <p class="text-muted text-center">No hay categorías disponibles.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Recursos destacados -->
+    {% if featured_resources %}
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="h5 mb-0">
+                    <i class="bi bi-star-fill text-warning me-2" aria-hidden="true"></i>
+                    Recursos Destacados
+                </h2>
+                <a href="{% url 'library:resources_list' %}" class="btn btn-sm btn-outline-primary">
+                    Ver todos
+                </a>
+            </div>
+        </div>
+        {% for resource in featured_resources %}
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-primary">{{ resource.get_resource_type_display }}</span>
+                        <span class="badge bg-warning">Destacado</span>
+                    </div>
+                    <h3 class="h6 mb-2">
+                        <a href="{% url 'library:resource_detail' resource.slug %}" class="text-decoration-none text-dark">
+                            {{ resource.title }}
+                        </a>
+                    </h3>
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-folder me-1" aria-hidden="true"></i>
+                        {{ resource.category.name }}
+                    </p>
+                    <p class="text-muted small mb-3">{{ resource.description|truncatewords:20 }}</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'library:resource_detail' resource.slug %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye me-1" aria-hidden="true"></i>
+                            Ver
+                        </a>
+                        {% if resource.file %}
+                        <a href="{% url 'library:download_resource' resource.slug %}" class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-download me-1" aria-hidden="true"></i>
+                            Descargar
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <!-- Recursos más vistos -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-graph-up text-success me-2" aria-hidden="true"></i>
+                        Más Populares
+                    </h2>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% if popular_resources %}
+                    {% for resource in popular_resources %}
+                    <a href="{% url 'library:resource_detail' resource.slug %}" 
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h3 class="h6 mb-1">{{ resource.title }}</h3>
+                                <small class="text-muted">
+                                    <i class="bi bi-folder me-1" aria-hidden="true"></i>
+                                    {{ resource.category.name }}
+                                </small>
+                            </div>
+                            <span class="badge bg-primary">{{ resource.view_count }} vistas</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    {% else %}
+                    <div class="list-group-item text-center text-muted">
+                        No hay recursos disponibles
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recursos recientes -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-clock-history text-info me-2" aria-hidden="true"></i>
+                        Agregados Recientemente
+                    </h2>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% if recent_resources %}
+                    {% for resource in recent_resources %}
+                    <a href="{% url 'library:resource_detail' resource.slug %}" 
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h3 class="h6 mb-1">{{ resource.title }}</h3>
+                                <small class="text-muted">
+                                    <i class="bi bi-folder me-1" aria-hidden="true"></i>
+                                    {{ resource.category.name }}
+                                </small>
+                            </div>
+                            <span class="badge bg-secondary">{{ resource.created_at|date:"d/m/Y" }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    {% else %}
+                    <div class="list-group-item text-center text-muted">
+                        No hay recursos disponibles
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-4">
+            <h2 class="h6 mb-3">Acciones Rápidas</h2>
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <a href="{% url 'library:resources_list' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-grid me-1" aria-hidden="true"></i>
+                    Ver Todos los Recursos
+                </a>
+                <a href="{% url 'library:my_bookmarks' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-bookmark me-1" aria-hidden="true"></i>
+                    Mis Marcadores ({{ user_bookmarks_count }})
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

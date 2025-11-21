@@ -101,7 +101,7 @@
       </div>
     </div>
 
-    <!-- NUEVA SECCIÓN: Panel del Ministerio -->
+    <!-- Panel del Ministerio -->
     <div class="col-md-6 mb-4">
       <div class="card shadow-sm h-100 border-start border-info border-4">
         <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
@@ -125,8 +125,74 @@
               Ver Todos los Informes
             </a>
             <a href="{% url 'admin_jobs:inclusion_kpis' %}" class="btn btn-outline-primary">
-                <i class="bi bi-bar-chart-line me-2"></i>
-                Ver KPIs de Inclusión
+              <i class="bi bi-bar-chart-line me-2"></i>
+              Ver KPIs de Inclusión
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formación y Capacitación -->
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm h-100 border-start border-4" style="border-color: #667eea !important;">
+        <div class="card-header text-white d-flex justify-content-between align-items-center" 
+             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+          <h5 class="mb-0">
+            <i class="bi bi-mortarboard me-2"></i>
+            Formación y Capacitación
+          </h5>
+          <span class="badge bg-light text-dark">Nuevo</span>
+        </div>
+        <div class="card-body">
+          <p class="mb-3">
+            Monitorea la participación de candidatos en cursos de habilidades sociales. Revisa estadísticas de finalización y certificados emitidos.
+          </p>
+          <div class="d-grid gap-2">
+            <a href="{% url 'training:admin_dashboard' %}" class="btn text-white" 
+               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+              <i class="bi bi-graph-up me-2"></i>
+              Dashboard de Formación
+            </a>
+            <a href="{% url 'training:admin_candidate_progress' %}" class="btn btn-outline-secondary">
+              <i class="bi bi-list-check me-2"></i>
+              Ver Progreso de Candidatos
+            </a>
+            <a href="/admin/training/socialskillscourse/" class="btn btn-outline-secondary">
+              <i class="bi bi-gear me-2"></i>
+              Administrar Cursos
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✨ NUEVA SECCIÓN: Biblioteca de Mejores Prácticas -->
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm h-100 border-start border-success border-4">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="bi bi-book me-2"></i>
+            Biblioteca de Mejores Prácticas
+          </h5>
+          <span class="badge bg-light text-success">Recursos</span>
+        </div>
+        <div class="card-body">
+          <p class="mb-3">
+            Monitorea el uso de la biblioteca de recursos sobre inclusión laboral. Revisa estadísticas de descargas, recursos más populares y empresas más activas.
+          </p>
+          <div class="d-grid gap-2">
+            <a href="{% url 'library:admin_stats' %}" class="btn btn-success text-white">
+              <i class="bi bi-graph-up me-2"></i>
+              Dashboard de Biblioteca
+            </a>
+            <a href="/admin/library/bestpracticeresource/" class="btn btn-outline-success">
+              <i class="bi bi-file-earmark-plus me-2"></i>
+              Agregar Recursos
+            </a>
+            <a href="/admin/library/resourcecategory/" class="btn btn-outline-success">
+              <i class="bi bi-folder-plus me-2"></i>
+              Gestionar Categorías
             </a>
           </div>
         </div>

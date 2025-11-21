@@ -25,13 +25,24 @@ def dashboard_view(request):
     
     # Dashboard según tipo de usuario
     if user.user_type == 'candidate':
-        # AGREGAR OFERTAS RECOMENDADAS PARA CANDIDATOS
+        from training.models import CourseEnrollment  # ← AGREGAR
+        
         recommended_jobs = Job.objects.filter(
             compliance_status=ComplianceStatus.APPROVED,
             is_active=True
         ).select_related('company').order_by('-created_at')[:5]
         
-        context['recommended_jobs'] = recommended_jobs
+        # ← AGREGAR ESTADÍSTICAS DE CURSOS
+        my_courses = CourseEnrollment.objects.filter(candidate=user)
+        
+        context.update({
+            'recommended_jobs': recommended_jobs,
+            'total_courses_enrolled': my_courses.count(),
+            'courses_in_progress': my_courses.filter(status='in_progress').count(),
+            'courses_completed': my_courses.filter(status='completed').count(),
+            'certificates_earned': my_courses.filter(certificate_issued=True).count(),
+        })
+        
         return render(request, 'core/dashboard_candidate.html', context)
     
     elif user.user_type == 'company':

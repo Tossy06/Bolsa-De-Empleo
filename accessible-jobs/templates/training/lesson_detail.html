@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load training_filters %}  <!-- ✅ AGREGAR ESTA LÍNEA -->
+
+{% block title %}{{ lesson.title }} - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'training:courses_list' %}">Cursos</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'training:course_detail' course.slug %}">{{ course.title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ lesson.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Contenido de la lección -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-primary">{{ lesson.get_content_type_display }}</span>
+                            {% if lesson.is_mandatory %}
+                            <span class="badge bg-danger">Obligatoria</span>
+                            {% endif %}
+                        </div>
+                        
+                        {% if lesson_progress.completed %}
+                        <span class="badge bg-success">
+                            <i class="bi bi-check-circle me-1" aria-hidden="true"></i>
+                            Completada
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <h1 class="h4 mb-4">{{ lesson.title }}</h1>
+                    
+                    <!-- Simulación de video -->
+                    {% if lesson.content_type == 'video' %}
+                    <div class="ratio ratio-16x9 mb-4 bg-dark rounded">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-white">
+                            <i class="bi bi-play-circle" style="font-size: 4rem;" aria-hidden="true"></i>
+                            <p class="mt-3 mb-0">Video simulado ({{ lesson.video_duration_minutes }} minutos)</p>
+                            <small class="text-muted">En producción, aquí iría el reproductor de video real</small>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Contenido de la lección -->
+                    <div class="lesson-content">
+                        {{ lesson.content|linebreaks }}
+                    </div>
+                    
+                    <!-- Transcripción -->
+                    {% if lesson.transcript %}
+                    <div class="mt-4">
+                        <button class="btn btn-outline-secondary btn-sm" 
+                                type="button" 
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#transcriptCollapse" 
+                                aria-expanded="false" 
+                                aria-controls="transcriptCollapse">
+                            <i class="bi bi-file-text me-1" aria-hidden="true"></i>
+                            Ver Transcripción
+                        </button>
+                        
+                        <div class="collapse mt-3" id="transcriptCollapse">
+                            <div class="card card-body bg-light">
+                                <h2 class="h6 mb-3">Transcripción Completa</h2>
+                                {{ lesson.transcript|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Botón de completar -->
+                    <div class="mt-4">
+                        {% if not lesson_progress.completed %}
+                        <button type="button" 
+                                class="btn btn-success btn-lg" 
+                                id="completeButton"
+                                data-lesson-id="{{ lesson.id }}"
+                                data-enrollment-id="{{ enrollment.id }}">
+                            <i class="bi bi-check-circle me-2" aria-hidden="true"></i>
+                            Marcar como Completada
+                        </button>
+                        {% else %}
+                        <button type="button" class="btn btn-success btn-lg" disabled>
+                            <i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>
+                            Lección Completada
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navegación de lecciones -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-list-check text-primary me-2" aria-hidden="true"></i>
+                        Lecciones del Curso
+                    </h2>
+                </div>
+                <div class="list-group list-group-flush" style="max-height: 600px; overflow-y: auto;">
+                    {% for l in all_lessons %}
+                    <a href="{% url 'training:lesson_detail' course.slug l.id %}" 
+                       class="list-group-item list-group-item-action {% if l.id == lesson.id %}active{% endif %}">
+                        <div class="d-flex align-items-center">
+                            {% if progress_dict|get_item:l.id %}
+                            <i class="bi bi-check-circle-fill text-success me-2" aria-hidden="true"></i>
+                            {% else %}
+                            <i class="bi bi-circle me-2" aria-hidden="true"></i>
+                            {% endif %}
+                            
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold small">{{ l.title }}</div>
+                                <small class="text-muted">{{ l.get_content_type_display }}</small>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Progreso del curso -->
+            <div class="card border-0 shadow-sm mt-3">
+                <div class="card-body">
+                    <h2 class="h6 mb-2">Progreso Total</h2>
+                    <div class="progress" style="height: 20px;" role="progressbar" 
+                         aria-label="Progreso del curso" 
+                         aria-valuenow="{{ enrollment.progress_percentage }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        <div class="progress-bar bg-success" 
+                             id="courseProgressBar"
+                             style="width: {{ enrollment.progress_percentage }}%;">
+                            <span id="courseProgressText">{{ enrollment.progress_percentage|floatformat:0 }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% csrf_token %}
+
+<!-- Script para marcar como completada -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const completeButton = document.getElementById('completeButton');
+    
+    if (completeButton) {
+        completeButton.addEventListener('click', function() {
+            const lessonId = this.dataset.lessonId;
+            const enrollmentId = this.dataset.enrollmentId;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            // Deshabilitar botón
+            completeButton.disabled = true;
+            completeButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Guardando...';
+            
+            fetch('/training/lesson/' + lessonId + '/complete/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualizar botón
+                    completeButton.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Lección Completada';
+                    
+                    // Actualizar barra de progreso
+                    const progressBar = document.getElementById('courseProgressBar');
+                    const progressText = document.getElementById('courseProgressText');
+                    progressBar.style.width = data.course_progress + '%';
+                    progressText.textContent = Math.round(data.course_progress) + '%';
+                    
+                    // Mostrar mensaje de certificado si aplica
+                    if (data.certificate_issued) {
+                        alert('¡Felicidades! Has completado el curso. Tu certificado está disponible.');
+                        window.location.href = '/training/certificate/' + enrollmentId + '/';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                completeButton.disabled = false;
+                completeButton.innerHTML = '<i class="bi bi-check-circle me-2"></i>Marcar como Completada';
+                alert('Ocurrió un error. Por favor intenta de nuevo.');
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

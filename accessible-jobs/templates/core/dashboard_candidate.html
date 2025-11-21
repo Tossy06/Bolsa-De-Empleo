@@ -133,7 +133,7 @@
             </div>
             
             <!-- Empleos recomendados -->
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-0 pt-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <h2 class="h5 mb-0">
@@ -167,6 +167,67 @@
                             <i class="bi bi-inbox" style="font-size: 4rem; opacity: 0.3;" aria-hidden="true"></i>
                             <p class="mt-3 mb-0">No hay ofertas disponibles en este momento</p>
                         </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- ✨ NUEVA SECCIÓN: Formación en Habilidades Sociales -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 pt-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="h5 mb-0">
+                            <i class="bi bi-mortarboard text-primary me-2" aria-hidden="true"></i>
+                            Formación en Habilidades Sociales
+                        </h2>
+                        <a href="{% url 'training:courses_list' %}" class="btn btn-sm btn-outline-primary">
+                            Ver todos
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if total_courses_enrolled > 0 %}
+                    <div class="row g-3 mb-3">
+                        <div class="col-4 text-center">
+                            <div class="bg-primary bg-opacity-10 rounded p-3">
+                                <h4 class="mb-0 text-primary">{{ total_courses_enrolled }}</h4>
+                                <small class="text-muted">Inscritos</small>
+                            </div>
+                        </div>
+                        <div class="col-4 text-center">
+                            <div class="bg-warning bg-opacity-10 rounded p-3">
+                                <h4 class="mb-0 text-warning">{{ courses_in_progress }}</h4>
+                                <small class="text-muted">En Progreso</small>
+                            </div>
+                        </div>
+                        <div class="col-4 text-center">
+                            <div class="bg-success bg-opacity-10 rounded p-3">
+                                <h4 class="mb-0 text-success">{{ certificates_earned }}</h4>
+                                <small class="text-muted">Certificados</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'training:my_courses' %}" class="btn btn-primary">
+                            <i class="bi bi-journal-bookmark me-2" aria-hidden="true"></i>
+                            Ver Mis Cursos
+                        </a>
+                        <a href="{% url 'training:courses_list' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-search me-2" aria-hidden="true"></i>
+                            Explorar Más Cursos
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-mortarboard text-muted" style="font-size: 4rem; opacity: 0.3;" aria-hidden="true"></i>
+                        <h3 class="h6 mt-3 mb-2">Desarrolla tus Habilidades Sociales</h3>
+                        <p class="text-muted mb-3">
+                            Accede a cursos gratuitos de comunicación, trabajo en equipo y resolución de problemas para mejorar tu empleabilidad.
+                        </p>
+                        <a href="{% url 'training:courses_list' %}" class="btn btn-primary">
+                            <i class="bi bi-search me-2" aria-hidden="true"></i>
+                            Explorar Cursos Disponibles
+                        </a>
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -245,9 +306,14 @@
                     </h3>
                 </div>
                 <div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item list-group-item-action">
+                    <a href="{% url 'jobs:list' %}" class="list-group-item list-group-item-action">
                         <i class="bi bi-search me-2" aria-hidden="true"></i>
                         Buscar Empleos
+                    </a>
+                    <!-- ✨ NUEVO ENLACE -->
+                    <a href="{% url 'training:courses_list' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-mortarboard me-2" aria-hidden="true"></i>
+                        Cursos de Formación
                     </a>
                     <a href="#" class="list-group-item list-group-item-action">
                         <i class="bi bi-file-earmark-person me-2" aria-hidden="true"></i>

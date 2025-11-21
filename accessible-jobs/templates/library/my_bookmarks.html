@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mis Marcadores - Biblioteca{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'library:home' %}">Biblioteca</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mis Marcadores</li>
+        </ol>
+    </nav>
+
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-2">
+                <i class="bi bi-bookmark-fill text-primary me-2" aria-hidden="true"></i>
+                Mis Marcadores
+            </h1>
+            <p class="text-muted">Recursos que has guardado para consultar más tarde</p>
+        </div>
+    </div>
+
+    <!-- Lista de marcadores -->
+    {% if page_obj %}
+    <div class="row mb-3">
+        <div class="col">
+            <p class="text-muted">
+                {{ page_obj.paginator.count }} recurso{{ page_obj.paginator.count|pluralize }} guardado{{ page_obj.paginator.count|pluralize }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for bookmark in page_obj %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-primary">{{ bookmark.resource.get_resource_type_display }}</span>
+                        <span class="badge bg-success">
+                            <i class="bi bi-bookmark-fill" aria-hidden="true"></i>
+                            Guardado
+                        </span>
+                    </div>
+
+                    <h2 class="h6 mb-2">
+                        <a href="{% url 'library:resource_detail' bookmark.resource.slug %}" class="text-decoration-none text-dark">
+                            {{ bookmark.resource.title }}
+                        </a>
+                    </h2>
+
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-folder me-1" aria-hidden="true"></i>
+                        {% if bookmark.resource.category.slug %}
+                        <a href="{% url 'library:category_detail' bookmark.resource.category.slug %}" class="text-decoration-none">
+                            {{ bookmark.resource.category.name }}
+                        </a>
+                        {% else %}
+                        {{ bookmark.resource.category.name }}
+                        {% endif %}
+                    </p>
+
+                    <p class="text-muted small mb-3 flex-grow-1">
+                        {{ bookmark.resource.description|truncatewords:15 }}
+                    </p>
+
+                    <small class="text-muted mb-3">
+                        <i class="bi bi-calendar me-1" aria-hidden="true"></i>
+                        Guardado hace {{ bookmark.created_at|timesince }}
+                    </small>
+
+                    {% if bookmark.notes %}
+                    <div class="alert alert-light py-2 mb-3">
+                        <small><strong>Mis notas:</strong> {{ bookmark.notes|truncatewords:20 }}</small>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'library:resource_detail' bookmark.resource.slug %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye me-1" aria-hidden="true"></i>
+                            Ver Recurso
+                        </a>
+                        {% if bookmark.resource.file %}
+                        <a href="{% url 'library:download_resource' bookmark.resource.slug %}" class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-download me-1" aria-hidden="true"></i>
+                            Descargar
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Paginación de marcadores">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-bookmark text-muted" style="font-size: 5rem; opacity: 0.3;" aria-hidden="true"></i>
+            <h2 class="h5 mt-4 mb-2">No tienes marcadores guardados</h2>
+            <p class="text-muted mb-4">
+                Explora la biblioteca y guarda recursos para acceder a ellos rápidamente.
+            </p>
+            <a href="{% url 'library:resources_list' %}" class="btn btn-primary">
+                <i class="bi bi-search me-2" aria-hidden="true"></i>
+                Explorar Recursos
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

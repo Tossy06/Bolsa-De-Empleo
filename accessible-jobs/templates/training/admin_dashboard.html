@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard de Formación - Administrador{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Dashboard de Formación</li>
+        </ol>
+    </nav>
+
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-2">
+                <i class="bi bi-graph-up text-primary me-2" aria-hidden="true"></i>
+                Dashboard de Formación y Capacitación
+            </h1>
+            <p class="text-muted">Monitorea la participación de candidatos en cursos de habilidades sociales</p>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-book text-primary fs-3" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted small mb-1">Cursos Activos</h6>
+                            <h3 class="mb-0">{{ active_courses }}</h3>
+                            <small class="text-muted">de {{ total_courses }} totales</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-info bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-people text-info fs-3" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted small mb-1">Total Inscripciones</h6>
+                            <h3 class="mb-0">{{ total_enrollments }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-check-circle text-success fs-3" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted small mb-1">Cursos Completados</h6>
+                            <h3 class="mb-0">{{ total_completed }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-award text-warning fs-3" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted small mb-1">Certificados Emitidos</h6>
+                            <h3 class="mb-0">{{ total_certificates }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Cursos más populares -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-star text-warning me-2" aria-hidden="true"></i>
+                        Cursos Más Populares
+                    </h2>
+                </div>
+                <div class="card-body">
+                    {% if popular_courses %}
+                    <div class="list-group list-group-flush">
+                        {% for course in popular_courses %}
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ course.title }}</h6>
+                                    <small class="text-muted">
+                                        <span class="badge bg-primary">{{ course.get_category_display }}</span>
+                                    </small>
+                                </div>
+                                <div class="text-end">
+                                    <h5 class="mb-0">{{ course.enrollment_count }}</h5>
+                                    <small class="text-muted">inscritos</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">No hay datos disponibles</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasa de finalización -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-graph-up-arrow text-success me-2" aria-hidden="true"></i>
+                        Tasa de Finalización por Curso
+                    </h2>
+                </div>
+                <div class="card-body">
+                    {% if completion_stats %}
+                    {% for course in completion_stats %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="fw-semibold">{{ course.title|truncatewords:5 }}</small>
+                            <small class="text-muted">
+                                {{ course.completed_enrollments }} / {{ course.total_enrollments }}
+                                ({{ course.completion_percentage }}%)
+                            </small>
+                        </div>
+                        <div class="progress" style="height: 8px;" role="progressbar" 
+                             aria-label="Tasa de finalización de {{ course.title }}" 
+                             aria-valuenow="{{ course.completion_percentage }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            <div class="progress-bar bg-success" 
+                                 style="width: {{ course.completion_percentage }}%;"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="text-muted text-center py-3">No hay datos disponibles</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Inscripciones recientes -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-clock-history text-info me-2" aria-hidden="true"></i>
+                        Inscripciones Recientes
+                    </h2>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    {% if recent_enrollments %}
+                    <div class="list-group list-group-flush">
+                        {% for enrollment in recent_enrollments %}
+                        <div class="list-group-item px-0">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-person-circle text-muted me-2 mt-1" aria-hidden="true"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ enrollment.candidate.get_full_name }}</h6>
+                                    <p class="mb-1 small text-muted">{{ enrollment.course.title }}</p>
+                                    <small class="text-muted">{{ enrollment.enrolled_at|timesince }} atrás</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">No hay inscripciones recientes</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Finalizaciones recientes -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-trophy text-warning me-2" aria-hidden="true"></i>
+                        Finalizaciones Recientes
+                    </h2>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    {% if recent_completions %}
+                    <div class="list-group list-group-flush">
+                        {% for enrollment in recent_completions %}
+                        <div class="list-group-item px-0">
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-award-fill text-warning me-2 mt-1" aria-hidden="true"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ enrollment.candidate.get_full_name }}</h6>
+                                    <p class="mb-1 small text-muted">{{ enrollment.course.title }}</p>
+                                    <small class="text-muted">Completado hace {{ enrollment.completed_at|timesince }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">No hay finalizaciones recientes</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-4">
+                    <h3 class="h6 mb-3">Acciones Rápidas</h3>
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                        <a href="{% url 'training:admin_candidate_progress' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-list-check me-1" aria-hidden="true"></i>
+                            Ver Progreso de Candidatos
+                        </a>
+                        <a href="/admin/training/socialskillscourse/" class="btn btn-outline-secondary">
+                            <i class="bi bi-gear me-1" aria-hidden="true"></i>
+                            Administrar Cursos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

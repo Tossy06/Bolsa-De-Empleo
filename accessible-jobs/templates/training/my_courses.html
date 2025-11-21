@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mis Cursos{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mis Cursos</li>
+        </ol>
+    </nav>
+
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-2">
+                <i class="bi bi-journal-bookmark text-primary me-2" aria-hidden="true"></i>
+                Mis Cursos
+            </h1>
+            <p class="text-muted">Gestiona tu progreso y accede a tus certificados</p>
+        </div>
+        <div class="col-auto">
+            <a href="{% url 'training:courses_list' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1" aria-hidden="true"></i>
+                Explorar Más Cursos
+            </a>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-journals text-primary fs-4" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-muted small">Total Cursos</h6>
+                            <h3 class="mb-0">{{ stats.total }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-hourglass-split text-warning fs-4" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-muted small">En Progreso</h6>
+                            <h3 class="mb-0">{{ stats.in_progress }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-check-circle text-success fs-4" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-muted small">Completados</h6>
+                            <h3 class="mb-0">{{ stats.completed }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-info bg-opacity-10 rounded p-3 me-3">
+                            <i class="bi bi-award text-info fs-4" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-muted small">Certificados</h6>
+                            <h3 class="mb-0">{{ stats.certificates }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de cursos -->
+    {% if enrollments %}
+    <div class="row">
+        {% for enrollment in enrollments %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                {% if enrollment.course.thumbnail %}
+                <img src="{{ enrollment.course.thumbnail.url }}" 
+                     class="card-img-top" 
+                     alt="Imagen del curso {{ enrollment.course.title }}"
+                     style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" 
+                     style="height: 200px;">
+                    <i class="bi bi-book text-primary" style="font-size: 4rem;" aria-hidden="true"></i>
+                </div>
+                {% endif %}
+
+                <div class="card-body d-flex flex-column">
+                    <!-- Estado del curso -->
+                    <div class="mb-2">
+                        {% if enrollment.status == 'completed' %}
+                        <span class="badge bg-success">
+                            <i class="bi bi-check-circle me-1" aria-hidden="true"></i>
+                            Completado
+                        </span>
+                        {% elif enrollment.status == 'in_progress' %}
+                        <span class="badge bg-warning">
+                            <i class="bi bi-hourglass-split me-1" aria-hidden="true"></i>
+                            En Progreso
+                        </span>
+                        {% else %}
+                        <span class="badge bg-secondary">
+                            <i class="bi bi-bookmark me-1" aria-hidden="true"></i>
+                            Inscrito
+                        </span>
+                        {% endif %}
+
+                        {% if enrollment.certificate_issued %}
+                        <span class="badge bg-info">
+                            <i class="bi bi-award me-1" aria-hidden="true"></i>
+                            Certificado
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <h2 class="h5 card-title">{{ enrollment.course.title }}</h2>
+
+                    <!-- Barra de progreso -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Progreso</small>
+                            <small class="fw-semibold">{{ enrollment.progress_percentage|floatformat:0 }}%</small>
+                        </div>
+                        <div class="progress" style="height: 8px;" role="progressbar" 
+                             aria-label="Progreso del curso" 
+                             aria-valuenow="{{ enrollment.progress_percentage }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            <div class="progress-bar bg-success" 
+                                 style="width: {{ enrollment.progress_percentage }}%;"></div>
+                        </div>
+                    </div>
+
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-clock-history me-1" aria-hidden="true"></i>
+                        Último acceso: {{ enrollment.last_accessed_at|timesince }} atrás
+                    </p>
+
+                    <div class="mt-auto">
+                        {% if enrollment.certificate_issued %}
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'training:course_detail' enrollment.course.slug %}" 
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye me-1" aria-hidden="true"></i>
+                                Ver Curso
+                            </a>
+                            <a href="{% url 'training:certificate' enrollment.id %}" 
+                               class="btn btn-success btn-sm">
+                                <i class="bi bi-download me-1" aria-hidden="true"></i>
+                                Ver Certificado
+                            </a>
+                        </div>
+                        {% else %}
+                        <a href="{% url 'training:course_detail' enrollment.course.slug %}" 
+                           class="btn btn-primary w-100">
+                            <i class="bi bi-play-circle me-1" aria-hidden="true"></i>
+                            Continuar Aprendiendo
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Sin cursos -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-journal-x text-muted" style="font-size: 5rem; opacity: 0.3;" aria-hidden="true"></i>
+            <h3 class="h5 mt-4 mb-2">Aún no estás inscrito en ningún curso</h3>
+            <p class="text-muted mb-4">
+                Explora nuestra oferta de formación en habilidades sociales y comienza a aprender
+            </p>
+            <a href="{% url 'training:courses_list' %}" class="btn btn-primary">
+                <i class="bi bi-search me-1" aria-hidden="true"></i>
+                Explorar Cursos Disponibles
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

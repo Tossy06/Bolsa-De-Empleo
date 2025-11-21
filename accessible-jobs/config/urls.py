@@ -22,6 +22,11 @@ urlpatterns = [
     # Panel de administración de Django
     path('admin/', admin.site.urls),
 
+    # App de training
+    path('training/', include('training.urls')),
+
+    path('biblioteca/', include('library.urls')),
+
     # URLs de la aplicación core (home, dashboard, etc)
     path('', include('core.urls')),
     

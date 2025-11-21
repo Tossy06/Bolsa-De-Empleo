@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recursos - Biblioteca{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'library:home' %}">Biblioteca</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Recursos</li>
+        </ol>
+    </nav>
+
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-2">
+                <i class="bi bi-collection text-primary me-2" aria-hidden="true"></i>
+                Todos los Recursos
+            </h1>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Buscar</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="search" 
+                           name="search" 
+                           placeholder="Título, descripción, etiquetas..." 
+                           value="{{ search_query }}"
+                           aria-label="Buscar recursos">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="category" class="form-label">Categoría</label>
+                    <select class="form-select" id="category" name="category" aria-label="Filtrar por categoría">
+                        <option value="">Todas</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.slug }}" {% if category_slug == cat.slug %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="type" class="form-label">Tipo</label>
+                    <select class="form-select" id="type" name="type" aria-label="Filtrar por tipo">
+                        <option value="">Todos</option>
+                        {% for value, label in resource_type_choices %}
+                        <option value="{{ value }}" {% if resource_type == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="sort" class="form-label">Ordenar por</label>
+                    <select class="form-select" id="sort" name="sort" aria-label="Ordenar resultados">
+                        <option value="recent" {% if sort_by == 'recent' %}selected{% endif %}>Más recientes</option>
+                        <option value="popular" {% if sort_by == 'popular' %}selected{% endif %}>Más populares</option>
+                        <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Título A-Z</option>
+                    </select>
+                </div>
+
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resultados -->
+    {% if page_obj %}
+    <div class="row mb-3">
+        <div class="col">
+            <p class="text-muted">
+                Mostrando {{ page_obj.start_index }}-{{ page_obj.end_index }} de {{ page_obj.paginator.count }} recursos
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for resource in page_obj %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-primary">{{ resource.get_resource_type_display }}</span>
+                        {% if resource.id in bookmarked_ids %}
+                        <span class="badge bg-success">
+                            <i class="bi bi-bookmark-fill" aria-hidden="true"></i>
+                            Guardado
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="h6 mb-2">
+                        <a href="{% url 'library:resource_detail' resource.slug %}" class="text-decoration-none text-dark">
+                            {{ resource.title }}
+                        </a>
+                    </h3>
+
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-folder me-1" aria-hidden="true"></i>
+                        {{ resource.category.name }}
+                    </p>
+
+                    <p class="text-muted small mb-3 flex-grow-1">
+                        {{ resource.description|truncatewords:20 }}
+                    </p>
+
+                    <div class="d-flex gap-2 mb-2">
+                        <small class="text-muted">
+                            <i class="bi bi-eye me-1" aria-hidden="true"></i>
+                            {{ resource.view_count }}
+                        </small>
+                        <small class="text-muted">
+                            <i class="bi bi-download me-1" aria-hidden="true"></i>
+                            {{ resource.download_count }}
+                        </small>
+                        {% if resource.is_accessible %}
+                        <small class="text-success">
+                            <i class="bi bi-universal-access me-1" aria-hidden="true"></i>
+                            Accesible
+                        </small>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'library:resource_detail' resource.slug %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye me-1" aria-hidden="true"></i>
+                            Ver Detalles
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Paginación de recursos">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&category={{ category_slug }}&type={{ resource_type }}&sort={{ sort_by }}">
+                    Anterior
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}&search={{ search_query }}&category={{ category_slug }}&type={{ resource_type }}&sort={{ sort_by }}">
+                    {{ num }}
+                </a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&category={{ category_slug }}&type={{ resource_type }}&sort={{ sort_by }}">
+                    Siguiente
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="alert alert-info text-center" role="alert">
+        <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+        No se encontraron recursos con los filtros seleccionados.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Progreso de Candidatos - Administrador{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'training:admin_dashboard' %}">Dashboard Formación</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Progreso de Candidatos</li>
+        </ol>
+    </nav>
+
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-2">
+                <i class="bi bi-list-check text-primary me-2" aria-hidden="true"></i>
+                Progreso de Candidatos en Cursos
+            </h1>
+            <p class="text-muted">Monitorea el avance individual de cada candidato</p>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-5">
+                    <label for="search" class="form-label">Buscar candidato o curso</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="search" 
+                           name="search" 
+                           placeholder="Nombre, email o curso..." 
+                           value="{{ search_query }}"
+                           aria-label="Buscar candidato o curso">
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Estado</label>
+                    <select class="form-select" id="status" name="status" aria-label="Filtrar por estado">
+                        <option value="">Todos los estados</option>
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-1" aria-hidden="true"></i>
+                        Filtrar
+                    </button>
+                </div>
+                
+                <div class="col-md-2 d-flex align-items-end">
+                    <a href="{% url 'training:admin_candidate_progress' %}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-clockwise me-1" aria-hidden="true"></i>
+                        Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de progreso -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+            <h2 class="h6 mb-0">Inscripciones y Progreso</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Candidato</th>
+                        <th scope="col">Curso</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Progreso</th>
+                        <th scope="col">Inscrito</th>
+                        <th scope="col">Último Acceso</th>
+                        <th scope="col">Certificado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if enrollments %}
+                        {% for enrollment in enrollments %}
+                        <tr>
+                            <td>
+                                <div>
+                                    <h6 class="mb-0">{{ enrollment.candidate.get_full_name }}</h6>
+                                    <small class="text-muted">{{ enrollment.candidate.email }}</small>
+                                </div>
+                            </td>
+                            <td>{{ enrollment.course.title }}</td>
+                            <td>
+                                {% if enrollment.status == 'completed' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle me-1" aria-hidden="true"></i>
+                                    {{ enrollment.get_status_display }}
+                                </span>
+                                {% elif enrollment.status == 'in_progress' %}
+                                <span class="badge bg-warning">
+                                    <i class="bi bi-hourglass-split me-1" aria-hidden="true"></i>
+                                    {{ enrollment.get_status_display }}
+                                </span>
+                                {% else %}
+                                <span class="badge bg-secondary">
+                                    {{ enrollment.get_status_display }}
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td style="min-width: 150px;">
+                                <div class="d-flex align-items-center">
+                                    <div class="progress flex-grow-1 me-2" style="height: 8px;" role="progressbar" 
+                                         aria-label="Progreso" 
+                                         aria-valuenow="{{ enrollment.progress_percentage }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                        <div class="progress-bar bg-success" 
+                                             style="width: {{ enrollment.progress_percentage }}%;"></div>
+                                    </div>
+                                    <small class="text-muted">{{ enrollment.progress_percentage|floatformat:0 }}%</small>
+                                </div>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ enrollment.enrolled_at|date:"d/m/Y" }}</small>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ enrollment.last_accessed_at|timesince }} atrás</small>
+                            </td>
+                            <td class="text-center">
+                                {% if enrollment.certificate_issued %}
+                                <i class="bi bi-award-fill text-warning fs-5" aria-hidden="true" title="Certificado emitido"></i>
+                                <span class="visually-hidden">Certificado emitido</span>
+                                {% else %}
+                                <i class="bi bi-dash text-muted" aria-hidden="true"></i>
+                                <span class="visually-hidden">Sin certificado</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.3;" aria-hidden="true"></i>
+                                <p class="mt-3 mb-0">No se encontraron inscripciones con los filtros aplicados</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
